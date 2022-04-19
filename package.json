@@ -6,7 +6,10 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "lint": "eslint ./src/**/*.jsx"
+        "lint": "eslint ./src/**/*.jsx",
+        "lint:fix": "eslint --fix",
+        "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
+        "prepare": "husky install"
     },
     "dependencies": {
         "eslint-plugin-prettier": "^4.0.0",
@@ -25,6 +28,7 @@
         "eslint-plugin-jsx-a11y": "^6.5.1",
         "eslint-plugin-react": "^7.29.4",
         "eslint-plugin-react-hooks": "^4.4.0",
-        "vite": "^2.9.5"
+        "vite": "^2.9.5",
+        "husky": "^7.0.0"
     }
 }
