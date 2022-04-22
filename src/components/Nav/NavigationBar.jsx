@@ -2,25 +2,17 @@ import Container from "react-bootstrap/Container"
 import Navbar from "react-bootstrap/Navbar"
 import Nav from "react-bootstrap/Nav"
 
-import { useEffect, useRef } from "react"
+import { useLocation } from "react-router-dom"
 
 import logo from "../../logo.svg"
 
 function NavigationBar() {
-    const homeLink = useRef()
-
-    useEffect(() => {
-        homeLink.current.click()
-    }, [])
-
-    const setActive = (e) => {
-        e.target.active = true
-    }
+    const location = useLocation()
 
     return (
         <Navbar bg="dark" variant="dark">
             <Container>
-                <Navbar.Brand href="#home">
+                <Navbar.Brand href="/">
                     <img
                         alt=""
                         src={logo}
@@ -29,22 +21,12 @@ function NavigationBar() {
                         className="d-inline-block align-top"
                     />{" "}
                 </Navbar.Brand>
-                <Nav className="me-auto">
-                    <Nav.Link ref={homeLink} href="#home" onClick={setActive}>
-                        Home
-                    </Nav.Link>
-                    <Nav.Link href="#collect" onClick={setActive}>
-                        Collect
-                    </Nav.Link>
-                    <Nav.Link href="#spread" onClick={setActive}>
-                        Spread
-                    </Nav.Link>
-                    <Nav.Link href="#Wallet" onClick={setActive}>
-                        Wallet
-                    </Nav.Link>
-                    <Nav.Link href="#setting" onClick={setActive}>
-                        Setting
-                    </Nav.Link>
+                <Nav className="me-auto" defaultActiveKey="/" activeKey={location.pathname}>
+                    <Nav.Link href="/">Home</Nav.Link>
+                    <Nav.Link href="/collect">Collect</Nav.Link>
+                    <Nav.Link href="/spread">Spread</Nav.Link>
+                    <Nav.Link href="/wallet">Wallet</Nav.Link>
+                    <Nav.Link href="/setting">Setting</Nav.Link>
                 </Nav>
             </Container>
         </Navbar>

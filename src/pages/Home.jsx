@@ -1,6 +1,8 @@
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
+import { useNavigate } from "react-router-dom"
+
 import Icons from "../components/Icon/Icons"
 
 const features = [
@@ -28,8 +30,10 @@ const features = [
 ]
 
 function Home() {
+    const navigate = useNavigate()
+
     return (
-        <>
+        <Row>
             <h1 className="px-4 py-3 text-primary text-center">
                 <u>Features</u>
             </h1>
@@ -37,7 +41,11 @@ function Home() {
                 <Col md={8} className="align-items-center row">
                     {features.map((_) => (
                         <Col md={3} key={_.title} className="my-2 p-2">
-                            <Button variant="light" style={{ width: "100%" }} className="p-3">
+                            <Button
+                                variant="light"
+                                style={{ width: "100%" }}
+                                className="p-3"
+                                onClick={() => navigate(`/${_.title.toLowerCase()}`)}>
                                 <h2 className="mb-4">
                                     <span className="m-2">
                                         <Icons iconName={_.iconName} />
@@ -50,7 +58,7 @@ function Home() {
                     ))}
                 </Col>
             </Row>
-        </>
+        </Row>
     )
 }
 
