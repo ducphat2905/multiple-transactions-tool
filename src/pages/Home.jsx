@@ -1,6 +1,8 @@
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
+import Card from "react-bootstrap/Card"
+import Alert from "react-bootstrap/Alert"
 import { useNavigate } from "react-router-dom"
 
 import Icons from "../components/Icon/Icons"
@@ -56,6 +58,28 @@ function Home() {
                             </Button>
                         </Col>
                     ))}
+
+                    <Card className="p-0 mt-4">
+                        <Card.Header className="text-center">Configuration Status</Card.Header>
+                        <Card.Body>
+                            <Alert variant="success">
+                                <p className="mb-0">
+                                    <span className="m-2">
+                                        <Icons iconName="BsPatchCheckFill" />
+                                    </span>
+                                    Network API Key is configured.
+                                </p>
+                            </Alert>
+                            <Alert variant="danger">
+                                <p className="mb-0">
+                                    <span className="m-2">
+                                        <Icons iconName="BsPatchCheckFill" />
+                                    </span>
+                                    Network API Key is NOT configured.
+                                </p>
+                            </Alert>
+                        </Card.Body>
+                    </Card>
                 </Col>
             </Row>
         </Row>
