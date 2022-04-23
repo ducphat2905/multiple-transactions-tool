@@ -16,11 +16,11 @@ import TronIcon from "../Icon/tron-icon.png"
 function NavigationBar() {
     const [network, setNetwork] = useState("")
     const location = useLocation()
-    const selectedNetwork = useRef()
+    const selectedNetworkRef = useRef()
 
-    const getNetworkName = (networkLink) => {
+    const getNetworkName = (_network) => {
         let name = ""
-        switch (networkLink.split("#/")[1]) {
+        switch (_network) {
             case "ethereum": {
                 name = "Ethereum"
                 break
@@ -40,14 +40,12 @@ function NavigationBar() {
         return name
     }
 
-    const chooseNetwork = (selected) => {
-        selectedNetwork.current.textContent = getNetworkName(selected)
-    }
-
     useEffect(() => {
-        if (location.hash) {
-            setNetwork(location.hash.split("#/")[1])
-            chooseNetwork(location.hash)
+        if (location.search) {
+            const params = new URLSearchParams(location.search)
+            const selectedNetwork = params.get("network")
+            setNetwork(selectedNetwork)
+            selectedNetworkRef.current.textContent = getNetworkName(selectedNetwork)
         }
     }, [location])
 
@@ -73,8 +71,8 @@ function NavigationBar() {
 
                 <Nav>
                     <Nav.Item>
-                        <Dropdown as={ButtonGroup} onSelect={(selected) => chooseNetwork(selected)}>
-                            <Button variant="info">
+                        <Dropdown as={ButtonGroup}>
+                            <Button variant={network ? "info" : "danger"}>
                                 {network === "ethereum" && <Icons iconName="FaEthereum" />}
                                 {network === "bsc" && (
                                     <img src={BscIcon} alt="bsc-icon" width="15" height="15" />
@@ -82,22 +80,26 @@ function NavigationBar() {
                                 {network === "tron" && (
                                     <img src={TronIcon} alt="tron-icon" width="15" height="15" />
                                 )}
-                                <span className="m-1" ref={selectedNetwork}>
+                                <span className="m-1" ref={selectedNetworkRef}>
                                     Choose a network
                                 </span>
                             </Button>
 
-                            <Dropdown.Toggle split variant="info" id="dropdown-split-basic" />
+                            <Dropdown.Toggle
+                                split
+                                variant={network ? "info" : "danger"}
+                                id="dropdown-split-basic"
+                            />
 
                             <Dropdown.Menu>
-                                <Dropdown.Item href="#/ethereum">
+                                <Dropdown.Item href="?network=ethereum">
                                     <Icons iconName="FaEthereum" /> Ethereum
                                 </Dropdown.Item>
-                                <Dropdown.Item href="#/bsc">
+                                <Dropdown.Item href="?network=bsc">
                                     <img src={BscIcon} alt="bsc-icon" width="15" height="15" />{" "}
                                     Binance Smart Chain
                                 </Dropdown.Item>
-                                <Dropdown.Item href="#/tron">
+                                <Dropdown.Item href="?network=tron">
                                     <img src={TronIcon} alt="tron-icon" width="15" height="15" />{" "}
                                     Tron Network
                                 </Dropdown.Item>
