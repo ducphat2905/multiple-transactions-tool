@@ -9,7 +9,7 @@ import { useLocation, useSearchParams } from "react-router-dom"
 import { useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
 
-import { setNetwork } from "../../redux/network"
+import { setNetwork, getNetwork } from "../../redux/network"
 
 import logo from "../../logo.svg"
 import Icons from "../Icon/Icons"
@@ -18,28 +18,24 @@ import TronIcon from "../Icon/tron-icon.png"
 
 function NavigationBar() {
     const location = useLocation()
-    const [searchParams] = useSearchParams()
+    const [, setSearchParams] = useSearchParams()
     const network = useSelector((state) => state.network)
     const dispatch = useDispatch()
 
     useEffect(() => {
-        // Handle switching between networks
-        const networkId = searchParams.get("networkId")
-        if (networkId && networkId !== network.id) {
-            dispatch(setNetwork(networkId))
-        }
+        // Get chosen network from local storage
+        dispatch(getNetwork())
     }, [location])
 
-    // Attach search params to the URL
-    const attachSearchParams = (destination) => {
-        let destinationRoute = destination
+    useEffect(() => {
+        // Set search params from selected network in the local storage
+        if (network.id) setSearchParams({ networkId: network.id })
+    }, [network])
 
-        // Include the param of network if existed
-        if (searchParams.get("networkId")) {
-            destinationRoute = `${destination}?networkId=${searchParams.get("networkId")}`
-        }
-
-        return destinationRoute
+    const selectNetwork = (e) => {
+        const { networkId } = e.target.dataset
+        dispatch(setNetwork(networkId))
+        setSearchParams({ networkId })
     }
 
     return (
@@ -58,16 +54,16 @@ function NavigationBar() {
                     <Nav.Link eventKey="/" href="/">
                         Home
                     </Nav.Link>
-                    <Nav.Link eventKey="/collect" href={attachSearchParams("/collect")}>
+                    <Nav.Link eventKey="/collect" href="/collect">
                         Collect
                     </Nav.Link>
-                    <Nav.Link eventKey="/spread" href={attachSearchParams("/spread")}>
+                    <Nav.Link eventKey="/spread" href="/spread">
                         Spread
                     </Nav.Link>
-                    <Nav.Link eventKey="/wallet" href={attachSearchParams("/wallet")}>
+                    <Nav.Link eventKey="/wallet" href="/wallet">
                         Wallet
                     </Nav.Link>
-                    <Nav.Link eventKey="/setting" href={attachSearchParams("/setting")}>
+                    <Nav.Link eventKey="/setting" href="/setting">
                         Setting
                     </Nav.Link>
                 </Nav>
@@ -95,14 +91,14 @@ function NavigationBar() {
                             />
 
                             <Dropdown.Menu>
-                                <Dropdown.Item href="?networkId=ethereum">
+                                <Dropdown.Item data-network-id="ethereum" onClick={selectNetwork}>
                                     <Icons iconName="FaEthereum" /> Ethereum
                                 </Dropdown.Item>
-                                <Dropdown.Item href="?networkId=bsc">
+                                <Dropdown.Item data-network-id="bsc" onClick={selectNetwork}>
                                     <img src={BscIcon} alt="bsc-icon" width="15" height="15" />{" "}
                                     Binance Smart Chain
                                 </Dropdown.Item>
-                                <Dropdown.Item href="?networkId=tron">
+                                <Dropdown.Item data-network-id="tron" onClick={selectNetwork}>
                                     <img src={TronIcon} alt="tron-icon" width="15" height="15" />{" "}
                                     Tron Network
                                 </Dropdown.Item>

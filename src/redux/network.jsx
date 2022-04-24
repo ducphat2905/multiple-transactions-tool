@@ -30,18 +30,39 @@ const getNetworkNameById = (_networkId) => {
 export const networkSlice = createSlice({
     name: "network",
     initialState: {
+        storageName: "network",
         id: "",
         name: ""
     },
     reducers: {
         setNetwork: (state, action) => {
-            state.id = action.payload
-            state.name = getNetworkNameById(action.payload)
+            const networkId = action.payload
+            const name = getNetworkNameById(action.payload)
+            // Update state
+            state.id = networkId
+            state.name = name
+            // Store in localStorage
+            localStorage.setItem(
+                state.storageName,
+                JSON.stringify({
+                    id: networkId,
+                    name
+                })
+            )
+        },
+        getNetwork: (state) => {
+            const network = localStorage.getItem(state.storageName)
+            // Set network if existed
+            if (network) {
+                const { id, name } = JSON.parse(network)
+                state.id = id
+                state.name = name
+            }
         }
     }
 })
 
 // Action creators are generated for each case reducer function
-export const { setNetwork } = networkSlice.actions
+export const { setNetwork, getNetwork } = networkSlice.actions
 
 export default networkSlice.reducer
