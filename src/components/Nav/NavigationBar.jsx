@@ -5,8 +5,11 @@ import ButtonGroup from "react-bootstrap/ButtonGroup"
 import Button from "react-bootstrap/Button"
 import Dropdown from "react-bootstrap/Dropdown"
 
-import { useLocation } from "react-router-dom"
-import { useRef, useEffect, useState } from "react"
+import { useLocation, useSearchParams } from "react-router-dom"
+import { useEffect } from "react"
+import { useSelector, useDispatch } from "react-redux"
+
+import { setNetwork } from "../../redux/network"
 
 import logo from "../../logo.svg"
 import Icons from "../Icon/Icons"
@@ -14,40 +17,30 @@ import BscIcon from "../Icon/bsc-icon.png"
 import TronIcon from "../Icon/tron-icon.png"
 
 function NavigationBar() {
-    const [network, setNetwork] = useState("")
     const location = useLocation()
-    const selectedNetworkRef = useRef()
-
-    const getNetworkName = (_network) => {
-        let name = ""
-        switch (_network) {
-            case "ethereum": {
-                name = "Ethereum"
-                break
-            }
-            case "bsc": {
-                name = "Binance Smart Chain"
-                break
-            }
-            case "tron": {
-                name = "Tron network"
-                break
-            }
-            default:
-                break
-        }
-
-        return name
-    }
+    const [searchParams] = useSearchParams()
+    const network = useSelector((state) => state.network)
+    const dispatch = useDispatch()
 
     useEffect(() => {
-        if (location.search) {
-            const params = new URLSearchParams(location.search)
-            const selectedNetwork = params.get("network")
-            setNetwork(selectedNetwork)
-            selectedNetworkRef.current.textContent = getNetworkName(selectedNetwork)
+        // Handle switching between networks
+        const networkId = searchParams.get("networkId")
+        if (networkId && networkId !== network.id) {
+            dispatch(setNetwork(networkId))
         }
     }, [location])
+
+    // Attach search params to the URL
+    const attachSearchParams = (destination) => {
+        let destinationRoute = destination
+
+        // Include the param of network if existed
+        if (searchParams.get("networkId")) {
+            destinationRoute = `${destination}?networkId=${searchParams.get("networkId")}`
+        }
+
+        return destinationRoute
+    }
 
     return (
         <Navbar bg="dark" variant="dark">
@@ -62,44 +55,54 @@ function NavigationBar() {
                     />{" "}
                 </Navbar.Brand>
                 <Nav className="me-auto" defaultActiveKey="/" activeKey={location.pathname}>
-                    <Nav.Link href="/">Home</Nav.Link>
-                    <Nav.Link href="/collect">Collect</Nav.Link>
-                    <Nav.Link href="/spread">Spread</Nav.Link>
-                    <Nav.Link href="/wallet">Wallet</Nav.Link>
-                    <Nav.Link href="/setting">Setting</Nav.Link>
+                    <Nav.Link eventKey="/" href="/">
+                        Home
+                    </Nav.Link>
+                    <Nav.Link eventKey="/collect" href={attachSearchParams("/collect")}>
+                        Collect
+                    </Nav.Link>
+                    <Nav.Link eventKey="/spread" href={attachSearchParams("/spread")}>
+                        Spread
+                    </Nav.Link>
+                    <Nav.Link eventKey="/wallet" href={attachSearchParams("/wallet")}>
+                        Wallet
+                    </Nav.Link>
+                    <Nav.Link eventKey="/setting" href={attachSearchParams("/setting")}>
+                        Setting
+                    </Nav.Link>
                 </Nav>
 
                 <Nav>
                     <Nav.Item>
                         <Dropdown as={ButtonGroup}>
-                            <Button variant={network ? "info" : "danger"}>
-                                {network === "ethereum" && <Icons iconName="FaEthereum" />}
-                                {network === "bsc" && (
+                            <Button variant={network.id ? "info" : "danger"}>
+                                {network.id === "ethereum" && <Icons iconName="FaEthereum" />}
+                                {network.id === "bsc" && (
                                     <img src={BscIcon} alt="bsc-icon" width="15" height="15" />
                                 )}
-                                {network === "tron" && (
+                                {network.id === "tron" && (
                                     <img src={TronIcon} alt="tron-icon" width="15" height="15" />
                                 )}
-                                <span className="m-1" ref={selectedNetworkRef}>
-                                    Choose a network
+                                <span className="m-1">
+                                    {network.name ? `${network.name}` : "Choose a network"}
                                 </span>
                             </Button>
 
                             <Dropdown.Toggle
                                 split
-                                variant={network ? "info" : "danger"}
+                                variant={network.id ? "info" : "danger"}
                                 id="dropdown-split-basic"
                             />
 
                             <Dropdown.Menu>
-                                <Dropdown.Item href="?network=ethereum">
+                                <Dropdown.Item href="?networkId=ethereum">
                                     <Icons iconName="FaEthereum" /> Ethereum
                                 </Dropdown.Item>
-                                <Dropdown.Item href="?network=bsc">
+                                <Dropdown.Item href="?networkId=bsc">
                                     <img src={BscIcon} alt="bsc-icon" width="15" height="15" />{" "}
                                     Binance Smart Chain
                                 </Dropdown.Item>
-                                <Dropdown.Item href="?network=tron">
+                                <Dropdown.Item href="?networkId=tron">
                                     <img src={TronIcon} alt="tron-icon" width="15" height="15" />{" "}
                                     Tron Network
                                 </Dropdown.Item>
