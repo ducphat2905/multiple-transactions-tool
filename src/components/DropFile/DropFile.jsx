@@ -27,8 +27,8 @@ function DropFile() {
         acceptedFiles.forEach((file) => {
             const reader = new FileReader()
 
-            reader.onabort = () => console.log("file reading was aborted")
-            reader.onerror = () => console.log("file reading has failed")
+            reader.onabort = () => alert("file reading was aborted")
+            reader.onerror = () => alert("file reading has failed")
 
             reader.onload = () => {
                 const { Sheets, SheetNames } = read(reader.result, { type: "array" })

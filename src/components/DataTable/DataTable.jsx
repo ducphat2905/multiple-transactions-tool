@@ -1,16 +1,23 @@
 import "./style.css"
 
-// import PropTypes from "prop-types"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import SplitButton from "react-bootstrap/SplitButton"
 import Dropdown from "react-bootstrap/Dropdown"
 import Button from "react-bootstrap/Button"
 import { DataGrid, GridToolbarContainer, GridToolbarExport } from "@mui/x-data-grid"
+import { useDispatch, useSelector } from "react-redux"
+import { useEffect } from "react"
 import Icons, { IconNames } from "../Icon/Icons"
-import { headerAlign, headerClassName } from "./ColumnStyle"
+import { getDataTable, removeDataTable } from "../../redux/DataTable"
 
 function CustomToolbar() {
+    const dispatch = useDispatch()
+
+    const dropTable = () => {
+        dispatch(removeDataTable())
+    }
+
     return (
         <GridToolbarContainer className="mb-4 justify-content-between">
             <Row>
@@ -34,7 +41,7 @@ function CustomToolbar() {
                     </div>
                 </Col>
                 <Col>
-                    <Button variant="outline-danger">
+                    <Button variant="outline-danger" onClick={dropTable}>
                         <Icons iconName={IconNames.FaTimes} />
                     </Button>
                 </Col>
@@ -43,33 +50,14 @@ function CustomToolbar() {
     )
 }
 
-const rows = [
-    { id: 1, col1: "Hello", col2: "World" },
-    { id: 2, col1: "DataGridPro", col2: "is Awesome" },
-    { id: 3, col1: "MUI", col2: "is Amazing" }
-]
-
-const columns = [
-    {
-        field: "col1",
-        headerName: "Column 1",
-        // width: 150,
-        flex: 1,
-        headerClassName,
-        headerAlign,
-        variant: "danger"
-    },
-    {
-        field: "col2",
-        headerName: "Column 2",
-        // width: 150,
-        flex: 1,
-        headerClassName,
-        headerAlign
-    }
-]
-
 function DataTable() {
+    const { rows, columns } = useSelector((state) => state.dataTable)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(getDataTable())
+    }, [])
+
     return (
         <DataGrid
             rows={rows}
@@ -80,10 +68,5 @@ function DataTable() {
         />
     )
 }
-
-// DataTable.propTypes = {
-//     rows: PropTypes.arrayOf(PropTypes.object).isRequired,
-//     columns: PropTypes.arrayOf(PropTypes.object).isRequired
-// }
 
 export default DataTable
