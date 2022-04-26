@@ -4,18 +4,11 @@ export const DATA_TABLES = Object.freeze({
     Wallet: "wallet-data-table"
 })
 
-/** Ethereum */
-const ethereumTokens = [
-    {
-        name: "",
-        symbol: "",
-        decimal: 0,
-        address: ""
-    }
-]
-
-export const TOKENS = Object.freeze({
-    ethereum: ethereumTokens
+export const NETWORKS = Object.freeze({
+    Ethereum: { id: "ethereum", name: "Ethereum", blockExplorer: "" },
+    Bsc: { id: "bsc", name: "Binance Smart Chain", blockExplorer: "" },
+    Tron: { id: "tron", name: "Tron Network", blockExplorer: "" },
+    Ropsten: { id: "ropsten", name: "Ropsten (Testnet)", blockExplorer: "" }
 })
 
-export default { DATA_TABLES }
+export default { DATA_TABLES, NETWORKS }

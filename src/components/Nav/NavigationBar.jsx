@@ -15,6 +15,9 @@ import logo from "../../logo.svg"
 import Icons from "../Icon/Icons"
 import BscIcon from "../Icon/bsc-icon.png"
 import TronIcon from "../Icon/tron-icon.png"
+import { NETWORKS } from "../../constants"
+
+const { Ethereum, Bsc, Tron, Ropsten } = NETWORKS
 
 function NavigationBar() {
     const location = useLocation()
@@ -72,11 +75,11 @@ function NavigationBar() {
                     <Nav.Item>
                         <Dropdown as={ButtonGroup}>
                             <Button variant={network.id ? "info" : "danger"}>
-                                {network.id === "ethereum" && <Icons iconName="FaEthereum" />}
-                                {network.id === "bsc" && (
+                                {network.id === Ethereum.id && <Icons iconName="FaEthereum" />}
+                                {network.id === Bsc.id && (
                                     <img src={BscIcon} alt="bsc-icon" width="15" height="15" />
                                 )}
-                                {network.id === "tron" && (
+                                {network.id === Tron.id && (
                                     <img src={TronIcon} alt="tron-icon" width="15" height="15" />
                                 )}
                                 <span className="m-1">
@@ -91,17 +94,37 @@ function NavigationBar() {
                             />
 
                             <Dropdown.Menu>
-                                <Dropdown.Item data-network-id="ethereum" onClick={selectNetwork}>
-                                    <Icons iconName="FaEthereum" /> Ethereum
-                                </Dropdown.Item>
-                                <Dropdown.Item data-network-id="bsc" onClick={selectNetwork}>
-                                    <img src={BscIcon} alt="bsc-icon" width="15" height="15" />{" "}
-                                    Binance Smart Chain
-                                </Dropdown.Item>
-                                <Dropdown.Item data-network-id="tron" onClick={selectNetwork}>
-                                    <img src={TronIcon} alt="tron-icon" width="15" height="15" />{" "}
-                                    Tron Network
-                                </Dropdown.Item>
+                                {Object.entries(NETWORKS).map(([key, values]) => {
+                                    const { id, name } = values
+                                    return (
+                                        <Dropdown.Item
+                                            key={key}
+                                            data-network-id={id}
+                                            onClick={selectNetwork}>
+                                            {[Ropsten.id, Ethereum.id].includes(id) && (
+                                                <Icons iconName="FaEthereum" />
+                                            )}
+
+                                            {[Bsc.id].includes(id) && (
+                                                <img
+                                                    src={BscIcon}
+                                                    alt="bsc-icon"
+                                                    width="15"
+                                                    height="15"
+                                                />
+                                            )}
+                                            {[Tron.id].includes(id) && (
+                                                <img
+                                                    src={TronIcon}
+                                                    alt="tron-icon"
+                                                    width="15"
+                                                    height="15"
+                                                />
+                                            )}
+                                            <span className="mx-2">{name}</span>
+                                        </Dropdown.Item>
+                                    )
+                                })}
                             </Dropdown.Menu>
                         </Dropdown>
                     </Nav.Item>
