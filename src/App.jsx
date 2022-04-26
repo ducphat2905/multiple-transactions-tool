@@ -26,9 +26,8 @@ function App() {
                 <Route path="/wallet" element={<Wallet />} />
                 <Route path="/setting" element={<Setting />} />
             </Routes>
-            <Row className="bg-dark fixed-bottom">
-                <Footer />
-            </Row>
+
+            <Footer />
         </Container>
     )
 }
