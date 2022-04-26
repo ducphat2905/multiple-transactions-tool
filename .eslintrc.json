@@ -31,6 +31,11 @@
         "react/react-in-jsx-scope": "off",
         "semi": "off",
         "no-console": 1,
-        "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }]
+        "no-param-reassign": [
+            "error",
+            { "props": true, "ignorePropertyModificationsFor": ["state"] }
+        ],
+        "react/forbid-prop-types": [1, { "forbid": ["any"]}],
+        "react/jsx-props-no-spreading": [0]
     }
 }

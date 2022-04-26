@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react"
 import { BsStackOverflow, BsFillDiagram3Fill, BsPatchCheckFill } from "react-icons/bs"
 import { GiWallet } from "react-icons/gi"
-import { FaCogs, FaEthereum } from "react-icons/fa"
+import { FaCogs, FaEthereum, FaTimes } from "react-icons/fa"
 
-const IconNames = Object.freeze({
+export const IconNames = Object.freeze({
     BsStackOverflow: "BsStackOverflow",
     BsFillDiagram3Fill: "BsFillDiagram3Fill",
     BsPatchCheckFill: "BsPatchCheckFill",
     FaCogs: "FaCogs",
     FaEthereum: "FaEthereum",
+    FaTimes: "FaTimes",
     GiWallet: "GiWallet"
 })
 
@@ -29,16 +30,20 @@ function Icons({ iconName }) {
                 setIcon(<BsPatchCheckFill />)
                 break
             }
-            case IconNames.GiWallet: {
-                setIcon(<GiWallet />)
-                break
-            }
             case IconNames.FaCogs: {
                 setIcon(<FaCogs />)
                 break
             }
             case IconNames.FaEthereum: {
                 setIcon(<FaEthereum />)
+                break
+            }
+            case IconNames.FaTimes: {
+                setIcon(<FaTimes />)
+                break
+            }
+            case IconNames.GiWallet: {
+                setIcon(<GiWallet />)
                 break
             }
             default:
@@ -48,4 +53,5 @@ function Icons({ iconName }) {
 
     return icon
 }
+
 export default Icons

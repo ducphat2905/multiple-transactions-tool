@@ -9,7 +9,7 @@ import { useLocation, useSearchParams } from "react-router-dom"
 import { useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
 
-import { setNetwork, getNetwork } from "../../redux/network"
+import { setNetwork, getNetwork } from "../../redux/Network"
 
 import logo from "../../logo.svg"
 import Icons from "../Icon/Icons"
