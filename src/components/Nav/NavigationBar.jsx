@@ -25,7 +25,7 @@ function NavigationBar() {
     useEffect(() => {
         // Get chosen network from local storage
         dispatch(getNetwork())
-    }, [location])
+    }, [])
 
     useEffect(() => {
         // Set search params from selected network in the local storage

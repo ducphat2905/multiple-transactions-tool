@@ -14,9 +14,6 @@ function Collect() {
 
     useEffect(() => {
         dispatch(setStorageName(DATA_TABLES.Collect))
-    })
-
-    useEffect(() => {
         dispatch(getDataTable())
     }, [])
 
@@ -27,10 +24,7 @@ function Collect() {
 
     return (
         <Row>
-            <Col className="my-4 mx-3">
-                {hasData && <DataTable />}
-                {!hasData && <DropFile />}
-            </Col>
+            <Col className="my-4 mx-3">{hasData ? <DataTable /> : <DropFile />}</Col>
         </Row>
     )
 }

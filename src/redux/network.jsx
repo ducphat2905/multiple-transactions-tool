@@ -1,4 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
+import EthereumTokens from "../tokens/ethereum"
+import BscTokens from "../tokens/bsc"
+import TronTokens from "../tokens/tron"
 
 /**
  *  Get network's name by Id
@@ -27,13 +30,16 @@ const getNetworkNameById = (_networkId) => {
     return name
 }
 
+const initialState = {
+    storageName: "network",
+    id: "",
+    name: "",
+    tokens: []
+}
+
 export const networkSlice = createSlice({
     name: "network",
-    initialState: {
-        storageName: "network",
-        id: "",
-        name: ""
-    },
+    initialState,
     reducers: {
         setNetwork: (state, action) => {
             const networkId = action.payload
@@ -58,11 +64,29 @@ export const networkSlice = createSlice({
                 state.id = id
                 state.name = name
             }
+        },
+        getTokens: (state) => {
+            switch (state.id) {
+                case "bsc": {
+                    state.tokens = [...BscTokens]
+                    break
+                }
+                case "ethereum": {
+                    state.tokens = [...EthereumTokens]
+                    break
+                }
+                case "tron": {
+                    state.tokens = [...TronTokens]
+                    break
+                }
+                default:
+                    break
+            }
         }
     }
 })
 
 // Action creators are generated for each case reducer function
-export const { setNetwork, getNetwork } = networkSlice.actions
+export const { setNetwork, getNetwork, getTokens } = networkSlice.actions
 
 export default networkSlice.reducer
