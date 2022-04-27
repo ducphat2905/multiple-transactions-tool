@@ -30,6 +30,7 @@
         "react/jsx-uses-react": "off",
         "react/react-in-jsx-scope": "off",
         "semi": "off",
+        "no-unused-vars": 1,
         "no-console": 1,
         "no-param-reassign": [
             "error",

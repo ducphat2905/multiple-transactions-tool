@@ -13,37 +13,37 @@ export const IconNames = Object.freeze({
     GiWallet: "GiWallet"
 })
 
-function Icons({ iconName }) {
+function Icons({ iconName, className }) {
     const [icon, setIcon] = useState("")
 
     useEffect(() => {
         switch (iconName) {
             case IconNames.BsStackOverflow: {
-                setIcon(<BsStackOverflow />)
+                setIcon(<BsStackOverflow className={className} />)
                 break
             }
             case IconNames.BsFillDiagram3Fill: {
-                setIcon(<BsFillDiagram3Fill />)
+                setIcon(<BsFillDiagram3Fill className={className} />)
                 break
             }
             case IconNames.BsPatchCheckFill: {
-                setIcon(<BsPatchCheckFill />)
+                setIcon(<BsPatchCheckFill className={className} />)
                 break
             }
             case IconNames.FaCogs: {
-                setIcon(<FaCogs />)
+                setIcon(<FaCogs className={className} />)
                 break
             }
             case IconNames.FaEthereum: {
-                setIcon(<FaEthereum />)
+                setIcon(<FaEthereum className={className} />)
                 break
             }
             case IconNames.FaTimes: {
-                setIcon(<FaTimes />)
+                setIcon(<FaTimes className={className} />)
                 break
             }
             case IconNames.GiWallet: {
-                setIcon(<GiWallet />)
+                setIcon(<GiWallet className={className} />)
                 break
             }
             default:

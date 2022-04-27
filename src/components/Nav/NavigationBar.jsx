@@ -6,10 +6,10 @@ import Button from "react-bootstrap/Button"
 import Dropdown from "react-bootstrap/Dropdown"
 
 import { useLocation, useSearchParams } from "react-router-dom"
-import { useEffect } from "react"
+import { useEffect, useRef, useMemo, useCallback } from "react"
 import { useSelector, useDispatch } from "react-redux"
 
-import { setNetwork, getNetwork } from "../../redux/Network"
+import { setNetwork, getChosenNetwork } from "../../redux/Network"
 
 import logo from "../../logo.svg"
 import Icons from "../Icon/Icons"
@@ -24,22 +24,54 @@ function NavigationBar() {
     const [, setSearchParams] = useSearchParams()
     const network = useSelector((state) => state.network)
     const dispatch = useDispatch()
+    const selectedNetworkRef = useRef()
 
     useEffect(() => {
         // Get chosen network from local storage
-        dispatch(getNetwork())
-    }, [])
-
-    useEffect(() => {
+        dispatch(getChosenNetwork())
         // Set search params from selected network in the local storage
         if (network.id) setSearchParams({ networkId: network.id })
     }, [network])
 
-    const selectNetwork = (e) => {
-        const { networkId } = e.target.dataset
+    const selectNetwork = (networkId) => {
         dispatch(setNetwork(networkId))
         setSearchParams({ networkId })
     }
+
+    const displaySelectedNetwork = useCallback(
+        (networkId) => {
+            switch (networkId) {
+                case Bsc.id:
+                    return <img src={BscIcon} alt="bsc-icon" width="15" height="15" />
+                case Ethereum.id:
+                case Ropsten.id:
+                    return <Icons iconName="FaEthereum" />
+                case Tron.id:
+                    return <img src={TronIcon} alt="bsc-icon" width="15" height="15" />
+                default:
+                    return ""
+            }
+        },
+        [network]
+    )
+
+    const networks = useMemo(() => {
+        return [Bsc, Ethereum, Tron, Ropsten].map(({ id, name }) => (
+            <Dropdown.Item key={id} onClick={() => selectNetwork(id)}>
+                {[Ropsten.id, Ethereum.id].includes(id) && (
+                    <Icons iconName="FaEthereum" className="mx-1" />
+                )}
+
+                {[Bsc.id].includes(id) && (
+                    <img src={BscIcon} alt="bsc-icon" width="15" height="15" className="mx-1" />
+                )}
+                {[Tron.id].includes(id) && (
+                    <img src={TronIcon} alt="tron-icon" width="15" height="15" className="mx-1" />
+                )}
+                {name}
+            </Dropdown.Item>
+        ))
+    }, [])
 
     return (
         <Navbar bg="dark" variant="dark">
@@ -74,16 +106,13 @@ function NavigationBar() {
                 <Nav>
                     <Nav.Item>
                         <Dropdown as={ButtonGroup}>
-                            <Button variant={network.id ? "info" : "danger"}>
-                                {network.id === Ethereum.id && <Icons iconName="FaEthereum" />}
-                                {network.id === Bsc.id && (
-                                    <img src={BscIcon} alt="bsc-icon" width="15" height="15" />
-                                )}
-                                {network.id === Tron.id && (
-                                    <img src={TronIcon} alt="tron-icon" width="15" height="15" />
-                                )}
-                                <span className="m-1">
-                                    {network.name ? `${network.name}` : "Choose a network"}
+                            <Button
+                                ref={selectedNetworkRef}
+                                variant={network.id ? "info" : "danger"}>
+                                {network.id && displaySelectedNetwork(network.id)}
+
+                                <span className="mx-2">
+                                    {network.id ? `${network.name}` : "Choose a network"}
                                 </span>
                             </Button>
 
@@ -93,39 +122,7 @@ function NavigationBar() {
                                 id="dropdown-split-basic"
                             />
 
-                            <Dropdown.Menu>
-                                {Object.entries(NETWORKS).map(([key, values]) => {
-                                    const { id, name } = values
-                                    return (
-                                        <Dropdown.Item
-                                            key={key}
-                                            data-network-id={id}
-                                            onClick={selectNetwork}>
-                                            {[Ropsten.id, Ethereum.id].includes(id) && (
-                                                <Icons iconName="FaEthereum" />
-                                            )}
-
-                                            {[Bsc.id].includes(id) && (
-                                                <img
-                                                    src={BscIcon}
-                                                    alt="bsc-icon"
-                                                    width="15"
-                                                    height="15"
-                                                />
-                                            )}
-                                            {[Tron.id].includes(id) && (
-                                                <img
-                                                    src={TronIcon}
-                                                    alt="tron-icon"
-                                                    width="15"
-                                                    height="15"
-                                                />
-                                            )}
-                                            <span className="mx-2">{name}</span>
-                                        </Dropdown.Item>
-                                    )
-                                })}
-                            </Dropdown.Menu>
+                            <Dropdown.Menu>{networks}</Dropdown.Menu>
                         </Dropdown>
                     </Nav.Item>
                 </Nav>
