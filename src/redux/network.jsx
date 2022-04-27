@@ -48,19 +48,21 @@ export const networkSlice = createSlice({
         },
         getTokens: (state) => {
             switch (state.id) {
-                case "bsc": {
+                case NETWORKS.Bsc.id: {
                     state.tokens = [...BscTokens]
                     break
                 }
-                case "ethereum": {
+                case NETWORKS.Ropsten.id:
+                case NETWORKS.Ethereum.id: {
                     state.tokens = [...EthereumTokens]
                     break
                 }
-                case "tron": {
+                case NETWORKS.Tron.id: {
                     state.tokens = [...TronTokens]
                     break
                 }
                 default:
+                    state.tokens = []
                     break
             }
         }
