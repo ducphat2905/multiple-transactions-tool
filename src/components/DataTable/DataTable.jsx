@@ -5,6 +5,7 @@ import Col from "react-bootstrap/Col"
 import SplitButton from "react-bootstrap/SplitButton"
 import Dropdown from "react-bootstrap/Dropdown"
 import Button from "react-bootstrap/Button"
+import Alert from "react-bootstrap/Alert"
 import { DataGrid, GridToolbarContainer, GridToolbarExport } from "@mui/x-data-grid"
 import { useDispatch, useSelector } from "react-redux"
 import { useEffect, useState } from "react"
@@ -12,12 +13,15 @@ import { useLocation } from "react-router-dom"
 import Icons, { IconNames } from "../Icon/Icons"
 import { getDataTable, removeDataTable } from "../../redux/DataTable"
 import { getTokens } from "../../redux/Network"
+import { NETWORKS } from "../../constants"
 
 function CustomToolbar() {
     const location = useLocation()
-    const { tokens } = useSelector((state) => state.network)
+    const { tokens, id: networkId } = useSelector((state) => state.network)
+    const { rows } = useSelector((state) => state.dataTable)
     const dispatch = useDispatch()
     const [token, setToken] = useState(null)
+    const [error, setError] = useState("")
 
     useEffect(() => {
         dispatch(getTokens())
@@ -28,10 +32,34 @@ function CustomToolbar() {
         dispatch(removeDataTable())
     }
 
+    // Display error
+    const displayTokenError = (_status) => {
+        if (_status) setError("Please select a token.")
+        else setError("")
+    }
+
     // Handle token selection
     const selectToken = (e) => {
+        displayTokenError(false)
         const { address, decimal, symbol } = e.target.dataset
         setToken({ address, decimal, symbol })
+    }
+    
+    // Get balance
+    const getBalanceHandler = () => {
+        if (!token) {
+            displayTokenError(true)
+            // return
+        }
+
+
+    }
+
+    // Collect
+    const collectHandler = () => {
+        if (!token) return displayTokenError(true)
+
+        return console.log("Get Balance")
     }
 
     return (
@@ -39,8 +67,10 @@ function CustomToolbar() {
             <Row>
                 <Col>
                     <SplitButton
-                        variant="outline-primary"
-                        title={token ? `Token: (${token.symbol})` : "Token"}>
+                        className="mx-2"
+                        variant="outline-success"
+                        title={token ? `Get Balance: (${token.symbol})` : "Get Balance"}
+                        onClick={getBalanceHandler}>
                         {tokens.map(({ address, symbol, decimal }) => (
                             <Dropdown.Item
                                 key={symbol}
@@ -52,6 +82,27 @@ function CustomToolbar() {
                             </Dropdown.Item>
                         ))}
                     </SplitButton>
+                    <SplitButton
+                        variant="outline-primary"
+                        title={token ? `Collect: (${token.symbol})` : "Collect"}
+                        onClick={collectHandler}>
+                        {tokens.map(({ address, symbol, decimal }) => (
+                            <Dropdown.Item
+                                key={symbol}
+                                data-symbol={symbol}
+                                data-address={address}
+                                data-decimal={decimal}
+                                onClick={selectToken}>
+                                {symbol}
+                            </Dropdown.Item>
+                        ))}
+                    </SplitButton>
+
+                    {error && (
+                        <Alert className="mx-2 d-inline p-2" variant="danger">
+                            Please select a token
+                        </Alert>
+                    )}
                 </Col>
             </Row>
 

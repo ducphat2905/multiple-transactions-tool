@@ -10,6 +10,7 @@ import { useEffect, useRef, useMemo, useCallback } from "react"
 import { useSelector, useDispatch } from "react-redux"
 
 import { setNetwork, getChosenNetwork } from "../../redux/Network"
+import { setProvider } from "../../redux/Ethereum"
 
 import logo from "../../logo.svg"
 import Icons from "../Icon/Icons"
@@ -23,12 +24,17 @@ function NavigationBar() {
     const location = useLocation()
     const [, setSearchParams] = useSearchParams()
     const network = useSelector((state) => state.network)
+    const { provider } = useSelector((state) => state.ethereum)
     const dispatch = useDispatch()
     const selectedNetworkRef = useRef()
 
     useEffect(() => {
         // Get chosen network from local storage
         dispatch(getChosenNetwork())
+        // Set provider
+        dispatch(
+            setProvider("https://ropsten.infura.io/v3/640d8cc3f12148e6b511453827f6c57c")
+        )
         // Set search params from selected network in the local storage
         if (network.id) setSearchParams({ networkId: network.id })
     }, [network])

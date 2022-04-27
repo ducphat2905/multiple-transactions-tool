@@ -7,6 +7,14 @@ const initialState = {
     rows: []
 }
 
+/**
+ *  Convert array of arrays to rows and columns
+ * @param {array} arrayOfData
+ * @returns {
+ *  {array} row,
+ *  {array} columns
+ * }
+ */
 const jsonToDataTable = (arrayOfData) => {
     const [headers, ...values] = arrayOfData
     // Create columns with styles
@@ -52,10 +60,11 @@ export const dataTableSlice = createSlice({
             localStorage.setItem(state.storageName, storageData)
 
             // Update state
-            state.file.name = name
-            state.file.type = type
-            state.file.size = size
-            // state.data = data
+            state.file = {
+                name,
+                type,
+                size
+            }
             state.columns = columns
             state.rows = rows
         },
@@ -71,10 +80,8 @@ export const dataTableSlice = createSlice({
 
             if (storageData) {
                 const { file, rows, columns } = JSON.parse(storageData)
-                state.file.name = file.name
-                state.file.type = file.type
-                state.file.size = file.size
-                // state.data = data
+
+                state.file = file
                 state.columns = columns
                 state.rows = rows
             }
