@@ -12,10 +12,10 @@ import { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
 import Icons, { IconNames } from "../Icon/Icons"
 import { getDataTable, removeDataTable } from "../../redux/DataTable"
+import { getBalance } from "../../redux/thunk/DataTableThunk"
 import { getTokens } from "../../redux/Network"
-import { NETWORKS } from "../../constants"
 
-function CustomToolbar() {
+function Toolbar() {
     const location = useLocation()
     const { tokens, id: networkId } = useSelector((state) => state.network)
     const { rows } = useSelector((state) => state.dataTable)
@@ -44,22 +44,31 @@ function CustomToolbar() {
         const { address, decimal, symbol } = e.target.dataset
         setToken({ address, decimal, symbol })
     }
-    
+
     // Get balance
     const getBalanceHandler = () => {
         if (!token) {
             displayTokenError(true)
-            // return
+            return
         }
 
-
+        dispatch(
+            getBalance({
+                networkId,
+                provider: "https://ropsten.infura.io/v3/640d8cc3f12148e6b511453827f6c57c",
+                wallets: []
+            })
+        )
+        // dispatch(initWeb3("https://ropsten.infura.io/v3/640d8cc3f12148e6b511453827f6c57c"))
+        // ethereum = new Ethereum("https://ropsten.infura.io/v3/640d8cc3f12148e6b511453827f6c57c")
+        // console.log(ethereum)
     }
 
     // Collect
     const collectHandler = () => {
         if (!token) return displayTokenError(true)
 
-        return console.log("Get Balance")
+        return console.log("Get collectHandler")
     }
 
     return (
@@ -135,8 +144,21 @@ function DataTable() {
             rows={rows}
             columns={columns}
             autoHeight
-            components={{ Toolbar: CustomToolbar }}
-            className="p-3"
+            sx={{
+                boxShadow: 2,
+                border: 2,
+                borderColor: "primary.dark",
+                "& .MuiDataGrid-cell:hover": {
+                    color: "primary.main"
+                }
+            }}
+            initialState={{
+                pagination: {
+                    pageSize: 25
+                }
+            }}
+            components={{ Toolbar }}
+            className="m-4 p-4"
         />
     )
 }

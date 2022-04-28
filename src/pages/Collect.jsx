@@ -24,7 +24,7 @@ function Collect() {
 
     return (
         <Row>
-            <Col className="my-4 mx-3">{hasData ? <DataTable /> : <DropFile />}</Col>
+            <Col className="pb-5 px-4">{hasData ? <DataTable /> : <DropFile />}</Col>
         </Row>
     )
 }
