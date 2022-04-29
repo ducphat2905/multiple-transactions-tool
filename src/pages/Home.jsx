@@ -5,7 +5,7 @@ import Card from "react-bootstrap/Card"
 import Alert from "react-bootstrap/Alert"
 import { useNavigate } from "react-router-dom"
 
-import Icons from "../components/Icon/Icons"
+import Icon from "../components/Icon/Icon"
 
 const features = [
     {
@@ -50,7 +50,7 @@ function Home() {
                                 onClick={() => navigate(`/${_.title.toLowerCase()}`)}>
                                 <h2 className="mb-4">
                                     <span className="m-2">
-                                        <Icons iconName={_.iconName} />
+                                        <Icon name={_.iconName} />
                                     </span>
                                     {_.title}
                                 </h2>
@@ -65,7 +65,7 @@ function Home() {
                             <Alert variant="success">
                                 <p className="mb-0">
                                     <span className="m-2">
-                                        <Icons iconName="BsPatchCheckFill" />
+                                        <Icon name="BsPatchCheckFill" />
                                     </span>
                                     Network API Key is configured.
                                 </p>
@@ -73,7 +73,7 @@ function Home() {
                             <Alert variant="danger">
                                 <p className="mb-0">
                                     <span className="m-2">
-                                        <Icons iconName="BsPatchCheckFill" />
+                                        <Icon name="BsPatchCheckFill" />
                                     </span>
                                     Network API Key is NOT configured.
                                 </p>

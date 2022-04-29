@@ -2,22 +2,22 @@ import { useEffect, useState } from "react"
 import { BsStackOverflow, BsFillDiagram3Fill, BsPatchCheckFill } from "react-icons/bs"
 import { GiWallet } from "react-icons/gi"
 import { FaCogs, FaEthereum, FaTimes } from "react-icons/fa"
+import { AiOutlineCheckCircle, AiFillCloseCircle } from "react-icons/ai"
+import IconNames from "./IconNames"
 
-export const IconNames = Object.freeze({
-    BsStackOverflow: "BsStackOverflow",
-    BsFillDiagram3Fill: "BsFillDiagram3Fill",
-    BsPatchCheckFill: "BsPatchCheckFill",
-    FaCogs: "FaCogs",
-    FaEthereum: "FaEthereum",
-    FaTimes: "FaTimes",
-    GiWallet: "GiWallet"
-})
-
-function Icons({ iconName, className }) {
+function Icon({ name, className }) {
     const [icon, setIcon] = useState("")
 
     useEffect(() => {
-        switch (iconName) {
+        switch (name) {
+            case IconNames.AiOutlineCheckCircle: {
+                setIcon(<AiOutlineCheckCircle className={className} />)
+                break
+            }
+            case IconNames.AiFillCloseCircle: {
+                setIcon(<AiFillCloseCircle className={className} />)
+                break
+            }
             case IconNames.BsStackOverflow: {
                 setIcon(<BsStackOverflow className={className} />)
                 break
@@ -54,4 +54,4 @@ function Icons({ iconName, className }) {
     return icon
 }
 
-export default Icons
+export default Icon
