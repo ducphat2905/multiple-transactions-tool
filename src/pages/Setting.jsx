@@ -9,7 +9,7 @@ import Accordion from "react-bootstrap/Accordion"
 import ListGroup from "react-bootstrap/ListGroup"
 import Alert from "react-bootstrap/Alert"
 import Table from "react-bootstrap/Table"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 
@@ -33,8 +33,9 @@ function Setting() {
     )
     const [network, setNetwork] = useState(new Network({ ...selectedNetwork }))
     const [tokenAddress, setTokenAddress] = useState("")
-    const [error, setError] = useState("")
-    const [success, setSuccess] = useState("")
+    const [tokenError, setTokenError] = useState("")
+    const [tokenSuccess, setTokenSuccess] = useState("")
+    const [endpointSuccess, setEndpointSuccess] = useState("")
 
     const onChangeEndpoint = (networkId, rpcEndpoint) => {
         setNetworks((prevItems) =>
@@ -54,6 +55,11 @@ function Setting() {
         const newNetworks = networks.map((_network) => ({ ..._network }))
         // Save to local storage
         dispatch(updateNetworks({ networks: newNetworks }))
+
+        setEndpointSuccess("Successful!")
+        setTimeout(() => {
+            setEndpointSuccess("")
+        }, 1800)
     }
 
     const showTokens = (_network) => {
@@ -78,11 +84,11 @@ function Setting() {
 
             dispatch(selectNetwork({ id: network.id }))
             setNetwork((prev) => ({ ...prev, tokens: [...prev.tokens, newToken] }))
-            setSuccess("Successful!")
-            setError("")
+            setTokenSuccess("Successful!")
+            setTokenError("")
         } else {
-            setSuccess("")
-            setError("Please select a network")
+            setTokenSuccess("")
+            setTokenError("Please select a network")
         }
     }
 
@@ -148,7 +154,10 @@ function Setting() {
                                     ))}
                                 </Col>
 
-                                <Col className="d-flex justify-content-center">
+                                <Col className="row">
+                                    {endpointSuccess && (
+                                        <Alert varian="success">{endpointSuccess}</Alert>
+                                    )}
                                     <Button
                                         size="md"
                                         type="submit"
@@ -222,8 +231,8 @@ function Setting() {
                                 </InputGroup>
                             </Col>
                             <Col md={12}>
-                                {error && <Alert variant="danger">{error}</Alert>}
-                                {success && <Alert variant="success">{success}</Alert>}
+                                {tokenError && <Alert variant="danger">{tokenError}</Alert>}
+                                {tokenSuccess && <Alert variant="success">{tokenSuccess}</Alert>}
                             </Col>
 
                             <Col md={12} className="mt-3">

@@ -30,6 +30,7 @@ export const NETWORKS = [
         id: "ropsten",
         name: "Ropsten (Testnet)",
         blockExplorer: "https://www.bscscan.com/",
+        rpcEndpoint: "",
         tokens: RopstenTokens
     })
 ]
