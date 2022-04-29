@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux"
 import DataTable from "../components/DataTable/DataTable"
 import DropFile from "../components/DropFile/DropFile"
 import { getDataTable, setStorageName } from "../redux/DataTable"
-import { DATA_TABLES } from "../constants"
+import { DATA_TABLES } from "../redux/storageNames"
 
 function Collect() {
     const [hasData, setHasData] = useState(false)
