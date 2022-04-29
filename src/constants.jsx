@@ -1,29 +1,36 @@
 import Network from "./objects/Network"
+import EthereumTokens from "./tokens/ethereum"
+import BscTokens from "./tokens/bsc"
+import TronTokens from "./tokens/tron"
+import RopstenTokens from "./tokens/ropsten"
 
 export const NETWORKS = [
     new Network({
         id: "ethereum",
         name: "Ethereum",
         blockExplorer: "https://etherscan.io/",
-        rpcEndpoint: ""
+        rpcEndpoint: "",
+        tokens: EthereumTokens
     }),
     new Network({
         id: "bsc",
         name: "Binance Smart Chain",
         blockExplorer: "https://ropsten.etherscan.io/",
-        rpcEndpoint: ""
+        rpcEndpoint: "",
+        tokens: BscTokens
     }),
     new Network({
         id: "tron",
         name: "Tron Network",
         blockExplorer: "https://tronscan.org/#/",
-        rpcEndpoint: ""
+        rpcEndpoint: "",
+        tokens: TronTokens
     }),
     new Network({
         id: "ropsten",
         name: "Ropsten (Testnet)",
         blockExplorer: "https://www.bscscan.com/",
-        rpcEndpoint: ""
+        tokens: RopstenTokens
     })
 ]
 
