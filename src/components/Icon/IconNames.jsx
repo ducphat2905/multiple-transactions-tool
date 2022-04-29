@@ -7,7 +7,8 @@ const IconNames = Object.freeze({
     FaCogs: "FaCogs",
     FaEthereum: "FaEthereum",
     FaTimes: "FaTimes",
-    GiWallet: "GiWallet"
+    GiWallet: "GiWallet",
+    IoMdAlert: "IoMdAlert"
 })
 
 export default IconNames

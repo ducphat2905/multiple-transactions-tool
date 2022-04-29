@@ -3,9 +3,13 @@ import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import Card from "react-bootstrap/Card"
 import Alert from "react-bootstrap/Alert"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { useSelector } from "react-redux"
 
 import Icon from "../components/Icon/Icon"
+import Network from "../objects/Network"
+import IconNames from "../components/Icon/IconNames"
 
 const features = [
     {
@@ -16,7 +20,7 @@ const features = [
     },
     {
         title: "Spread",
-        description: "Spread crytocurrencies from a given wallet to multiple wallets.",
+        description: "Spread cryptocurrencies from a given wallet to multiple wallets.",
         iconName: "BsFillDiagram3Fill"
     },
     {
@@ -33,6 +37,14 @@ const features = [
 
 function Home() {
     const navigate = useNavigate()
+    const setting = useSelector((state) => state.setting)
+    const selectedNetwork = useSelector((state) => state.network)
+    const [errors, setErrors] = useState([])
+
+    useEffect(() => {
+        const totalErrors = setting.networks.filter((_network) => !_network.rpcEndpoint)
+        setErrors(totalErrors)
+    }, [setting.networks])
 
     return (
         <Row>
@@ -62,22 +74,33 @@ function Home() {
                     <Card className="p-0 mt-4">
                         <Card.Header className="text-center">Configuration Status</Card.Header>
                         <Card.Body>
-                            <Alert variant="success">
-                                <p className="mb-0">
-                                    <span className="m-2">
-                                        <Icon name="BsPatchCheckFill" />
-                                    </span>
-                                    Network API Key is configured.
-                                </p>
-                            </Alert>
-                            <Alert variant="danger">
-                                <p className="mb-0">
-                                    <span className="m-2">
-                                        <Icon name="BsPatchCheckFill" />
-                                    </span>
-                                    Network API Key is NOT configured.
-                                </p>
-                            </Alert>
+                            {errors.length === 0 && (
+                                <Alert variant="success">
+                                    <p className="mb-0">
+                                        <span className="m-2">
+                                            <Icon name={IconNames.BsPatchCheckFill} />
+                                        </span>
+                                        All networks are ready for you!
+                                    </p>
+                                </Alert>
+                            )}
+
+                            {errors.length > 0 &&
+                                errors.map((network) => (
+                                    <Alert variant="danger">
+                                        <p className="mb-0">
+                                            <span className="m-2">
+                                                <Icon name={IconNames.IoMdAlert} />
+                                            </span>
+                                            [{network.name}] is not provided with RPC endpoint. Go
+                                            to{" "}
+                                            <Link to={`/setting?networkId=${selectedNetwork.id}`}>
+                                                Setting
+                                            </Link>{" "}
+                                            to configure it.
+                                        </p>
+                                    </Alert>
+                                ))}
                         </Card.Body>
                     </Card>
                 </Col>
