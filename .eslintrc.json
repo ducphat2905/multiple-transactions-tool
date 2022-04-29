@@ -32,10 +32,7 @@
         "semi": "off",
         "no-unused-vars": 1,
         "no-console": 1,
-        "no-param-reassign": [
-            "error",
-            { "props": true, "ignorePropertyModificationsFor": ["state"] }
-        ],
+        "no-param-reassign": 0,
         "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
         "react/forbid-prop-types": [1, { "forbid": ["any"] }],
         "react/jsx-props-no-spreading": [0]
