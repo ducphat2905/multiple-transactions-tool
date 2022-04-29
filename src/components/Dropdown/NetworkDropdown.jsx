@@ -6,7 +6,7 @@ import PropTypes from "prop-types"
 import { useSelector } from "react-redux"
 import Network from "../../objects/Network"
 
-function Networks({ selectHandler }) {
+function NetworkDropdown({ selectHandler }) {
     const setting = useSelector((state) => state.setting)
     const selectedNetwork = useSelector((state) => state.network)
     const [network, setNetwork] = useState(() => new Network({ ...selectedNetwork }))
@@ -52,8 +52,8 @@ function Networks({ selectHandler }) {
     )
 }
 
-Networks.propTypes = {
+NetworkDropdown.propTypes = {
     selectHandler: PropTypes.func.isRequired
 }
 
-export default Networks
+export default NetworkDropdown

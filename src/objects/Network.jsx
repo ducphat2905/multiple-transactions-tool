@@ -4,11 +4,12 @@ import BscIcon from "../assets/icons/bsc-icon.png"
 import TronIcon from "../assets/icons/tron-icon.png"
 
 class Network {
-    constructor({ id, name, blockExplorer, rpcEndpoint }) {
+    constructor({ id, name, blockExplorer, rpcEndpoint, tokens }) {
         this.id = id
         this.name = name
         this.blockExplorer = blockExplorer
         this.rpcEndpoint = rpcEndpoint
+        this.tokens = tokens
     }
 
     getIconComponent() {

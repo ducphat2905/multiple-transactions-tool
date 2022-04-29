@@ -6,10 +6,10 @@ import { useLocation, useSearchParams } from "react-router-dom"
 import { useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
 
-import { setNetwork } from "../../redux/Network"
+import { selectNetwork } from "../../redux/Network"
 
 import logo from "../../logo.svg"
-import Networks from "../Dropdown/Networks"
+import NetworkDropdown from "../Dropdown/NetworkDropdown"
 
 function NavigationBar() {
     const location = useLocation()
@@ -24,8 +24,8 @@ function NavigationBar() {
         }
     }, [network])
 
-    const selectNetwork = (_network) => {
-        dispatch(setNetwork({ ..._network }))
+    const selectNetworkHandler = (_network) => {
+        dispatch(selectNetwork({ ..._network }))
         setSearchParams({ networkId: _network.id })
     }
 
@@ -61,7 +61,7 @@ function NavigationBar() {
 
                 <Nav>
                     <Nav.Item>
-                        <Networks selectHandler={selectNetwork} />
+                        <NetworkDropdown selectHandler={selectNetworkHandler} />
                     </Nav.Item>
                 </Nav>
             </Container>
