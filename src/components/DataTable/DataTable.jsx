@@ -9,23 +9,18 @@ import Alert from "react-bootstrap/Alert"
 import { DataGrid, GridToolbarContainer, GridToolbarExport } from "@mui/x-data-grid"
 import { useDispatch, useSelector } from "react-redux"
 import { useEffect, useState } from "react"
-import { useLocation } from "react-router-dom"
-import Icons, { IconNames } from "../Icon/Icons"
+import Icon from "../Icon/Icon"
+import IconNames from "../Icon/IconNames"
 import { getDataTable, removeDataTable } from "../../redux/DataTable"
 import { getBalance } from "../../redux/thunk/DataTableThunk"
-import { getTokens } from "../../redux/Network"
 
 function Toolbar() {
-    const location = useLocation()
     const { tokens, id: networkId } = useSelector((state) => state.network)
+    const network = useSelector((state) => state.network)
     const { rows } = useSelector((state) => state.dataTable)
     const dispatch = useDispatch()
     const [token, setToken] = useState(null)
     const [error, setError] = useState("")
-
-    useEffect(() => {
-        dispatch(getTokens())
-    }, [location.search])
 
     // Remove the dropped file
     const dropTable = () => {
@@ -55,13 +50,10 @@ function Toolbar() {
         dispatch(
             getBalance({
                 networkId,
-                provider: "https://ropsten.infura.io/v3/640d8cc3f12148e6b511453827f6c57c",
+                rpcEndpoint: network.rpcEndpoint,
                 wallets: []
             })
         )
-        // dispatch(initWeb3("https://ropsten.infura.io/v3/640d8cc3f12148e6b511453827f6c57c"))
-        // ethereum = new Ethereum("https://ropsten.infura.io/v3/640d8cc3f12148e6b511453827f6c57c")
-        // console.log(ethereum)
     }
 
     // Collect
@@ -123,7 +115,7 @@ function Toolbar() {
                 </Col>
                 <Col>
                     <Button variant="outline-danger" onClick={dropTable}>
-                        <Icons iconName={IconNames.FaTimes} />
+                        <Icon name={IconNames.FaTimes} />
                     </Button>
                 </Col>
             </Row>

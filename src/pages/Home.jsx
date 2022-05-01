@@ -8,7 +8,6 @@ import { useState, useEffect } from "react"
 import { useSelector } from "react-redux"
 
 import Icon from "../components/Icon/Icon"
-import Network from "../objects/Network"
 import IconNames from "../components/Icon/IconNames"
 
 const features = [

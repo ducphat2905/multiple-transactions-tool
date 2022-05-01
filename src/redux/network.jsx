@@ -1,8 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit"
-import EthereumTokens from "../tokens/ethereum"
-import BscTokens from "../tokens/bsc"
-import TronTokens from "../tokens/tron"
-import { NETWORKS } from "../constants"
 import { networkStorage, settingStorage } from "./storageNames"
 
 const initialState = () => {
