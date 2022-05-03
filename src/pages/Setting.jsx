@@ -97,7 +97,7 @@ function Setting() {
             <Col className="m-3 p-2">
                 <Accordion defaultActiveKey="0">
                     <Accordion.Item eventKey="0">
-                        <Accordion.Header>Set RPC Endpoints</Accordion.Header>
+                        <Accordion.Header>Set Provider</Accordion.Header>
                         <Accordion.Body>
                             <Form onSubmit={onSaveEndpoints}>
                                 <Col className="m-2 p-1">
@@ -135,7 +135,7 @@ function Setting() {
                                                             e.target.value
                                                         )
                                                     }
-                                                    placeholder="Enter the RPC's endpoint here."
+                                                    placeholder="Enter the RPC's endpoint (URL) here ."
                                                 />
                                             )}
 
@@ -195,7 +195,7 @@ function Setting() {
                                                 />
                                             </ListGroup.Item>
                                             <ListGroup.Item as="li">
-                                                Paste above to set up your RPC endpoint
+                                                Paste above to set up your provider
                                             </ListGroup.Item>
                                         </ListGroup>
                                     </div>

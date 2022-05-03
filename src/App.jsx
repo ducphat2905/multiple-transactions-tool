@@ -12,6 +12,7 @@ import Collect from "./pages/Collect"
 import Spread from "./pages/Spread"
 import Setting from "./pages/Setting"
 import Wallet from "./pages/Wallet"
+import Toaster from "./components/Toaster/Toaster"
 
 function App() {
     return (
@@ -19,14 +20,20 @@ function App() {
             <Row>
                 <NavigationBar />
             </Row>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/collect" element={<Collect />} />
-                <Route path="/spread" element={<Spread />} />
-                <Route path="/wallet" element={<Wallet />} />
-                <Route path="/setting" element={<Setting />} />
-            </Routes>
 
+            <Row className="my-2 mx-1">
+                <Toaster />
+            </Row>
+
+            <Row>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/collect" element={<Collect />} />
+                    <Route path="/spread" element={<Spread />} />
+                    <Route path="/wallet" element={<Wallet />} />
+                    <Route path="/setting" element={<Setting />} />
+                </Routes>
+            </Row>
             <Footer />
         </Container>
     )

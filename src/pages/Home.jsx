@@ -91,7 +91,7 @@ function Home() {
                                             <span className="m-2">
                                                 <Icon name={IconNames.IoMdAlert} />
                                             </span>
-                                            [{network.name}] is not provided with RPC endpoint. Go
+                                            [{network.name}] have not set up the provider. Go
                                             to{" "}
                                             <Link to={`/setting?networkId=${selectedNetwork.id}`}>
                                                 Setting
