@@ -11,7 +11,7 @@ const toasterSlice = createSlice({
     reducers: {
         toggleToaster(state, action) {
             const { show, message } = action.payload
-            console.log(state)
+
             if (show) {
                 state.show = true
                 state.message = message

@@ -41,7 +41,7 @@ function Home() {
     const [errors, setErrors] = useState([])
 
     useEffect(() => {
-        const totalErrors = setting.networks.filter((_network) => !_network.rpcEndpoint)
+        const totalErrors = setting.networks.filter((_network) => !_network.hasValidProvider)
         setErrors(totalErrors)
     }, [setting.networks])
 
@@ -91,8 +91,7 @@ function Home() {
                                             <span className="m-2">
                                                 <Icon name={IconNames.IoMdAlert} />
                                             </span>
-                                            [{network.name}] have not set up the provider. Go
-                                            to{" "}
+                                            [{network.name}] have not set up the provider. Go to{" "}
                                             <Link to={`/setting?networkId=${selectedNetwork.id}`}>
                                                 Setting
                                             </Link>{" "}

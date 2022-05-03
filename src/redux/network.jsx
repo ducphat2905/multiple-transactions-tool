@@ -9,6 +9,7 @@ const initialState = () => {
         name: "",
         blockExplorer: "",
         rpcEndpoint: "",
+        hasValidProvider: false,
         tokens: []
     }
 

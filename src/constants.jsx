@@ -10,6 +10,7 @@ export const NETWORKS = [
         name: "Ethereum",
         blockExplorer: "https://etherscan.io/",
         rpcEndpoint: "",
+        hasValidProvider: false,
         tokens: EthereumTokens
     }),
     new Network({
@@ -17,6 +18,7 @@ export const NETWORKS = [
         name: "Binance Smart Chain",
         blockExplorer: "https://ropsten.etherscan.io/",
         rpcEndpoint: "",
+        hasValidProvider: false,
         tokens: BscTokens
     }),
     new Network({
@@ -24,6 +26,7 @@ export const NETWORKS = [
         name: "Tron Network",
         blockExplorer: "https://tronscan.org/#/",
         rpcEndpoint: "",
+        hasValidProvider: false,
         tokens: TronTokens
     }),
     new Network({
@@ -31,6 +34,7 @@ export const NETWORKS = [
         name: "Ropsten (Testnet)",
         blockExplorer: "https://www.bscscan.com/",
         rpcEndpoint: "",
+        hasValidProvider: false,
         tokens: RopstenTokens
     })
 ]

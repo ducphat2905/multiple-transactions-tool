@@ -4,7 +4,7 @@ class Web3js {
     provider = null
 
     web3 = null
-    
+
     constructor(_provider) {
         this.provider = _provider
 

@@ -49,17 +49,23 @@ function Setting() {
         )
     }
 
-    const onSaveEndpoints = (e) => {
+    const onSaveEndpoints = async (e) => {
         e.preventDefault()
+
+        // Networks with updated "hasValidProvider" property
+        const validatedNetworks = networks.map((_network) => _network.checkProvider())
         // Parse from an array of Network to an array of Object
-        const newNetworks = networks.map((_network) => ({ ..._network }))
+        const newNetworks = validatedNetworks.map((_network) => ({ ..._network }))
+
         // Save to local storage
         dispatch(updateNetworks({ networks: newNetworks }))
 
-        setEndpointSuccess("Successful!")
-        setTimeout(() => {
-            setEndpointSuccess("")
-        }, 1800)
+        if (newNetworks.findIndex((_network) => _network.hasValidProvider) !== -1) {
+            setEndpointSuccess("Successful!")
+            setTimeout(() => {
+                setEndpointSuccess("")
+            }, 1800)
+        }
     }
 
     const showTokens = (_network) => {
@@ -95,6 +101,7 @@ function Setting() {
     return (
         <Row className="pb-5 px-4">
             <Col className="m-3 p-2">
+                {/* Provider */}
                 <Accordion defaultActiveKey="0">
                     <Accordion.Item eventKey="0">
                         <Accordion.Header>Set Provider</Accordion.Header>
@@ -142,11 +149,12 @@ function Setting() {
                                             <Button
                                                 className="row"
                                                 variant={
-                                                    _network.rpcEndpoint ? "success" : "danger"
+                                                    _network.hasValidProvider ? "success" : "danger"
                                                 }>
-                                                {_network.rpcEndpoint ? (
+                                                {_network.hasValidProvider && (
                                                     <Icon name={IconNames.AiOutlineCheckCircle} />
-                                                ) : (
+                                                )}
+                                                {!_network.hasValidProvider && (
                                                     <Icon name={IconNames.AiFillCloseCircle} />
                                                 )}
                                             </Button>
@@ -170,6 +178,7 @@ function Setting() {
                         </Accordion.Body>
                     </Accordion.Item>
 
+                    {/* Guide */}
                     <Accordion.Item eventKey="1">
                         <Accordion.Header>How to get the RPC Endpoint ?</Accordion.Header>
                         <Accordion.Body>
@@ -207,6 +216,7 @@ function Setting() {
             </Col>
 
             <Col className="m-3 p-2">
+                {/* Add token */}
                 <Accordion defaultActiveKey="2">
                     <Accordion.Item eventKey="2">
                         <Accordion.Header>Tokens</Accordion.Header>
