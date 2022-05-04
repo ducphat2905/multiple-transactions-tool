@@ -27,7 +27,7 @@ export const networkSlice = createSlice({
     name: "network",
     initialState: initialState(),
     reducers: {
-        selectNetwork: (state, action) => {
+        selectNetwork(state, action) {
             const { id } = action.payload
 
             // Get networks from local storage
@@ -43,11 +43,23 @@ export const networkSlice = createSlice({
                     localStorage.setItem(state.storageName, JSON.stringify(state))
                 }
             }
+        },
+        updateChosenNetwork(state, action) {
+            const { chosenNetwork } = action.payload
+
+            // Get from local storage
+            const networkData = localStorage.getItem(networkStorage)
+            if (networkData) {
+                const storageData = JSON.parse(networkData)
+                const data = { ...storageData, ...chosenNetwork }
+
+                localStorage.setItem(networkStorage, JSON.stringify(data))
+            }
         }
     }
 })
 
 // Action creators are generated for each case reducer function
-export const { selectNetwork } = networkSlice.actions
+export const { selectNetwork, updateChosenNetwork } = networkSlice.actions
 
 export default networkSlice.reducer

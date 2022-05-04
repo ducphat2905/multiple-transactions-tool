@@ -20,7 +20,7 @@ import Icon from "../components/Icon/Icon"
 import IconNames from "../components/Icon/IconNames"
 import InfuraExampleImg from "../assets/images/infura-rpc-endpoint-example.png"
 import NetworkDropdown from "../components/Dropdown/NetworkDropdown"
-import { selectNetwork } from "../redux/Network"
+import { selectNetwork, updateChosenNetwork } from "../redux/Network"
 
 const { Bsc: BscEndpoints, BscTestnet: BscTestnetEndpoints } = RPC_ENDPOINTS
 
@@ -57,8 +57,11 @@ function Setting() {
         // Parse from an array of Network to an array of Object
         const newNetworks = validatedNetworks.map((_network) => ({ ..._network }))
 
-        // Save to local storage
+        // Save networks to local storage
         dispatch(updateNetworks({ networks: newNetworks }))
+        // Update provider of the chosen network
+        const chosenNetwork = newNetworks.find((_network) => _network.id === selectedNetwork.id)
+        dispatch(updateChosenNetwork({ chosenNetwork }))
 
         if (newNetworks.findIndex((_network) => _network.hasValidProvider) !== -1) {
             setEndpointSuccess("Successful!")
