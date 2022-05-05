@@ -4,8 +4,7 @@ const initialState = {
     storageName: "",
     file: { name: "", type: "", size: 0 },
     columns: [],
-    rows: [],
-    isLoading: false
+    rows: []
 }
 
 /**

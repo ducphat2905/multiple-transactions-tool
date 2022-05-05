@@ -15,12 +15,16 @@ import { getDataTable, removeDataTable } from "../../redux/DataTable"
 import { getBalance } from "../../redux/thunk/DataTableThunk"
 
 function Toolbar() {
-    const { tokens, id: networkId } = useSelector((state) => state.network)
+    const { tokens } = useSelector((state) => state.network)
     const network = useSelector((state) => state.network)
-    const { rows } = useSelector((state) => state.dataTable)
+    const { rows, columns } = useSelector((state) => state.dataTable)
     const dispatch = useDispatch()
     const [token, setToken] = useState(null)
     const [error, setError] = useState("")
+
+    useEffect(() => {
+        setToken(null)
+    }, [network])
 
     // Remove the dropped file
     const dropTable = () => {
@@ -42,6 +46,8 @@ function Toolbar() {
 
     // Get balance
     const getBalanceHandler = () => {
+        displayTokenError(false)
+
         if (!token) {
             displayTokenError(true)
             return
@@ -49,9 +55,8 @@ function Toolbar() {
 
         dispatch(
             getBalance({
-                networkId,
-                rpcEndpoint: network.rpcEndpoint,
-                wallets: []
+                token,
+                data: { rows, columns }
             })
         )
     }
@@ -150,7 +155,7 @@ function DataTable() {
                 }
             }}
             components={{ Toolbar }}
-            className="m-4 p-4"
+            className="m-2 p-3"
         />
     )
 }
