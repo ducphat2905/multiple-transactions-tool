@@ -37,8 +37,23 @@ export const networkSlice = createSlice({
                 const selectedNetwork = data.networks.find((_network) => _network.id === id)
 
                 if (selectedNetwork) {
+                    const {
+                        id: networkId,
+                        name,
+                        blockExplorer,
+                        rpcEndpoint,
+                        hasValidProvider,
+                        tokens
+                    } = selectedNetwork
+
                     // Update state
-                    state = { ...state, ...selectedNetwork }
+                    state.id = networkId
+                    state.name = name
+                    state.blockExplorer = blockExplorer
+                    state.rpcEndpoint = rpcEndpoint
+                    state.hasValidProvider = hasValidProvider
+                    state.tokens = tokens
+
                     // Store in localStorage
                     localStorage.setItem(state.storageName, JSON.stringify(state))
                 }

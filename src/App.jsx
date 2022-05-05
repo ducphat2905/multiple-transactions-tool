@@ -25,15 +25,13 @@ function App() {
                 <Toaster />
             </Row>
 
-            <Row>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/collect" element={<Collect />} />
-                    <Route path="/spread" element={<Spread />} />
-                    <Route path="/wallet" element={<Wallet />} />
-                    <Route path="/setting" element={<Setting />} />
-                </Routes>
-            </Row>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/collect" element={<Collect />} />
+                <Route path="/spread" element={<Spread />} />
+                <Route path="/wallet" element={<Wallet />} />
+                <Route path="/setting" element={<Setting />} />
+            </Routes>
             <Footer />
         </Container>
     )

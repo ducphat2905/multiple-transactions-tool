@@ -85,13 +85,13 @@ function Home() {
                             )}
 
                             {errors.length > 0 &&
-                                errors.map((network) => (
-                                    <Alert variant="danger">
+                                errors.map((_network) => (
+                                    <Alert key={_network.id} variant="danger">
                                         <p className="mb-0">
                                             <span className="m-2">
                                                 <Icon name={IconNames.IoMdAlert} />
                                             </span>
-                                            [{network.name}] have not set up the provider. Go to{" "}
+                                            [{_network.name}] have not set up the provider. Go to{" "}
                                             <Link to={`/setting?networkId=${selectedNetwork.id}`}>
                                                 Setting
                                             </Link>{" "}
