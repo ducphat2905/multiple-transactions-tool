@@ -17,7 +17,7 @@ import { getBalance } from "../../redux/thunk/DataTableThunk"
 function Toolbar() {
     const { tokens } = useSelector((state) => state.network)
     const network = useSelector((state) => state.network)
-    const { rows, columns } = useSelector((state) => state.dataTable)
+    const { rows } = useSelector((state) => state.dataTable)
     const dispatch = useDispatch()
     const [token, setToken] = useState(null)
     const [error, setError] = useState("")
@@ -56,7 +56,7 @@ function Toolbar() {
         dispatch(
             getBalance({
                 token,
-                data: { rows, columns }
+                data: { rows }
             })
         )
     }

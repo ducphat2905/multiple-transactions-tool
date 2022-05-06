@@ -14,6 +14,9 @@ function Collect() {
 
     useEffect(() => {
         dispatch(setStorageName(DATA_TABLES.Collect))
+    })
+
+    useEffect(() => {
         dispatch(getDataTable())
     }, [])
 

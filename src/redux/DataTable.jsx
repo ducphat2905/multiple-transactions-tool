@@ -1,44 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit"
+import { TABLE_COLUMNS } from "../constants"
 
 const initialState = {
     storageName: "",
     file: { name: "", type: "", size: 0 },
     columns: [],
     rows: []
-}
-
-/**
- *  Convert array of arrays to rows and columns
- * @param {array} arrayOfData
- * @returns {
- *  {array} row,
- *  {array} columns
- * }
- */
-const jsonToDataTable = (arrayOfData) => {
-    const [headers, ...values] = arrayOfData
-    // Create columns with styles
-    const columns = headers.map((name) => {
-        return {
-            field: name,
-            headerName: name.toUpperCase(),
-            flex: 1,
-            headerClassName: "bg-light",
-            headerAlign: "center"
-        }
-    })
-
-    // Create rows according to column's values
-    const rows = values.map((value, index) => {
-        const newRow = { id: index }
-
-        for (let i = 0; i < headers.length; i++) {
-            newRow[headers[i]] = value[i]
-        }
-        return newRow
-    })
-
-    return { rows, columns }
 }
 
 export const dataTableSlice = createSlice({
@@ -50,7 +17,11 @@ export const dataTableSlice = createSlice({
         },
         storeDataTable: (state, action) => {
             const { name, type, size, data } = action.payload
-            const { rows, columns } = jsonToDataTable(data)
+            const columns = TABLE_COLUMNS
+            const rows = data.map((value, index) => ({
+                id: index,
+                ...value
+            }))
 
             const storageData = JSON.stringify({
                 file: { name, type, size },

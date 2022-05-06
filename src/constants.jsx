@@ -52,4 +52,26 @@ export const RPC_ENDPOINTS = Object.freeze({
     ]
 })
 
-export default { NETWORKS, RPC_ENDPOINTS }
+// Table's columns
+export const TABLE_COLUMNS = [
+    {
+        field: "address",
+        headerName: "Address",
+        flex: 1,
+        headerClassName: "bg-light"
+    },
+    {
+        field: "privateKey",
+        headerName: "Private Key",
+        flex: 2,
+        headerClassName: "bg-light"
+    },
+    {
+        field: "transferringAmount",
+        headerName: "Transferring Amount",
+        flex: 1,
+        headerClassName: "bg-light"
+    }
+]
+
+export default { NETWORKS, RPC_ENDPOINTS, TABLE_COLUMNS }

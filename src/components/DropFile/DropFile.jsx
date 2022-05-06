@@ -5,6 +5,7 @@ import Alert from "react-bootstrap/Alert"
 import { useDispatch } from "react-redux"
 import { acceptStyle, baseStyle, focusedStyle, rejectStyle } from "./Style"
 import { storeDataTable } from "../../redux/DataTable"
+import { TABLE_COLUMNS } from "../../constants"
 
 function DropFile() {
     const [fileName, setFileName] = useState("")
@@ -32,17 +33,40 @@ function DropFile() {
 
                 // Get the first sheet
                 const worksheet = Sheets[SheetNames[0]]
-                const worksheetJSON = utils.sheet_to_json(worksheet, { header: 1 })
+                const worksheetJSON = utils.sheet_to_json(worksheet, {
+                    raw: false,
+                    defval: null
+                })
 
-                // Store in local storage
-                dispatch(
-                    storeDataTable({
-                        name: file.name,
-                        type: file.type,
-                        size: file.size,
-                        data: worksheetJSON
-                    })
-                )
+                // Check required columns
+                const requiredColumns = TABLE_COLUMNS.map((column) => column.field)
+                // Check the first row if it contains required columns
+                const hasEnoughColumns = requiredColumns.filter((column) => {
+                    const keys = Object.keys(worksheetJSON[0])
+
+                    return !keys.includes(column)
+                })
+
+                // Not enough
+                if (hasEnoughColumns.length > 0) {
+                    setFileName(file.name)
+                    setSize(file.size)
+                    setErrorMsg(
+                        `Please provide your file with ${requiredColumns.length} column${
+                            requiredColumns.length > 1 && "s"
+                        }: (${requiredColumns.toString()})`
+                    )
+                } else {
+                    // Store in local storage
+                    dispatch(
+                        storeDataTable({
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            data: worksheetJSON
+                        })
+                    )
+                }
             }
 
             reader.readAsArrayBuffer(file)
