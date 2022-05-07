@@ -5,7 +5,7 @@ import Alert from "react-bootstrap/Alert"
 import { useDispatch } from "react-redux"
 import { acceptStyle, baseStyle, focusedStyle, rejectStyle } from "./Style"
 import { storeDataTable } from "../../redux/DataTable"
-import { TABLE_COLUMNS } from "../../constants"
+import { INPUT_COLUMNS } from "../../constants"
 
 function DropFile() {
     const [fileName, setFileName] = useState("")
@@ -39,7 +39,7 @@ function DropFile() {
                 })
 
                 // Check required columns
-                const requiredColumns = TABLE_COLUMNS.map((column) => column.field)
+                const requiredColumns = INPUT_COLUMNS.map((column) => column.field)
                 // Check the first row if it contains required columns
                 const hasEnoughColumns = requiredColumns.filter((column) => {
                     const keys = Object.keys(worksheetJSON[0])

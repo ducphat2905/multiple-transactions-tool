@@ -4,6 +4,15 @@ import BscTokens from "./tokens/bsc"
 import TronTokens from "./tokens/tron"
 import RopstenTokens from "./tokens/ropsten"
 
+export const TOOL_STAGES = Object.freeze({
+    DropFile: "0",
+    InputTable: "1",
+    CollectForm: "2.1",
+    SpreadForm: "2.2",
+    Logging: "3",
+    ResultTable: "4"
+})
+
 export const NETWORKS = [
     new Network({
         id: "ethereum",
@@ -52,8 +61,8 @@ export const RPC_ENDPOINTS = Object.freeze({
     ]
 })
 
-// Table's columns
-export const TABLE_COLUMNS = [
+// Table's columns of the input file
+export const INPUT_COLUMNS = [
     {
         field: "address",
         headerName: "Address",
@@ -63,15 +72,45 @@ export const TABLE_COLUMNS = [
     {
         field: "privateKey",
         headerName: "Private Key",
-        flex: 2,
+        flex: 1.5,
         headerClassName: "bg-light"
     },
     {
         field: "transferringAmount",
         headerName: "Transferring Amount",
-        flex: 1,
+        flex: 0.5,
         headerClassName: "bg-light"
     }
 ]
 
-export default { NETWORKS, RPC_ENDPOINTS, TABLE_COLUMNS }
+// Columns for table that displays the result
+export const RESULT_COLUMNS = (newColumn) => {
+    return [
+        {
+            field: "address",
+            headerName: "Address",
+            flex: 1,
+            headerClassName: "bg-light"
+        },
+        {
+            field: "privateKey",
+            headerName: "Private Key",
+            flex: 1.5,
+            headerClassName: "bg-light"
+        },
+        {
+            field: "transferringAmount",
+            headerName: "Transferring Amount",
+            flex: 0.5,
+            headerClassName: "bg-light"
+        },
+        {
+            field: newColumn.field,
+            headerName: newColumn.header,
+            flex: 1,
+            headerClassName: "bg-light"
+        }
+    ]
+}
+
+export default { TOOL_STAGES, NETWORKS, RPC_ENDPOINTS, INPUT_COLUMNS, RESULT_COLUMNS }
