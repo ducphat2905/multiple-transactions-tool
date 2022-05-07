@@ -11,10 +11,12 @@ class Web3js {
         this.web3 = new Web3(_provider)
     }
 
-    async getBalance(_address) {
-        const balance = await this.web3.eth.getBalance(_address)
-        this.balance = balance
-        return this
+    getBalance(_address, _tokenAddress) {
+        if (_tokenAddress === "ETH" || _tokenAddress === "BNB") {
+            return this.web3.eth.getBalance(_address)
+        }
+
+        return 0
     }
 }
 
