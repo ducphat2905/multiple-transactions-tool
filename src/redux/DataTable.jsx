@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { TABLE_COLUMNS } from "../constants"
+import { INPUT_COLUMNS } from "../constants"
 
 const initialState = {
     storageName: "",
@@ -15,9 +15,12 @@ export const dataTableSlice = createSlice({
         setStorageName: (state, action) => {
             state.storageName = action.payload
         },
+        setColumns: (state, action) => {
+            state.columns = action.payload
+        },
         storeDataTable: (state, action) => {
             const { name, type, size, data } = action.payload
-            const columns = TABLE_COLUMNS
+            const columns = INPUT_COLUMNS
             const rows = data.map((value, index) => ({
                 id: index,
                 ...value
@@ -60,7 +63,7 @@ export const dataTableSlice = createSlice({
     }
 })
 
-export const { getDataTable, storeDataTable, setStorageName, removeDataTable } =
+export const { getDataTable, storeDataTable, setStorageName, setColumns, removeDataTable } =
     dataTableSlice.actions
 
 export default dataTableSlice.reducer
