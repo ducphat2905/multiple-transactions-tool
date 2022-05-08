@@ -86,7 +86,11 @@ function DropFile() {
     })
 
     const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } = useDropzone({
-        accept: ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel", // Only allow ".csv" and ".xlsx, .xls"
+        accept: [
+            "text/csv",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-excel"
+        ], // Only accept ".csv" and ".xlsx, .xls"
         maxFiles: 1,
         onDropAccepted,
         onDropRejected
