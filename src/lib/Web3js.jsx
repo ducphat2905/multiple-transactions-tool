@@ -11,11 +11,14 @@ class Web3js {
         }
     }
 
-    async getBalance(_address, _tokenAddress) {
+    async getBalance(_address, _token) {
         try {
             let data = 0
-            if (!_tokenAddress || _tokenAddress === "ETH" || _tokenAddress === "BNB") {
+            if (!_token.address && !_token.ABI) {
                 data = await this.web3.eth.getBalance(_address)
+            } else {
+                const tokenContract = new this.web3.eth.Contract(_token.ABI, _token.address)
+                data = await tokenContract.methods.balanceOf(_address).call()
             }
 
             return { data }
