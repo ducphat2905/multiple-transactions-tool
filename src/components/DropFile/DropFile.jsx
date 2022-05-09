@@ -4,7 +4,7 @@ import { read, utils } from "xlsx"
 import Alert from "react-bootstrap/Alert"
 import { useDispatch } from "react-redux"
 import { acceptStyle, baseStyle, focusedStyle, rejectStyle } from "./Style"
-import { storeDataTable } from "../../redux/DataTable"
+import { storeDataTable, TABLE_TYPES } from "../../redux/DataTable"
 import { INPUT_COLUMNS } from "../../constants"
 
 function DropFile() {
@@ -63,7 +63,9 @@ function DropFile() {
                             name: file.name,
                             type: file.type,
                             size: file.size,
-                            data: worksheetJSON
+                            rows: worksheetJSON,
+                            tableType: TABLE_TYPES.Input,
+                            columns: INPUT_COLUMNS
                         })
                     )
                 }

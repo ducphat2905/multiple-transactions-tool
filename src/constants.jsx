@@ -6,11 +6,10 @@ import RopstenTokens from "./tokens/ropsten"
 
 export const TOOL_STAGES = Object.freeze({
     DropFile: "0",
-    InputTable: "1",
+    DataTable: "1",
     CollectForm: "2.1",
     SpreadForm: "2.2",
-    Logging: "3",
-    ResultTable: "4"
+    Logging: "3"
 })
 
 export const NETWORKS = [
@@ -107,7 +106,7 @@ export const RESULT_COLUMNS = (newColumn) => {
         {
             field: newColumn.field,
             headerName: newColumn.header,
-            flex: 1,
+            flex: newColumn.flex,
             headerClassName: "bg-light"
         }
     ]

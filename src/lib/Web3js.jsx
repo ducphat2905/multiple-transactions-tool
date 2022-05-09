@@ -1,22 +1,27 @@
 import Web3 from "web3"
 
 class Web3js {
-    provider = null
-
     web3 = null
 
     constructor(_provider) {
-        this.provider = _provider
-
-        this.web3 = new Web3(_provider)
+        try {
+            this.web3 = new Web3(_provider)
+        } catch (error) {
+            this.error = error.message
+        }
     }
 
-    getBalance(_address, _tokenAddress) {
-        if (_tokenAddress === "ETH" || _tokenAddress === "BNB") {
-            return this.web3.eth.getBalance(_address)
-        }
+    async getBalance(_address, _tokenAddress) {
+        try {
+            let data = 0
+            if (!_tokenAddress || _tokenAddress === "ETH" || _tokenAddress === "BNB") {
+                data = await this.web3.eth.getBalance(_address)
+            }
 
-        return 0
+            return { data }
+        } catch (error) {
+            return { error: error.message }
+        }
     }
 }
 

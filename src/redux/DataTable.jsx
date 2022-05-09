@@ -1,8 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { INPUT_COLUMNS } from "../constants"
+
+export const TABLE_TYPES = Object.freeze({
+    Empty: "empty-table",
+    Input: "input-table",
+    Result: "result-table"
+})
 
 const initialState = {
-    storageName: "",
+    tableType: localStorage.getItem(TABLE_TYPES.Input) ? TABLE_TYPES.Input : TABLE_TYPES.Empty,
     file: { name: "", type: "", size: 0 },
     columns: [],
     rows: []
@@ -12,26 +17,20 @@ export const dataTableSlice = createSlice({
     name: "dataTable",
     initialState,
     reducers: {
-        setStorageName: (state, action) => {
-            state.storageName = action.payload
-        },
-        setColumns: (state, action) => {
-            state.columns = action.payload
+        setTableType: (state, action) => {
+            state.tableType = action.payload
         },
         storeDataTable: (state, action) => {
-            const { name, type, size, data } = action.payload
-            const columns = INPUT_COLUMNS
-            const rows = data.map((value, index) => ({
-                id: index,
-                ...value
-            }))
+            const { name, type, size, rows, tableType, columns } = action.payload
 
             const storageData = JSON.stringify({
                 file: { name, type, size },
                 rows,
-                columns
+                columns,
+                tableType
             })
-            localStorage.setItem(state.storageName, storageData)
+
+            if (tableType !== TABLE_TYPES.Empty) localStorage.setItem(tableType, storageData)
 
             // Update state
             state.file = {
@@ -41,29 +40,36 @@ export const dataTableSlice = createSlice({
             }
             state.columns = columns
             state.rows = rows
+            state.tableType = tableType
         },
-        removeDataTable: (state) => {
-            if (state.storageName) {
-                localStorage.removeItem(state.storageName)
+        removeTable: (state, action) => {
+            const { table } = action.payload
+            if (table !== TABLE_TYPES.Empty) {
+                localStorage.removeItem(table)
             }
+
             // Reset state
             return initialState
         },
-        getDataTable: (state) => {
-            const storageData = localStorage.getItem(state.storageName)
+        getDataTable: (state, action) => {
+            const { table } = action.payload
+            const storageData = localStorage.getItem(table)
 
             if (storageData) {
-                const { file, rows, columns } = JSON.parse(storageData)
+                const { file, rows, columns, tableType } = JSON.parse(storageData)
 
                 state.file = file
                 state.columns = columns
                 state.rows = rows
+                state.tableType = tableType
+            } else {
+                state.tableType = table
+                state.rows = initialState.rows
             }
         }
     }
 })
 
-export const { getDataTable, storeDataTable, setStorageName, setColumns, removeDataTable } =
-    dataTableSlice.actions
+export const { setTableType, getDataTable, storeDataTable, removeTable } = dataTableSlice.actions
 
 export default dataTableSlice.reducer

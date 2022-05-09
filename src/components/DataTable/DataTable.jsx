@@ -1,9 +1,10 @@
 import { DataGrid } from "@mui/x-data-grid"
 import { useDispatch, useSelector } from "react-redux"
 import { useEffect } from "react"
-import { getDataTable } from "../../redux/DataTable"
+
 import CustomToolbar from "./CustomToolbar"
 import CustomPagination from "./CustomPagination"
+import { getDataTable } from "../../redux/DataTable"
 
 function Pagination() {
     return <CustomPagination />
@@ -14,12 +15,12 @@ function Toolbar() {
 }
 
 function DataTable() {
-    const { rows, columns } = useSelector((state) => state.dataTable)
+    const { rows, columns, tableType } = useSelector((state) => state.dataTable)
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(getDataTable())
-    }, [])
+        dispatch(getDataTable({ table: tableType }))
+    }, [tableType])
 
     return (
         <DataGrid
