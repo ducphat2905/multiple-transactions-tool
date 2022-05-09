@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit"
 import Web3js from "../../lib/Web3js"
 import { toggleToaster } from "../Toaster"
 import { setTableType, storeDataTable, TABLE_TYPES } from "../DataTable"
-import { RESULT_COLUMNS } from "../../constants"
+import { FEATURES, RESULT_COLUMNS } from "../../constants"
 
 // TO-DO: Sending request with a specific rate limit
 const storeResult = (dispatch, data) => {
@@ -19,7 +19,8 @@ const storeResult = (dispatch, data) => {
                 field: token.symbol,
                 flex: 0.5,
                 header: token.symbol.toUpperCase()
-            })
+            }),
+            feature: FEATURES.GetBalance
         })
     )
     dispatch(setTableType(TABLE_TYPES.Result))

@@ -4,6 +4,12 @@ import BscTokens from "./tokens/bsc"
 import TronTokens from "./tokens/tron"
 import RopstenTokens from "./tokens/ropsten"
 
+export const FEATURES = Object.freeze({
+    GetBalance: "Get Balance",
+    Collect: "Collect",
+    Spread: "Spread"
+})
+
 export const TOOL_STAGES = Object.freeze({
     DropFile: "0",
     DataTable: "1",

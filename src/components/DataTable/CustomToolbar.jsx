@@ -17,7 +17,7 @@ import EthereumThunk from "../../redux/thunk/EthereumThunk"
 function CustomToolbar() {
     const { tokens } = useSelector((state) => state.network)
     const network = useSelector((state) => state.network)
-    const { rows, tableType } = useSelector((state) => state.dataTable)
+    const { rows, tableType, feature } = useSelector((state) => state.dataTable)
     const dispatch = useDispatch()
     const [token, setToken] = useState(null)
     const [error, setError] = useState("")
@@ -157,7 +157,7 @@ function CustomToolbar() {
                                 }
                                 eventKey="result-table"
                                 onClick={() => dispatch(setTableType(TABLE_TYPES.Result))}>
-                                Result
+                                Result {feature && `(${feature})`}
                             </Nav.Link>
                         </Nav.Item>
                     </Nav>
