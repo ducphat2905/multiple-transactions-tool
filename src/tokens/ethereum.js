@@ -1,13 +1,7 @@
-export const ETH = {
-    address: "ETH",
-    symbol: "ETH",
-    decimal: 18
-}
+import Token from "../objects/Token"
 
-export const USDT = {
-    address: "USDT",
-    symbol: "USDT",
-    decimal: 6
-}
+export const ETH = new Token(null, "ETH", 18, null)
+
+export const USDT = new Token("0xdAC17F958D2ee523a2206206994597C13D831ec7", "USDT", 6, "ERC20/USDT")
 
 export default [ETH, USDT]

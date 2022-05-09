@@ -1,7 +1,5 @@
-export const BNB = {
-    address: "BNB",
-    symbol: "BNB",
-    decimal: 18
-}
+import Token from "../objects/Token"
+
+export const BNB = new Token(null, "BNB", 18, null)
 
 export default [BNB]
