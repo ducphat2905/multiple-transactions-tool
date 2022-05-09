@@ -6,6 +6,7 @@ import DataTable from "../components/DataTable/DataTable"
 import DropFileComponent from "../components/DropFile/DropFile"
 import { getDataTable, TABLE_TYPES } from "../redux/DataTable"
 import { TOOL_STAGES } from "../constants"
+import { toggleToaster } from "../redux/Toaster"
 
 function DropFile() {
     return <DropFileComponent />
@@ -30,7 +31,26 @@ function Logging() {
 function Collect() {
     const [stage, setStage] = useState()
     const { tableType } = useSelector((state) => state.dataTable)
+    const chosenNetwork = useSelector((state) => state.network)
     const dispatch = useDispatch()
+
+    // Display error when provider is not set
+    useEffect(() => {
+        if (!chosenNetwork.hasValidProvider) {
+            dispatch(
+                toggleToaster({
+                    show: true,
+                    message: `The ${chosenNetwork.name} is not configured with a Provider. Please go to Setting and set up a provider for it.`
+                })
+            )
+        } else {
+            dispatch(
+                toggleToaster({
+                    show: false
+                })
+            )
+        }
+    }, [chosenNetwork.hasValidProvider])
 
     useEffect(() => {
         switch (tableType) {
@@ -52,13 +72,15 @@ function Collect() {
 
     return (
         <Row>
-            <Col className="pb-5 px-4">
-                {stage === TOOL_STAGES.DropFile && <DropFile />}
-                {stage === TOOL_STAGES.DataTable && <Table />}
-                {stage === TOOL_STAGES.CollectForm && <CollectForm />}
-                {stage === TOOL_STAGES.SpreadForm && <SpreadForm />}
-                {stage === TOOL_STAGES.Logging && <Logging />}
-            </Col>
+            {chosenNetwork.hasValidProvider && (
+                <Col className="pb-5 px-4">
+                    {stage === TOOL_STAGES.DropFile && <DropFile />}
+                    {stage === TOOL_STAGES.DataTable && <Table />}
+                    {stage === TOOL_STAGES.CollectForm && <CollectForm />}
+                    {stage === TOOL_STAGES.SpreadForm && <SpreadForm />}
+                    {stage === TOOL_STAGES.Logging && <Logging />}
+                </Col>
+            )}
         </Row>
     )
 }
