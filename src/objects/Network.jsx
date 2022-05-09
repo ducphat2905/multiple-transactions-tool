@@ -17,6 +17,7 @@ class Network {
     checkProvider() {
         switch (this.id) {
             case "bsc":
+            case "ropsten":
             case "ethereum": {
                 if (!this.rpcEndpoint) {
                     this.hasValidProvider = false
@@ -34,6 +35,8 @@ class Network {
                 }
                 break
             }
+            case "tron":
+                break
             default:
                 break
         }
