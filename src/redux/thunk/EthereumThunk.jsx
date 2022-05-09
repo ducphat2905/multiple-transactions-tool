@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import Web3js from "../../lib/Web3js"
+import Token from "../../objects/Token"
 import { toggleToaster } from "../Toaster"
 import { setTableType, storeDataTable, TABLE_TYPES } from "../DataTable"
 import { FEATURES, RESULT_COLUMNS } from "../../constants"
@@ -28,15 +29,18 @@ const storeResult = (dispatch, data) => {
 
 const getBalance = createAsyncThunk(
     "ethereum/getBalance",
-    async ({ token, wallets }, { getState, rejectWithValue, dispatch }) => {
+    async ({ token, wallets }, { getState, dispatch }) => {
         const { network } = getState()
         const { dataTable } = getState()
 
         const web3js = new Web3js(network.rpcEndpoint)
 
+        const tokenObj = new Token(token.address, token.symbol, token.decimal, token.AbiType)
+        tokenObj.setAbiJson()
+
         const rows = await Promise.all(
             wallets.map(async (_wallet) => {
-                const { data, error } = await web3js.getBalance(_wallet.address)
+                const { data, error } = await web3js.getBalance(_wallet.address, tokenObj)
 
                 return {
                     ..._wallet,

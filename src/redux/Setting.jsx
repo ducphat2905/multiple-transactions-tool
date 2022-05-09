@@ -3,8 +3,16 @@ import { NETWORKS } from "../constants"
 import { settingStorage } from "./storageNames"
 
 const initialNetworks = () => {
-    // Get from "constant.jsx" by default
-    let networks = NETWORKS.map((network) => ({ ...network }))
+    // Get from "constant.jsx" by default and convert them to Objects
+    let networks = NETWORKS.map((network) => {
+        // Parse from Tokens to Objects
+        const tokens = network.tokens.map((_token) => ({ ..._token }))
+
+        return {
+            ...network,
+            tokens
+        }
+    })
 
     // Get from local storage
     const settingData = localStorage.getItem(settingStorage)

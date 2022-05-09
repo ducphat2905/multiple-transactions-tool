@@ -6,13 +6,14 @@ import Button from "react-bootstrap/Button"
 import Alert from "react-bootstrap/Alert"
 import Nav from "react-bootstrap/Nav"
 import { GridToolbarContainer, GridToolbarExport } from "@mui/x-data-grid"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 import Icon from "../Icon/Icon"
 import IconNames from "../Icon/IconNames"
 import { removeTable, setTableType, TABLE_TYPES } from "../../redux/DataTable"
 import EthereumThunk from "../../redux/thunk/EthereumThunk"
+import Token from "../../objects/Token"
 
 function CustomToolbar() {
     const { tokens } = useSelector((state) => state.network)
@@ -38,10 +39,9 @@ function CustomToolbar() {
     }
 
     // Handle token selection
-    const selectToken = (e) => {
+    const selectToken = (_token) => {
         displayTokenError(false)
-        const { address, decimal, symbol } = e.target.dataset
-        setToken({ address, decimal, symbol })
+        setToken(_token)
     }
 
     // Get balance
@@ -68,6 +68,22 @@ function CustomToolbar() {
         return console.log("Get collectHandler")
     }
 
+    const tokenList = useMemo(() => {
+        return tokens.map((_token) => {
+            const tokenObj = new Token(
+                _token.address,
+                _token.symbol,
+                _token.decimal,
+                _token.AbiType
+            )
+            return (
+                <Dropdown.Item key={_token.symbol} onClick={() => selectToken(_token)}>
+                    {tokenObj.getTokenIcon()} {_token.symbol}
+                </Dropdown.Item>
+            )
+        })
+    }, [tokens])
+
     return (
         <GridToolbarContainer className="mb-4 justify-content-between">
             {/* Get balance / Collect / Spread */}
@@ -78,16 +94,7 @@ function CustomToolbar() {
                         variant="outline-dark"
                         title={token ? `Get Balance: (${token.symbol})` : "Get Balance"}
                         onClick={getBalanceHandler}>
-                        {tokens.map(({ address, symbol, decimal }) => (
-                            <Dropdown.Item
-                                key={symbol}
-                                data-symbol={symbol}
-                                data-address={address}
-                                data-decimal={decimal}
-                                onClick={selectToken}>
-                                {symbol}
-                            </Dropdown.Item>
-                        ))}
+                        {tokenList}
                     </SplitButton>
 
                     <SplitButton
@@ -95,16 +102,7 @@ function CustomToolbar() {
                         variant="outline-success"
                         title={token ? `Collect: (${token.symbol})` : "Collect"}
                         onClick={collectHandler}>
-                        {tokens.map(({ address, symbol, decimal }) => (
-                            <Dropdown.Item
-                                key={symbol}
-                                data-symbol={symbol}
-                                data-address={address}
-                                data-decimal={decimal}
-                                onClick={selectToken}>
-                                {symbol}
-                            </Dropdown.Item>
-                        ))}
+                        {tokenList}
                     </SplitButton>
 
                     <SplitButton
@@ -112,16 +110,7 @@ function CustomToolbar() {
                         variant="outline-primary"
                         title={token ? `Spread: (${token.symbol})` : "Spread"}
                         onClick={collectHandler}>
-                        {tokens.map(({ address, symbol, decimal }) => (
-                            <Dropdown.Item
-                                key={symbol}
-                                data-symbol={symbol}
-                                data-address={address}
-                                data-decimal={decimal}
-                                onClick={selectToken}>
-                                {symbol}
-                            </Dropdown.Item>
-                        ))}
+                        {tokenList}
                     </SplitButton>
 
                     {error && (
