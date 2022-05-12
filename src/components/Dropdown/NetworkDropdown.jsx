@@ -10,9 +10,13 @@ function NetworkDropdown({ selectHandler }) {
     const setting = useSelector((state) => state.setting)
     const selectedNetwork = useSelector((state) => state.network)
     const [network, setNetwork] = useState(() => new Network({ ...selectedNetwork }))
-    const [networks] = useState(() =>
+    const [networks, setNetworks] = useState(() =>
         setting.networks.map((_network) => new Network({ ..._network }))
     )
+
+    useEffect(() => {
+        setNetworks(setting.networks.map((_network) => new Network({ ..._network })))
+    }, [setting.networks])
 
     useEffect(() => {
         // Set chosen network for navbar
