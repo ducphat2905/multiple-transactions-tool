@@ -1,5 +1,6 @@
 import Web3 from "web3"
 import axios from "axios"
+import NumberHelper from "../helpers/Number"
 
 class Web3js {
     web3 = null
@@ -55,15 +56,15 @@ class Web3js {
 
     async getBalance(_address, _token) {
         try {
-            let data = 0
+            let balance = 0
             if (!_token.address && !_token.ABI) {
-                data = await this.web3.eth.getBalance(_address)
+                balance = await this.web3.eth.getBalance(_address)
             } else {
                 const tokenContract = new this.web3.eth.Contract(_token.ABI, _token.address)
-                data = await tokenContract.methods.balanceOf(_address).call()
+                balance = await tokenContract.methods.balanceOf(_address).call()
             }
 
-            return { data }
+            return { data: NumberHelper.parseToDecimalVal(balance, _token.decimal) }
         } catch (error) {
             return { error: error.message }
         }

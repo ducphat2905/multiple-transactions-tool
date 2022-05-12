@@ -35,10 +35,8 @@ const getBalance = createAsyncThunk(
 
         const web3js = new Web3js(network.rpcEndpoint)
 
-        // const tokenObj = new Token(token.address, token.symbol, token.decimal, token.AbiType)
-        // tokenObj.setAbiJson()
         let tokenAbi = abi.listOfAbi.find((_abi) => _abi.address === token.address)?.abi
-        tokenAbi = tokenAbi && JSON.stringify(tokenAbi)
+        tokenAbi = tokenAbi && JSON.stringify(tokenAbi) // Avoid redux to handle json
 
         const rows = await Promise.all(
             wallets.map(async (_wallet) => {

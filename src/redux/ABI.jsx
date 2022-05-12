@@ -59,7 +59,7 @@ const abiSlice = createSlice({
                 const data = JSON.parse(storageData)
 
                 const newAbiList = data.listOfAbi.filter((_abi) => _abi.address !== tokenAddress)
-console.log(newAbiList)
+
                 // Update current state
                 state.listOfAbi = [...newAbiList]
 
