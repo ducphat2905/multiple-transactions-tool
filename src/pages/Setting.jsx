@@ -74,7 +74,7 @@ function Setting() {
         dispatch(updateNetworks({ networks: newNetworks }))
         // Update provider of the chosen network
         const chosenNetwork = newNetworks.find((_network) => _network.id === selectedNetwork.id)
-        if (chosenNetwork.rpcEndpoint !== selectedNetwork.rpcEndpoint) {
+        if (chosenNetwork && chosenNetwork.rpcEndpoint !== selectedNetwork.rpcEndpoint) {
             dispatch(updateChosenNetwork({ chosenNetwork }))
         }
 
