@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { toggleToaster } from "../../redux/Toaster"
 
 function Toaster() {
-    const { show, message } = useSelector((state) => state.toaster)
+    const { show, message, title } = useSelector((state) => state.toaster)
     const dispatch = useDispatch()
 
     return (
@@ -12,7 +12,7 @@ function Toaster() {
                 variant="danger"
                 onClose={() => dispatch(toggleToaster({ show: false }))}
                 dismissible>
-                <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+                <Alert.Heading>{title || "Oh snap! You got an error!"}</Alert.Heading>
                 <p>{message}</p>
             </Alert>
         )

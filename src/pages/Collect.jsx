@@ -36,6 +36,18 @@ function Collect() {
 
     // Display error when provider is not set
     useEffect(() => {
+        if (!chosenNetwork.id) {
+            dispatch(
+                toggleToaster({
+                    show: true,
+                    title: "Error",
+                    message: `No network is selected.`
+                })
+            )
+
+            return
+        }
+
         if (!chosenNetwork.hasValidProvider) {
             dispatch(
                 toggleToaster({
@@ -43,14 +55,16 @@ function Collect() {
                     message: `The ${chosenNetwork.name} is not configured with a Provider. Please go to Setting and set up a provider for it.`
                 })
             )
-        } else {
-            dispatch(
-                toggleToaster({
-                    show: false
-                })
-            )
+
+            return
         }
-    }, [chosenNetwork.hasValidProvider])
+
+        dispatch(
+            toggleToaster({
+                show: false
+            })
+        )
+    }, [chosenNetwork])
 
     useEffect(() => {
         switch (tableType) {

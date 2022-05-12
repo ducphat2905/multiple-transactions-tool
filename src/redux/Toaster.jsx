@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
     show: false,
+    title: "",
     message: ""
 }
 
@@ -10,15 +11,11 @@ const toasterSlice = createSlice({
     initialState,
     reducers: {
         toggleToaster(state, action) {
-            const { show, message } = action.payload
+            const { show, message, title } = action.payload
 
-            if (show) {
-                state.show = true
-                state.message = message
-            } else {
-                state.show = false
-                state.message = ""
-            }
+            state.show = show
+            state.title = title || ""
+            state.message = message || ""
         }
     }
 })
