@@ -23,6 +23,7 @@ import NetworkDropdown from "../components/Dropdown/NetworkDropdown"
 import { updateChosenNetwork } from "../redux/Network"
 import Spinner from "../components/Spinner/Spinner"
 import Web3js from "../lib/Web3js"
+import { addAbi, removeAbiByAddress } from "../redux/ABI"
 
 const { Bsc: BscEndpoints, BscTestnet: BscTestnetEndpoints } = BSC_PROVIDERS
 
@@ -123,6 +124,7 @@ function Setting() {
                         token: newToken
                     })
                 )
+                dispatch(addAbi({ tokenAddress: newToken.address, abi: newToken.ABI }))
 
                 setTimeout(() => {
                     setIsLoading(false)
@@ -150,6 +152,7 @@ function Setting() {
             setIsLoading(false)
 
             dispatch(removeTokenByAddress({ tokenAddress: _tokenAddress, networkId: _networkId }))
+            dispatch(removeAbiByAddress({ tokenAddress: _tokenAddress }))
 
             if (network.id === selectedNetwork) {
                 const chosenNetwork = {

@@ -42,6 +42,7 @@ class Web3js {
                             address: _tokenAddress,
                             symbol,
                             decimal,
+                            ABI: tokenABI,
                             AbiType: `ERC20/${symbol.toUpperCase()}`
                         }
 

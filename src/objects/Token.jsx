@@ -4,26 +4,11 @@ import BnbIcon from "../assets/icons/bsc-icon.png"
 import TrxIcon from "../assets/icons/tron-icon.png"
 import UsdtIcon from "../assets/icons/usdt-icon.png"
 
-import ERC20_USDT from "../ABI/ERC20/USDT.json"
-
 class Token {
-    constructor(_address, _symbol, _decimal, _AbiType) {
+    constructor(_address, _symbol, _decimal) {
         this.address = _address
         this.symbol = _symbol
         this.decimal = _decimal
-        this.AbiType = _AbiType
-    }
-
-    setAbiJson() {
-        switch (this.AbiType) {
-            case "ERC20/USDT": {
-                this.ABI = ERC20_USDT
-                break
-            }
-            default:
-                this.ABI = null
-                break
-        }
     }
 
     getTokenIcon() {
