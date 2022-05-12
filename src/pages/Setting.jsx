@@ -45,11 +45,11 @@ function Setting() {
         setNetworks(setting.networks.map((_network) => new Network({ ..._network })))
     }, [setting.networks])
 
-    useEffect(() => {
-        if (network.id === selectedNetwork.id) {
-            setNetwork(new Network({ ...selectedNetwork }))
-        }
-    }, [selectedNetwork])
+    // useEffect(() => {
+    //     if (network.id === selectedNetwork.id) {
+    //         setNetwork(new Network({ ...selectedNetwork }))
+    //     }
+    // }, [selectedNetwork])
 
     const onChangeEndpoint = (networkId, rpcEndpoint) => {
         setNetworks((prevItems) =>
@@ -87,12 +87,6 @@ function Setting() {
         }
     }
 
-    const showTokens = (_network) => {
-        if (_network.id !== network.id) {
-            setNetwork(_network)
-        }
-    }
-
     const addTokenHandler = async () => {
         setIsLoading(true)
         setTokenSuccess("")
@@ -126,6 +120,23 @@ function Setting() {
                 )
                 dispatch(addAbi({ tokenAddress: newToken.address, abi: newToken.ABI }))
 
+                console.log(selectedNetwork.tokens.findIndex(
+                    (_token) => _token.address === tokenAddress
+                ))
+                // Update to chosen network
+                if (
+                    network.id === selectedNetwork.id &&
+                    selectedNetwork.tokens.findIndex(
+                        (_token) => _token.address === tokenAddress
+                    ) === -1
+                ) {
+                    const chosenNetwork = {
+                        ...selectedNetwork,
+                        tokens: [...selectedNetwork.tokens, newToken]
+                    }
+                    dispatch(updateChosenNetwork({ chosenNetwork }))
+                }
+
                 setTimeout(() => {
                     setIsLoading(false)
                     setNetwork((prev) => ({ ...prev, tokens: [...prev.tokens, newToken] }))
@@ -154,10 +165,10 @@ function Setting() {
             dispatch(removeTokenByAddress({ tokenAddress: _tokenAddress, networkId: _networkId }))
             dispatch(removeAbiByAddress({ tokenAddress: _tokenAddress }))
 
-            if (network.id === selectedNetwork) {
+            if (_networkId === selectedNetwork.id) {
                 const chosenNetwork = {
                     ...selectedNetwork,
-                    tokens: network.tokens.filter((_token) => _token.address !== tokenAddress)
+                    tokens: network.tokens.filter((_token) => _token.address !== _tokenAddress)
                 }
                 dispatch(updateChosenNetwork({ chosenNetwork }))
             }
@@ -302,7 +313,9 @@ function Setting() {
                         <Accordion.Header>Tokens</Accordion.Header>
                         <Accordion.Body className="row">
                             <Col md={3} className="pr-0">
-                                <NetworkDropdown selectHandler={showTokens} />
+                                <NetworkDropdown
+                                    selectHandler={(_network) => setNetwork(_network)}
+                                />
                             </Col>
                             <Col md={9} className="pl-0">
                                 <InputGroup className="mb-3">
