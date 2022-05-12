@@ -62,6 +62,14 @@ export const networkSlice = createSlice({
         updateChosenNetwork(state, action) {
             const { chosenNetwork } = action.payload
 
+            // Update state
+            state.id = chosenNetwork.id
+            state.name = chosenNetwork.name
+            state.blockExplorer = chosenNetwork.blockExplorer
+            state.rpcEndpoint = chosenNetwork.rpcEndpoint
+            state.hasValidProvider = chosenNetwork.hasValidProvider
+            state.tokens = chosenNetwork.tokens
+
             // Get from local storage
             const networkData = localStorage.getItem(networkStorage)
             if (networkData) {
