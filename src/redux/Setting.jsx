@@ -52,14 +52,35 @@ const settingSlice = createSlice({
         addToken(state, action) {
             const { networkId, token } = action.payload
 
-            const newNetworks = state.networks.map((_network) => {
-                if (_network.id === networkId) {
+            const updateNetworks = state.networks.map((_network) => {
+                if (
+                    _network.id === networkId &&
+                    _network.tokens.findIndex((_token) => _token.address === token.address) === -1
+                ) {
                     _network.tokens.push(token)
                 }
                 return _network
             })
 
-            state.networks = newNetworks
+            state.networks = updateNetworks
+
+            // Save to local storage
+            localStorage.setItem(state.storageName, JSON.stringify(state))
+        },
+        removeTokenByAddress(state, action) {
+            const { networkId, tokenAddress } = action.payload
+
+            const updateNetworks = state.networks.map((_network) => {
+                if (_network.id === networkId) {
+                    _network.tokens = _network.tokens.filter(
+                        (_token) => _token.address !== tokenAddress
+                    )
+                }
+
+                return _network
+            })
+
+            state.networks = updateNetworks
 
             // Save to local storage
             localStorage.setItem(state.storageName, JSON.stringify(state))
@@ -67,6 +88,6 @@ const settingSlice = createSlice({
     }
 })
 
-export const { updateNetworks, addToken } = settingSlice.actions
+export const { updateNetworks, addToken, removeTokenByAddress } = settingSlice.actions
 
 export default settingSlice.reducer
