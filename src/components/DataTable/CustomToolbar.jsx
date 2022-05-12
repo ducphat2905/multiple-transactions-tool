@@ -16,7 +16,6 @@ import EthereumThunk from "../../redux/thunk/EthereumThunk"
 import Token from "../../objects/Token"
 
 function CustomToolbar() {
-    const { tokens } = useSelector((state) => state.network)
     const network = useSelector((state) => state.network)
     const { rows, tableType, feature } = useSelector((state) => state.dataTable)
     const dispatch = useDispatch()
@@ -69,7 +68,7 @@ function CustomToolbar() {
     }
 
     const tokenList = useMemo(() => {
-        return tokens.map((_token) => {
+        return network.tokens.map((_token) => {
             const tokenObj = new Token(
                 _token.address,
                 _token.symbol,
@@ -82,7 +81,7 @@ function CustomToolbar() {
                 </Dropdown.Item>
             )
         })
-    }, [tokens])
+    }, [network])
 
     return (
         <GridToolbarContainer className="mb-4 justify-content-between">
