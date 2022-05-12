@@ -9,20 +9,22 @@ import Accordion from "react-bootstrap/Accordion"
 import ListGroup from "react-bootstrap/ListGroup"
 import Alert from "react-bootstrap/Alert"
 import Table from "react-bootstrap/Table"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 
-import { RPC_ENDPOINTS } from "../constants"
-import { addToken, updateNetworks } from "../redux/Setting"
+import { BSC_PROVIDERS } from "../constants"
+import { addToken, removeTokenByAddress, updateNetworks } from "../redux/Setting"
 import Network from "../objects/Network"
 import Icon from "../components/Icon/Icon"
 import IconNames from "../components/Icon/IconNames"
 import InfuraExampleImg from "../assets/images/infura-rpc-endpoint-example.png"
 import NetworkDropdown from "../components/Dropdown/NetworkDropdown"
-import { selectNetwork, updateChosenNetwork } from "../redux/Network"
+import { updateChosenNetwork } from "../redux/Network"
+import Spinner from "../components/Spinner/Spinner"
+import Web3js from "../lib/Web3js"
 
-const { Bsc: BscEndpoints, BscTestnet: BscTestnetEndpoints } = RPC_ENDPOINTS
+const { Bsc: BscEndpoints, BscTestnet: BscTestnetEndpoints } = BSC_PROVIDERS
 
 function Setting() {
     const setting = useSelector((state) => state.setting)
@@ -36,6 +38,17 @@ function Setting() {
     const [tokenError, setTokenError] = useState("")
     const [tokenSuccess, setTokenSuccess] = useState("")
     const [endpointSuccess, setEndpointSuccess] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
+
+    useEffect(() => {
+        setNetworks(setting.networks.map((_network) => new Network({ ..._network })))
+    }, [setting.networks])
+
+    useEffect(() => {
+        if (network.id === selectedNetwork.id) {
+            setNetwork(new Network({ ...selectedNetwork }))
+        }
+    }, [selectedNetwork])
 
     const onChangeEndpoint = (networkId, rpcEndpoint) => {
         setNetworks((prevItems) =>
@@ -61,7 +74,9 @@ function Setting() {
         dispatch(updateNetworks({ networks: newNetworks }))
         // Update provider of the chosen network
         const chosenNetwork = newNetworks.find((_network) => _network.id === selectedNetwork.id)
-        dispatch(updateChosenNetwork({ chosenNetwork }))
+        if (chosenNetwork.rpcEndpoint !== selectedNetwork.rpcEndpoint) {
+            dispatch(updateChosenNetwork({ chosenNetwork }))
+        }
 
         if (newNetworks.findIndex((_network) => _network.hasValidProvider) !== -1) {
             setEndpointSuccess("Successful!")
@@ -77,28 +92,87 @@ function Setting() {
         }
     }
 
-    const addTokenHandler = () => {
-        if (network.id) {
-            const newToken = {
-                address: tokenAddress,
-                symbol: "symbol",
-                decimal: 18
-            }
-            dispatch(
-                addToken({
-                    networkId: network.id,
-                    token: newToken
-                })
-            )
+    const addTokenHandler = async () => {
+        setIsLoading(true)
+        setTokenSuccess("")
+        setTokenError("")
 
-            dispatch(selectNetwork({ id: network.id }))
-            setNetwork((prev) => ({ ...prev, tokens: [...prev.tokens, newToken] }))
-            setTokenSuccess("Successful!")
-            setTokenError("")
-        } else {
+        if (network.id) {
+            if (!network.hasValidProvider) {
+                setIsLoading(false)
+                setTokenSuccess("")
+                setTokenError("Please set up provider for the network first.")
+                return
+            }
+
+            const existed = network.tokens.findIndex((_token) => _token.address === tokenAddress)
+            if (existed !== -1) {
+                setIsLoading(false)
+                setTokenSuccess("")
+                setTokenError("Token already existed.")
+                return
+            }
+
+            const web3js = new Web3js(network.rpcEndpoint)
+            const { data: newToken, error } = await web3js.getTokenData(tokenAddress, network.id)
+
+            if (newToken) {
+                dispatch(
+                    addToken({
+                        networkId: network.id,
+                        token: newToken
+                    })
+                )
+
+                setTimeout(() => {
+                    setIsLoading(false)
+                    setNetwork((prev) => ({ ...prev, tokens: [...prev.tokens, newToken] }))
+                    setTokenSuccess("Successful!")
+                    setTokenError("")
+                }, 1000)
+                return
+            }
+        }
+
+        setTimeout(() => {
+            setIsLoading(false)
             setTokenSuccess("")
             setTokenError("Please select a network")
-        }
+        }, 1000)
+    }
+
+    const removeToken = (_tokenAddress, _networkId) => {
+        setTokenSuccess("")
+        setTokenError("")
+        setIsLoading(true)
+
+        setTimeout(() => {
+            setIsLoading(false)
+
+            dispatch(removeTokenByAddress({ tokenAddress: _tokenAddress, networkId: _networkId }))
+
+            if (network.id === selectedNetwork) {
+                const chosenNetwork = {
+                    ...selectedNetwork,
+                    tokens: network.tokens.filter((_token) => _token.address !== tokenAddress)
+                }
+                dispatch(updateChosenNetwork({ chosenNetwork }))
+            }
+
+            // Update token list
+            setNetwork((_network) => {
+                const newTokenList = _network.tokens.filter(
+                    (_token) => _token.address !== _tokenAddress
+                )
+
+                return {
+                    ..._network,
+                    tokens: [...newTokenList]
+                }
+            })
+            setTokenSuccess("Successful!")
+            setTokenError("")
+        }, 1000)
     }
 
     return (
@@ -243,7 +317,14 @@ function Setting() {
                                     </Button>
                                 </InputGroup>
                             </Col>
+
                             <Col md={12}>
+                                {isLoading && (
+                                    <div className="text-center">
+                                        <Spinner />
+                                    </div>
+                                )}
+
                                 {tokenError && <Alert variant="danger">{tokenError}</Alert>}
                                 {tokenSuccess && <Alert variant="success">{tokenSuccess}</Alert>}
                             </Col>
@@ -252,7 +333,7 @@ function Setting() {
                                 <Table bordered hover size="md">
                                     <thead className="bg-dark text-white">
                                         <tr className="text-center">
-                                            <td colSpan={4} className="p-2">
+                                            <td colSpan={5} className="p-2">
                                                 <h5 className="m-0">Token List (Ethereum)</h5>
                                             </td>
                                         </tr>
@@ -261,15 +342,32 @@ function Setting() {
                                             <th>Symbol</th>
                                             <th>Address</th>
                                             <th>Decimal</th>
+                                            <th> </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {network.tokens.map((_token, index) => (
                                             <tr key={`${_token.symbol}-${_token.address}`}>
                                                 <td>{index + 1}</td>
-                                                <td>{_token.symbol}</td>
+                                                <td>
+                                                    <b>{_token.symbol}</b>
+                                                </td>
                                                 <td>{_token.address}</td>
                                                 <td>{_token.decimal}</td>
+                                                <td>
+                                                    {index !== 0 && (
+                                                        <Button
+                                                            variant="danger"
+                                                            onClick={() =>
+                                                                removeToken(
+                                                                    _token.address,
+                                                                    network.id
+                                                                )
+                                                            }>
+                                                            <Icon name={IconNames.FaTimes} />
+                                                        </Button>
+                                                    )}
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>

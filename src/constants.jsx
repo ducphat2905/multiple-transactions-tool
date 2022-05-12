@@ -30,7 +30,7 @@ export const NETWORKS = [
     new Network({
         id: "bsc",
         name: "Binance Smart Chain",
-        blockExplorer: "https://ropsten.etherscan.io/",
+        blockExplorer: "https://www.bscscan.com/",
         rpcEndpoint: "",
         hasValidProvider: false,
         tokens: BscTokens
@@ -46,7 +46,7 @@ export const NETWORKS = [
     new Network({
         id: "ropsten",
         name: "Ropsten (Testnet)",
-        blockExplorer: "https://www.bscscan.com/",
+        blockExplorer: "https://ropsten.etherscan.io/",
         rpcEndpoint: "",
         hasValidProvider: false,
         tokens: RopstenTokens
@@ -54,7 +54,7 @@ export const NETWORKS = [
 ]
 
 // Rate limit: 10k per 5min
-export const RPC_ENDPOINTS = Object.freeze({
+export const BSC_PROVIDERS = Object.freeze({
     Bsc: [
         "https://bsc-dataseed.binance.org/",
         "https://bsc-dataseed1.defibit.io/",
@@ -118,4 +118,4 @@ export const RESULT_COLUMNS = (newColumn) => {
     ]
 }
 
-export default { TOOL_STAGES, NETWORKS, RPC_ENDPOINTS, INPUT_COLUMNS, RESULT_COLUMNS }
+export default { TOOL_STAGES, NETWORKS, BSC_PROVIDERS, INPUT_COLUMNS, RESULT_COLUMNS }
