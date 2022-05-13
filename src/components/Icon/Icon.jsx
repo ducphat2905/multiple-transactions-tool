@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { BsStackOverflow, BsFillDiagram3Fill, BsPatchCheckFill } from "react-icons/bs"
 import { GiWallet } from "react-icons/gi"
-import { FaCogs, FaEthereum, FaTimes } from "react-icons/fa"
+import { FaCogs, FaEthereum, FaTimes, FaCheck } from "react-icons/fa"
 import { IoMdAlert } from "react-icons/io"
 import { AiOutlineCheckCircle, AiFillCloseCircle } from "react-icons/ai"
 import IconNames from "./IconNames"
@@ -33,6 +33,10 @@ function Icon({ name, className }) {
             }
             case IconNames.FaCogs: {
                 setIcon(<FaCogs className={className} />)
+                break
+            }
+            case IconNames.FaCheck: {
+                setIcon(<FaCheck className={className} />)
                 break
             }
             case IconNames.FaEthereum: {
