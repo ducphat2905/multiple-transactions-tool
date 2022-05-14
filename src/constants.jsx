@@ -10,14 +10,6 @@ export const FEATURES = Object.freeze({
     Spread: "Spread"
 })
 
-export const TOOL_STAGES = Object.freeze({
-    DropFile: "0",
-    DataTable: "1",
-    CollectForm: "2.1",
-    SpreadForm: "2.2",
-    Logging: "3"
-})
-
 export const NETWORKS = [
     new Network({
         id: "ethereum",
@@ -118,4 +110,4 @@ export const RESULT_COLUMNS = (newColumn) => {
     ]
 }
 
-export default { TOOL_STAGES, NETWORKS, BSC_PROVIDERS, INPUT_COLUMNS, RESULT_COLUMNS }
+export default { NETWORKS, BSC_PROVIDERS, INPUT_COLUMNS, RESULT_COLUMNS }

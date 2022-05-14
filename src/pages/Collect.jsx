@@ -1,20 +1,13 @@
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import DataTable from "../components/DataTable/DataTable"
 import DropFileComponent from "../components/DropFile/DropFile"
+import Logger from "../components/Logger/Logger"
 import { getDataTable, TABLE_TYPES } from "../redux/DataTable"
-import { TOOL_STAGES } from "../constants"
 import { toggleToaster } from "../redux/Toaster"
-
-function DropFile() {
-    return <DropFileComponent />
-}
-
-function Table() {
-    return <DataTable />
-}
+import { setStage, STAGES } from "../redux/Stage"
 
 function CollectForm() {
     return <h1>Collect Form</h1>
@@ -24,12 +17,8 @@ function SpreadForm() {
     return <h1>Spread Form</h1>
 }
 
-function Logging() {
-    return <h1>Logging</h1>
-}
-
 function Collect() {
-    const [stage, setStage] = useState()
+    const stage = useSelector((state) => state.stage)
     const { tableType } = useSelector((state) => state.dataTable)
     const chosenNetwork = useSelector((state) => state.network)
     const dispatch = useDispatch()
@@ -67,20 +56,22 @@ function Collect() {
     }, [chosenNetwork])
 
     useEffect(() => {
-        switch (tableType) {
-            case TABLE_TYPES.Empty:
-                setStage(TOOL_STAGES.DropFile)
-                break
-            case TABLE_TYPES.Input:
-                dispatch(getDataTable({ table: TABLE_TYPES.Input }))
-                setStage(TOOL_STAGES.DataTable)
-                break
-            case TABLE_TYPES.Result:
-                dispatch(getDataTable({ table: TABLE_TYPES.Result }))
-                setStage(TOOL_STAGES.DataTable)
-                break
-            default:
-                break
+        if (stage.current !== STAGES.Logger) {
+            switch (tableType) {
+                case TABLE_TYPES.Empty:
+                    dispatch(setStage(STAGES.DropFile))
+                    break
+                case TABLE_TYPES.Input:
+                    dispatch(getDataTable({ table: TABLE_TYPES.Input }))
+                    dispatch(setStage(STAGES.DataTable))
+                    break
+                case TABLE_TYPES.Result:
+                    dispatch(getDataTable({ table: TABLE_TYPES.Result }))
+                    dispatch(setStage(STAGES.DataTable))
+                    break
+                default:
+                    break
+            }
         }
     }, [tableType])
 
@@ -88,11 +79,11 @@ function Collect() {
         <Row>
             {chosenNetwork.hasValidProvider && (
                 <Col className="pb-5 px-4">
-                    {stage === TOOL_STAGES.DropFile && <DropFile />}
-                    {stage === TOOL_STAGES.DataTable && <Table />}
-                    {stage === TOOL_STAGES.CollectForm && <CollectForm />}
-                    {stage === TOOL_STAGES.SpreadForm && <SpreadForm />}
-                    {stage === TOOL_STAGES.Logging && <Logging />}
+                    {stage.current === STAGES.DropFile && <DropFileComponent />}
+                    {stage.current === STAGES.DataTable && <DataTable />}
+                    {stage.current === STAGES.CollectForm && <CollectForm />}
+                    {stage.current === STAGES.SpreadForm && <SpreadForm />}
+                    {stage.current === STAGES.Logger && <Logger />}
                 </Col>
             )}
         </Row>

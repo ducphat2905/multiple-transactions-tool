@@ -11,7 +11,7 @@ const initialState = {
     file: { name: "", type: "", size: 0 },
     columns: [],
     rows: [],
-    feature: ""
+    resultWallets: []
 }
 
 export const dataTableSlice = createSlice({
@@ -22,7 +22,7 @@ export const dataTableSlice = createSlice({
             state.tableType = action.payload
         },
         storeDataTable: (state, action) => {
-            const { name, type, size, rows, tableType, columns, feature } = action.payload
+            const { name, type, size, rows, tableType, columns } = action.payload
 
             // Add id to each row (required by @MUI)
             const rowsWithId = rows.map((row, index) => ({ id: index, ...row }))
@@ -31,8 +31,7 @@ export const dataTableSlice = createSlice({
                 file: { name, type, size },
                 rows: rowsWithId,
                 columns,
-                tableType,
-                feature
+                tableType
             })
 
             if (tableType !== TABLE_TYPES.Empty) localStorage.setItem(tableType, storageData)
@@ -46,7 +45,12 @@ export const dataTableSlice = createSlice({
             state.columns = columns
             state.rows = rowsWithId
             state.tableType = tableType
-            state.feature = feature
+        },
+        setResultWallets(state, action) {
+            state.resultWallets = action.payload
+        },
+        addResultWallet(state, action) {
+            state.resultWallets = [...state.resultWallets, action.payload]
         },
         removeTable: (state, action) => {
             const { table } = action.payload
@@ -62,13 +66,12 @@ export const dataTableSlice = createSlice({
             const storageData = localStorage.getItem(table)
 
             if (storageData) {
-                const { file, rows, columns, tableType, feature } = JSON.parse(storageData)
+                const { file, rows, columns, tableType } = JSON.parse(storageData)
 
                 state.file = file
                 state.columns = columns
                 state.rows = rows
                 state.tableType = tableType
-                state.feature = feature
             } else {
                 state.tableType = table
                 state.rows = initialState.rows
@@ -77,6 +80,13 @@ export const dataTableSlice = createSlice({
     }
 })
 
-export const { setTableType, getDataTable, storeDataTable, removeTable } = dataTableSlice.actions
+export const {
+    setTableType,
+    getDataTable,
+    storeDataTable,
+    setResultWallets,
+    addResultWallet,
+    removeTable
+} = dataTableSlice.actions
 
 export default dataTableSlice.reducer

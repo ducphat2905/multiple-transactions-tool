@@ -4,6 +4,7 @@ import dataTableReducer from "./redux/DataTable"
 import settingReducer from "./redux/Setting"
 import toasterReducer from "./redux/Toaster"
 import abiReducer from "./redux/ABI"
+import stageReducer from "./redux/Stage"
 
 export default configureStore({
     reducer: {
@@ -11,6 +12,7 @@ export default configureStore({
         dataTable: dataTableReducer,
         setting: settingReducer,
         abi: abiReducer,
+        stage: stageReducer,
         toaster: toasterReducer
     }
 })
