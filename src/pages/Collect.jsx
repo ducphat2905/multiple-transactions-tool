@@ -5,17 +5,11 @@ import { useSelector, useDispatch } from "react-redux"
 import DataTable from "../components/DataTable/DataTable"
 import DropFileComponent from "../components/DropFile/DropFile"
 import Logger from "../components/Logger/Logger"
+import CollectForm from "../components/Form/CollectForm"
+import SpreadForm from "../components/Form/SpreadForm"
 import { getDataTable, TABLE_TYPES } from "../redux/DataTable"
 import { toggleToaster } from "../redux/Toaster"
 import { setStage, STAGES } from "../redux/Stage"
-
-function CollectForm() {
-    return <h1>Collect Form</h1>
-}
-
-function SpreadForm() {
-    return <h1>Spread Form</h1>
-}
 
 function Collect() {
     const stage = useSelector((state) => state.stage)

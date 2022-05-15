@@ -1,28 +1,25 @@
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
-import SplitButton from "react-bootstrap/SplitButton"
-import Dropdown from "react-bootstrap/Dropdown"
 import Button from "react-bootstrap/Button"
 import Alert from "react-bootstrap/Alert"
 import Nav from "react-bootstrap/Nav"
 import { GridToolbarContainer, GridToolbarExport } from "@mui/x-data-grid"
-import { useEffect, useState, useMemo } from "react"
+import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 import Icon from "../Icon/Icon"
 import IconNames from "../Icon/IconNames"
 import { removeTable, setResultWallets, setTableType, TABLE_TYPES } from "../../redux/DataTable"
 import EthereumThunk from "../../redux/thunk/EthereumThunk"
-import Token from "../../objects/Token"
-import { setStage, STAGES, setFeature } from "../../redux/Stage"
+import { setStage, STAGES, setFeature, setToken } from "../../redux/Stage"
 import { FEATURES } from "../../constants"
+import TokenDropdown from "../Dropdown/TokenDropdown"
 
 function CustomToolbar() {
     const network = useSelector((state) => state.network)
     const { rows, tableType } = useSelector((state) => state.dataTable)
-    const { feature } = useSelector((state) => state.stage)
+    const { feature, token } = useSelector((state) => state.stage)
     const dispatch = useDispatch()
-    const [token, setToken] = useState(null)
     const [error, setError] = useState("")
 
     useEffect(() => {
@@ -40,11 +37,9 @@ function CustomToolbar() {
         else setError("")
     }
 
-    // Handle token selection
-    const selectToken = (_token) => {
-        displayTokenError(false)
-        setToken(_token)
-    }
+    useEffect(() => {
+        if (token) displayTokenError(false)
+    }, [token])
 
     // Get balance
     const getBalanceHandler = () => {
@@ -66,58 +61,46 @@ function CustomToolbar() {
         )
     }
 
-    // Collect
     const collectHandler = () => {
-        if (!token) return displayTokenError(true)
-        dispatch(setFeature({ feature: FEATURES.Collect, token }))
+        if (!token) {
+            displayTokenError(true)
+            return
+        }
 
-        return console.log("Get collectHandler")
+        dispatch(setFeature({ feature: FEATURES.Collect, token }))
+        dispatch(setStage(STAGES.CollectForm))
     }
 
-    const tokenList = useMemo(() => {
-        return network.tokens.map((_token) => {
-            const tokenObj = new Token(
-                _token.address,
-                _token.symbol,
-                _token.decimal,
-                _token.AbiType
-            )
-            return (
-                <Dropdown.Item key={_token.symbol} onClick={() => selectToken(_token)}>
-                    {tokenObj.getTokenIcon()} {_token.symbol}
-                </Dropdown.Item>
-            )
-        })
-    }, [network])
+    const spreadHandler = () => {
+        if (!token) {
+            displayTokenError(true)
+            return
+        }
+
+        dispatch(setFeature({ feature: FEATURES.Spread, token }))
+        dispatch(setStage(STAGES.SpreadForm))
+    }
 
     return (
         <GridToolbarContainer className="mb-4 justify-content-between">
             {/* Get balance / Collect / Spread */}
             <Row>
                 <Col>
-                    <SplitButton
-                        className="mx-2"
-                        variant="outline-dark"
-                        title={token ? `Get Balance: (${token.symbol})` : "Get Balance"}
-                        onClick={getBalanceHandler}>
-                        {tokenList}
-                    </SplitButton>
-
-                    <SplitButton
-                        className="mx-2"
-                        variant="outline-success"
-                        title={token ? `Collect: (${token.symbol})` : "Collect"}
-                        onClick={collectHandler}>
-                        {tokenList}
-                    </SplitButton>
-
-                    <SplitButton
-                        className="mx-2"
-                        variant="outline-primary"
-                        title={token ? `Spread: (${token.symbol})` : "Spread"}
-                        onClick={collectHandler}>
-                        {tokenList}
-                    </SplitButton>
+                    <TokenDropdown
+                        buttonVariant="outline-dark"
+                        title="Get Balance"
+                        handleClick={getBalanceHandler}
+                    />
+                    <TokenDropdown
+                        buttonVariant="outline-success"
+                        title="Collect"
+                        handleClick={collectHandler}
+                    />
+                    <TokenDropdown
+                        buttonVariant="outline-primary"
+                        title="Spread"
+                        handleClick={spreadHandler}
+                    />
 
                     {error && (
                         <Alert className="mx-2 d-inline p-2" variant="danger">

@@ -21,6 +21,9 @@ const stageSlice = createSlice({
         setStage(state, action) {
             state.current = action.payload
         },
+        setToken(state, action) {
+            state.token = action.payload
+        },
         setFeature(state, action) {
             const { feature, token } = action.payload
             state.feature = feature
@@ -29,6 +32,6 @@ const stageSlice = createSlice({
     }
 })
 
-export const { setStage, setFeature } = stageSlice.actions
+export const { setStage, setToken, setFeature } = stageSlice.actions
 
 export default stageSlice.reducer

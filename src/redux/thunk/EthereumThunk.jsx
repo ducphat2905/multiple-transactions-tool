@@ -35,9 +35,14 @@ const handleResultAsync = (
     resultWallet[token.symbol] = Number.parseToDecimalVal(balance, token.decimal)
     results.push(resultWallet)
 
-    // setTimeout(() => {
-    dispatch(addResultWallet(resultWallet))
-    // }, 0.1 * index)
+    // // Halt when the result reached 50%
+    // if (results.length >= totalLength / 2) {
+    //     setTimeout(() => {
+    //         dispatch(addResultWallet(resultWallet))
+    //     }, 0.1)
+    // } else {
+        dispatch(addResultWallet(resultWallet))
+    // }
 
     if (results.length === totalLength) {
         storeResultInTable(dispatch, { rows: results, file, token })
@@ -52,7 +57,7 @@ const getBalance = createAsyncThunk(
         const totalLength = wallets.length
         const results = []
         const web3js = new Web3js(network.rpcEndpoint)
-        console.log(network.rpcEndpoint)
+
         const batch = new web3js.web3.BatchRequest()
         wallets.forEach(async (_wallet) => {
             if (token.address) {
@@ -102,8 +107,6 @@ const getBalance = createAsyncThunk(
         })
 
         batch.execute()
-
-        // storeResult(dispatch, { rows, file: dataTable.file, token })
     }
 )
 
