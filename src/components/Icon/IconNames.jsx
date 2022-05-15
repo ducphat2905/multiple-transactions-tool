@@ -9,6 +9,7 @@ const IconNames = Object.freeze({
     FaTimes: "FaTimes",
     FaCheck: "FaCheck",
     GiWallet: "GiWallet",
+    IoMdArrowBack: "IoMdArrowBack",
     IoMdAlert: "IoMdAlert"
 })
 

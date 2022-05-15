@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { BsStackOverflow, BsFillDiagram3Fill, BsPatchCheckFill } from "react-icons/bs"
 import { GiWallet } from "react-icons/gi"
 import { FaCogs, FaEthereum, FaTimes, FaCheck } from "react-icons/fa"
-import { IoMdAlert } from "react-icons/io"
+import { IoMdArrowBack, IoMdAlert } from "react-icons/io"
 import { AiOutlineCheckCircle, AiFillCloseCircle } from "react-icons/ai"
 import IconNames from "./IconNames"
 
@@ -49,6 +49,10 @@ function Icon({ name, className }) {
             }
             case IconNames.GiWallet: {
                 setIcon(<GiWallet className={className} />)
+                break
+            }
+            case IconNames.IoMdArrowBack: {
+                setIcon(<IoMdArrowBack className={className} />)
                 break
             }
             case IconNames.IoMdAlert: {
