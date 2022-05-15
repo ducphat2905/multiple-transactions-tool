@@ -29,12 +29,12 @@ const { Bsc: BscEndpoints, BscTestnet: BscTestnetEndpoints } = BSC_PROVIDERS
 
 function Setting() {
     const setting = useSelector((state) => state.setting)
-    const selectedNetwork = useSelector((state) => state.network)
+    const chosenNetwork = useSelector((state) => state.network)
     const dispatch = useDispatch()
     const [networks, setNetworks] = useState(() =>
         setting.networks.map((_network) => new Network({ ..._network }))
     )
-    const [network, setNetwork] = useState(new Network({ ...selectedNetwork }))
+    const [network, setNetwork] = useState(new Network({ ...chosenNetwork }))
     const [tokenAddress, setTokenAddress] = useState("")
     const [tokenError, setTokenError] = useState("")
     const [tokenSuccess, setTokenSuccess] = useState("")
@@ -46,10 +46,10 @@ function Setting() {
     }, [setting.networks])
 
     // useEffect(() => {
-    //     if (network.id === selectedNetwork.id) {
-    //         setNetwork(new Network({ ...selectedNetwork }))
+    //     if (network.id === chosenNetwork.id) {
+    //         setNetwork(new Network({ ...chosenNetwork }))
     //     }
-    // }, [selectedNetwork])
+    // }, [chosenNetwork])
 
     const onChangeEndpoint = (networkId, rpcEndpoint) => {
         setNetworks((prevItems) =>
@@ -74,9 +74,9 @@ function Setting() {
         // Save networks to local storage
         dispatch(updateNetworks({ networks: newNetworks }))
         // Update provider of the chosen network
-        const chosenNetwork = newNetworks.find((_network) => _network.id === selectedNetwork.id)
-        if (chosenNetwork && chosenNetwork.rpcEndpoint !== selectedNetwork.rpcEndpoint) {
-            dispatch(updateChosenNetwork({ chosenNetwork }))
+        const updateNetwork = newNetworks.find((_network) => _network.id === chosenNetwork.id)
+        if (updateNetwork && updateNetwork.rpcEndpoint !== chosenNetwork.rpcEndpoint) {
+            dispatch(updateChosenNetwork({ updateNetwork }))
         }
 
         if (newNetworks.findIndex((_network) => _network.hasValidProvider) !== -1) {
@@ -109,7 +109,7 @@ function Setting() {
             }
 
             const web3js = new Web3js(network.rpcEndpoint)
-            const { data: newToken, error } = await web3js.getTokenData(tokenAddress, network.id)
+            const { data: newToken } = await web3js.getTokenData(tokenAddress, network.id)
 
             if (newToken) {
                 dispatch(
@@ -120,21 +120,18 @@ function Setting() {
                 )
                 dispatch(addAbi({ tokenAddress: newToken.address, abi: newToken.ABI }))
 
-                console.log(selectedNetwork.tokens.findIndex(
-                    (_token) => _token.address === tokenAddress
-                ))
                 // Update to chosen network
                 if (
-                    network.id === selectedNetwork.id &&
-                    selectedNetwork.tokens.findIndex(
+                    network.id === chosenNetwork.id &&
+                    chosenNetwork.tokens.findIndex(
                         (_token) => _token.address === tokenAddress
                     ) === -1
                 ) {
-                    const chosenNetwork = {
-                        ...selectedNetwork,
-                        tokens: [...selectedNetwork.tokens, newToken]
+                    const updateNetwork = {
+                        ...chosenNetwork,
+                        tokens: [...chosenNetwork.tokens, newToken]
                     }
-                    dispatch(updateChosenNetwork({ chosenNetwork }))
+                    dispatch(updateChosenNetwork({ updateNetwork }))
                 }
 
                 setTimeout(() => {
@@ -165,12 +162,12 @@ function Setting() {
             dispatch(removeTokenByAddress({ tokenAddress: _tokenAddress, networkId: _networkId }))
             dispatch(removeAbiByAddress({ tokenAddress: _tokenAddress }))
 
-            if (_networkId === selectedNetwork.id) {
-                const chosenNetwork = {
-                    ...selectedNetwork,
+            if (_networkId === chosenNetwork.id) {
+                const updateNetwork = {
+                    ...chosenNetwork,
                     tokens: network.tokens.filter((_token) => _token.address !== _tokenAddress)
                 }
-                dispatch(updateChosenNetwork({ chosenNetwork }))
+                dispatch(updateChosenNetwork({ updateNetwork }))
             }
 
             // Update token list
