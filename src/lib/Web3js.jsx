@@ -69,6 +69,10 @@ class Web3js {
             return { error: error.message }
         }
     }
+
+    checkAddressFormat(_address) {
+        return this.web3.utils.isAddress(_address)
+    }
 }
 
 export default Web3js
