@@ -23,7 +23,7 @@ function CustomToolbar() {
     const [error, setError] = useState("")
 
     useEffect(() => {
-        setToken(null)
+        dispatch(setToken(null))
     }, [network])
 
     // Remove the dropped file

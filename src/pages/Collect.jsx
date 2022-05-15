@@ -9,11 +9,11 @@ import CollectForm from "../components/Form/CollectForm"
 import SpreadForm from "../components/Form/SpreadForm"
 import { getDataTable, TABLE_TYPES } from "../redux/DataTable"
 import { toggleToaster } from "../redux/Toaster"
-import { setStage, STAGES } from "../redux/Stage"
+import { setFeature, setStage, STAGES } from "../redux/Stage"
 
 function Collect() {
     const stage = useSelector((state) => state.stage)
-    const { tableType } = useSelector((state) => state.dataTable)
+    const { tableType, rows } = useSelector((state) => state.dataTable)
     const chosenNetwork = useSelector((state) => state.network)
     const dispatch = useDispatch()
 
@@ -47,6 +47,13 @@ function Collect() {
                 show: false
             })
         )
+        dispatch(setFeature(""))
+
+        if (rows.length > 0) {
+            dispatch(setStage(STAGES.DataTable))
+        } else {
+            dispatch(setStage(STAGES.DropFile))
+        }
     }, [chosenNetwork])
 
     useEffect(() => {
