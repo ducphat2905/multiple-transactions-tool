@@ -5,10 +5,11 @@ import TrxIcon from "../assets/icons/tron-icon.png"
 import UsdtIcon from "../assets/icons/usdt-icon.png"
 
 class Token {
-    constructor(_address, _symbol, _decimal) {
-        this.address = _address
-        this.symbol = _symbol
-        this.decimal = _decimal
+    constructor({address, symbol, decimal, ABI}) {
+        this.address = address
+        this.symbol = symbol
+        this.decimal = decimal
+        this.ABI = ABI && JSON.parse(ABI)
     }
 
     getTokenIcon() {

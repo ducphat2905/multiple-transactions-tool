@@ -16,7 +16,7 @@ function TokenDropdown({ title, handleClick, buttonVariant }) {
     }
 
     const showTokenIcon = () => {
-        const tokenObject = new Token(token.address, token.symbol, token.decimal)
+        const tokenObject = new Token({ ...token })
         return (
             <>
                 {title}:{" "}
@@ -35,7 +35,7 @@ function TokenDropdown({ title, handleClick, buttonVariant }) {
             title={token ? showTokenIcon() : title}
             onClick={handleClick}>
             {chosenNetwork.tokens.map((_token) => {
-                const tokenObj = new Token(_token.address, _token.symbol, _token.decimal)
+                const tokenObj = new Token({ ..._token })
                 return (
                     <Dropdown.Item key={_token.symbol} onClick={() => selectToken(_token)}>
                         {tokenObj.getTokenIcon()} {_token.symbol}
