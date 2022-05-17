@@ -87,22 +87,115 @@ class Web3js {
         }
     }
 
-    async sendEth({ from, toAddress, amount }) {
+    async getTransferGasFee(
+        { fromAddress, toAddress, amountOfEth, amountOfToken, token },
+        _parseToEth = false
+    ) {
         try {
-            // Check sufficiency
+            let gasFee = 0
+            const gasPrice = await this.web3.eth.getGasPrice()
+            let estimateGas = amountOfEth
+                ? await this.web3.eth.estimateGas({
+                      from: fromAddress,
+                      to: toAddress,
+                      value: this.web3.utils.toWei(amountOfEth, "ether")
+                  })
+                : "0"
+
+            if (token) {
+                const tokenObject = new Token({ ...token })
+                const contract = new this.web3.eth.Contract(tokenObject.ABI, tokenObject.address)
+                const amountToTransfer = NumberHelper.parseFromDecimalVal(
+                    parseFloat(amountOfToken),
+                    token.decimal
+                )
+                estimateGas = await contract.methods
+                    .transfer(toAddress, amountToTransfer.toString())
+                    .estimateGas({
+                        from: fromAddress,
+                        value: "0"
+                    })
+            }
+
+            gasFee = parseInt(gasPrice, 10) * parseInt(estimateGas, 10)
+            gasFee = _parseToEth ? this.web3.utils.fromWei(gasFee.toString(), "ether") : gasFee
+
+            return { data: gasFee }
+        } catch (error) {
+            return { error: error.message }
+        }
+    }
+
+    async checkBalanceEth(_fromAddress, _toAddress, _amountOfEth) {
+        try {
             const { data: ethBalance, error: ethBalanceError } = await this.getEthBalance(
-                from.address
+                _fromAddress
             )
 
             if (ethBalanceError) return { error: ethBalanceError }
 
-            console.log(ethBalance)
+            if (parseInt(ethBalance, 10) === 0) return { error: "Wallet has 0 ETH." }
+
+            const { data: gasFee, error: gasFeeError } = await this.getTransferGasFee({
+                fromAddress: _fromAddress,
+                toAddress: _toAddress,
+                amountOfEth: _amountOfEth
+            })
+
+            if (gasFeeError) return { error: gasFeeError }
+
+            const ethToTransfer =
+                parseInt(this.web3.utils.toWei(_amountOfEth.toString(), "ether"), 10) +
+                parseInt(gasFee, 10)
+
+            if (parseInt(ethBalance, 10) < ethToTransfer)
+                return {
+                    error: `Insufficient balance. Require: ${this.web3.utils.fromWei(
+                        ethToTransfer,
+                        "ether"
+                    )}`
+                }
+
+            return {
+                data: true
+            }
+        } catch (error) {
+            return { error: error.message }
+        }
+    }
+
+    async sendEth({ from, toAddress, amountOfEth }) {
+        try {
+            // Check sufficiency
+            const { error: ethBalanceError } = await this.checkBalanceEth(
+                from.address,
+                toAddress,
+                amountOfEth
+            )
+
+            if (ethBalanceError) return { error: ethBalanceError }
 
             // Transaction Object
+            const transactionObject = {
+                from: from.address,
+                to: toAddress,
+                value: this.web3.utils.toWei(amountOfEth, "ether"),
+                gas: 21000,
+                data: "0x"
+            }
 
-            //
-            const gasFee = await this.web3.eth.getGasPrice()
-            return { data: null }
+            // Sign
+            const signedTransaction = await this.web3.eth.accounts.signTransaction(
+                transactionObject,
+                from.privateKey
+            )
+
+            // Send
+            const receipt = await this.web3.eth.sendSignedTransaction(
+                signedTransaction.rawTransaction
+            )
+
+            return { data: receipt }
         } catch (error) {
             return { error: error.message }
         }
