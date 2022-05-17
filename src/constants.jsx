@@ -69,45 +69,15 @@ export const INPUT_COLUMNS = [
     {
         field: "privateKey",
         headerName: "Private Key",
-        flex: 1.5,
+        flex: 1,
         headerClassName: "bg-light"
     },
     {
         field: "transferringAmount",
         headerName: "Transferring Amount",
-        flex: 0.5,
+        flex: 0.3,
         headerClassName: "bg-light"
     }
 ]
 
-// Columns for table that displays the result
-export const RESULT_COLUMNS = (newColumn) => {
-    return [
-        {
-            field: "address",
-            headerName: "Address",
-            flex: 1,
-            headerClassName: "bg-light"
-        },
-        {
-            field: "privateKey",
-            headerName: "Private Key",
-            flex: 1.5,
-            headerClassName: "bg-light"
-        },
-        {
-            field: "transferringAmount",
-            headerName: "Transferring Amount",
-            flex: 0.5,
-            headerClassName: "bg-light"
-        },
-        {
-            field: newColumn.field,
-            headerName: newColumn.header,
-            flex: newColumn.flex,
-            headerClassName: "bg-light"
-        }
-    ]
-}
-
-export default { NETWORKS, BSC_PROVIDERS, INPUT_COLUMNS, RESULT_COLUMNS }
+export default { NETWORKS, BSC_PROVIDERS, INPUT_COLUMNS }
