@@ -21,6 +21,8 @@ function Logger() {
     const [title, setTitle] = useState("")
     const cardContainer = useRef()
     const [isLoading, setIsLoading] = useState(true)
+    const [fails, setFails] = useState(undefined)
+    const [successes, setSuccesses] = useState(undefined)
 
     useEffect(() => {
         switch (feature) {
@@ -30,6 +32,10 @@ function Logger() {
             }
             case FEATURES.Collect: {
                 setTitle("Collecting")
+                break
+            }
+            case FEATURES.Spread: {
+                setTitle("Spreading")
                 break
             }
             default:
@@ -44,6 +50,9 @@ function Logger() {
         if (resultWallets.length === rows.length) {
             setIsLoading(false)
         }
+
+        setFails(resultWallets.filter((_result) => _result.error).length)
+        setSuccesses(resultWallets.filter((_result) => !_result.error).length)
     }, [resultWallets])
 
     const showTableResult = () => {
@@ -113,8 +122,14 @@ function Logger() {
             </Card.Body>
             <Card.Footer>
                 <div className="d-flex justify-content-end">
+                    <p className="mb-0 mx-2 d-flex justify-content-between align-items-center">
+                        Fail:{" "}
+                        <span className="d-block m-1 p-1 text-danger">{fails}</span>
+                        Success:{" "}
+                        <span className="d-block m-1 p-1 text-success">{successes}</span>
+                    </p>
                     <Button onClick={showTableResult} disabled={isLoading}>
-                        Done ({resultWallets.length})
+                        Done
                     </Button>
                 </div>
             </Card.Footer>
