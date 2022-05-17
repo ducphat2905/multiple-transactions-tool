@@ -17,7 +17,7 @@ import TokenDropdown from "../Dropdown/TokenDropdown"
 
 function CustomToolbar() {
     const network = useSelector((state) => state.network)
-    const { rows, tableType } = useSelector((state) => state.dataTable)
+    const { tableType } = useSelector((state) => state.dataTable)
     const { feature, token } = useSelector((state) => state.stage)
     const dispatch = useDispatch()
     const [error, setError] = useState("")
@@ -55,8 +55,7 @@ function CustomToolbar() {
         dispatch(setResultWallets([]))
         dispatch(
             EthereumThunk.getBalance({
-                token,
-                wallets: rows
+                token
             })
         )
     }
