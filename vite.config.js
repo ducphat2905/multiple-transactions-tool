@@ -9,7 +9,8 @@ export default defineConfig({
             stream: "stream-browserify",
             zlib: "browserify-zlib",
             util: "util",
-            https: "agent-base"
+            https: "agent-base",
+            assert: "assert"
         }
     },
     plugins: [react()]
