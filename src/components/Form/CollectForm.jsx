@@ -8,6 +8,7 @@ import IconNames from "../Icon/IconNames"
 import Web3js from "../../lib/Web3js"
 import { setFeature, setStage, STAGES } from "../../redux/Stage"
 import EthereumThunk from "../../redux/thunk/EthereumThunk"
+import { setResultWallets } from "../../redux/DataTable"
 
 function CollectForm() {
     const dispatch = useDispatch()
@@ -45,6 +46,7 @@ function CollectForm() {
 
         toggleErrorMsg(false)
         dispatch(setStage(STAGES.Logger))
+        dispatch(setResultWallets([]))
         dispatch(EthereumThunk.collect({ token, recipient: { address: recipientAddress } }))
     }
 
