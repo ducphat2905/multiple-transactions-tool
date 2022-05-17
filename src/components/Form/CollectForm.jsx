@@ -7,12 +7,13 @@ import Icon from "../Icon/Icon"
 import IconNames from "../Icon/IconNames"
 import Web3js from "../../lib/Web3js"
 import { setFeature, setStage, STAGES } from "../../redux/Stage"
+import EthereumThunk from "../../redux/thunk/EthereumThunk"
 
 function CollectForm() {
     const dispatch = useDispatch()
     const { token } = useSelector((state) => state.stage)
     const chosenNetwork = useSelector((state) => state.network)
-    const [recipientAddress, setRecipientAddress] = useState("")
+    const [recipientAddress, setRecipientAddress] = useState("0xa6dd3736841f1A1f3f7C27349867D46285c39f58")
     const [error, setError] = useState("")
     const [isValid, setIsValid] = useState()
 
@@ -44,6 +45,7 @@ function CollectForm() {
 
         toggleErrorMsg(false)
         dispatch(setStage(STAGES.Logger))
+        dispatch(EthereumThunk.collect({ token, recipient: { address: recipientAddress } }))
     }
 
     const onBack = () => {

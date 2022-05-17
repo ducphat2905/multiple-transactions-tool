@@ -5,7 +5,7 @@ import TrxIcon from "../assets/icons/tron-icon.png"
 import UsdtIcon from "../assets/icons/usdt-icon.png"
 
 class Token {
-    constructor({address, symbol, decimal, ABI}) {
+    constructor({ address, symbol, decimal, ABI }) {
         this.address = address
         this.symbol = symbol
         this.decimal = decimal

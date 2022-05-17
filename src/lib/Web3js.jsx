@@ -1,6 +1,7 @@
 import Web3 from "web3"
 import axios from "axios"
 import NumberHelper from "../helpers/Number"
+import Token from "../objects/Token"
 
 class Web3js {
     web3 = null
@@ -30,8 +31,11 @@ class Web3js {
                 .get(`${apiFullUrl}${_tokenAddress}`)
                 .then(async (response) => {
                     if (response.data.status === "1") {
-                        const tokenABI = JSON.parse(response.data.result)
-                        const tokenInstance = new this.web3.eth.Contract(tokenABI, _tokenAddress)
+                        const tokenABIString = response.data.result
+                        const tokenInstance = new this.web3.eth.Contract(
+                            JSON.parse(tokenABIString),
+                            _tokenAddress
+                        )
 
                         // Get decimal
                         const decimal = await tokenInstance.methods.decimals().call()
@@ -43,8 +47,7 @@ class Web3js {
                             address: _tokenAddress,
                             symbol,
                             decimal,
-                            ABI: tokenABI,
-                            AbiType: `ERC20/${symbol.toUpperCase()}`
+                            ABI: tokenABIString
                         }
 
                         resolve({ data: token })
@@ -54,24 +57,55 @@ class Web3js {
         })
     }
 
-    async getBalance(_address, _token) {
-        try {
-            let balance = 0
-            if (!_token.address && !_token.ABI) {
-                balance = await this.web3.eth.getBalance(_address)
-            } else {
-                const tokenContract = new this.web3.eth.Contract(_token.ABI, _token.address)
-                balance = await tokenContract.methods.balanceOf(_address).call()
-            }
+    checkAddressFormat(_address) {
+        return this.web3.utils.isAddress(_address)
+    }
 
-            return { data: NumberHelper.parseToDecimalVal(balance, _token.decimal) }
+    async getEthBalance(_address, _parseToEth = false) {
+        try {
+            const balance = await this.web3.eth.getBalance(_address)
+            const data = _parseToEth ? this.web3.utils.fromWei(balance, "ether") : balance
+
+            return { data }
         } catch (error) {
             return { error: error.message }
         }
     }
 
-    checkAddressFormat(_address) {
-        return this.web3.utils.isAddress(_address)
+    async getErc20Balance(_address, _token, _parseToDecimalValue = false) {
+        try {
+            const token = new Token({ ..._token })
+            const contract = new this.web3.eth.Contract(token.ABI, token.address)
+            const balance = await contract.methods.balanceOf(_address).call()
+            const data = _parseToDecimalValue
+                ? NumberHelper.parseToDecimalVal(balance, token.decimal)
+                : balance
+
+            return { data }
+        } catch (error) {
+            return { error: error.message }
+        }
+    }
+
+    async sendEth({ from, toAddress, amount }) {
+        try {
+            // Check sufficiency
+            const { data: ethBalance, error: ethBalanceError } = await this.getEthBalance(
+                from.address
+            )
+
+            if (ethBalanceError) return { error: ethBalanceError }
+
+            console.log(ethBalance)
+
+            // Transaction Object
+
+            //
+            const gasFee = await this.web3.eth.getGasPrice()
+            return { data: null }
+        } catch (error) {
+            return { error: error.message }
+        }
     }
 }
 
