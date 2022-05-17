@@ -12,20 +12,50 @@ function CollectMsg({ wallet }) {
     return (
         <ListGroup.Item>
             <div className="d-flex justify-content-between">
-                <span>
-                    Collected <b>{wallet[token.symbol] ? wallet[token.symbol] : "0"}</b>{" "}
-                    {token.symbol} from
-                    <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
-                        {wallet.address}
-                    </a>
-                </span>
-                <span>
-                    {!wallet.error ? (
-                        <Icon name={IconNames.FaCheck} className="text-success" />
-                    ) : (
-                        <Icon name={IconNames.FaTimes} className="text-danger" />
-                    )}
-                </span>
+                {!wallet.error ? (
+                    <>
+                        <p className="my-1 d-inline">
+                            Collected{" "}
+                            <b>
+                                {wallet.transferringAmount !== null
+                                    ? wallet.transferringAmount
+                                    : "0"}
+                            </b>{" "}
+                            {token.symbol} from{" "}
+                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
+                                {wallet.address}
+                            </a>
+                            <span className="text-success m-1 p-1 d-block">
+                                Transaction hash:{" "}
+                                <a href={`${chosenNetwork.blockExplorer}/tx/${wallet.txHash}`}>
+                                    {wallet.txHash}
+                                </a>
+                            </span>
+                        </p>
+                        <span>
+                            <Icon name={IconNames.FaCheck} className="text-success" />
+                        </span>
+                    </>
+                ) : (
+                    <>
+                        <p className="my-1 d-inline">
+                            Failed to collect{" "}
+                            <b>
+                                {wallet.transferringAmount !== null
+                                    ? wallet.transferringAmount
+                                    : "0"}
+                            </b>{" "}
+                            {token.symbol} from{" "}
+                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
+                                {wallet.address}
+                            </a>
+                            <span className="text-danger m-1 p-1 d-block">{wallet.error}</span>
+                        </p>
+                        <span>
+                            <Icon name={IconNames.FaTimes} className="text-danger" />
+                        </span>
+                    </>
+                )}
             </div>
         </ListGroup.Item>
     )

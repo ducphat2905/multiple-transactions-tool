@@ -12,19 +12,30 @@ function GetBalanceMsg({ wallet }) {
     return (
         <ListGroup.Item>
             <div className="d-flex justify-content-between">
-                <span>
-                    <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
-                        {wallet.address}
-                    </a>{" "}
-                    has <b>{wallet[token.symbol] ? wallet[token.symbol] : "0"}</b> {token.symbol}
-                </span>
-                <span>
-                    {!wallet.error ? (
+                {!wallet.error ? (
+                    <>
+                        <p className="my-1 d-inline">
+                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
+                                {wallet.address}
+                            </a>{" "}
+                            has <b>{wallet[token.symbol] ? wallet[token.symbol] : "0"}</b>{" "}
+                            {token.symbol}
+                        </p>
                         <Icon name={IconNames.FaCheck} className="text-success" />
-                    ) : (
-                        <Icon name={IconNames.FaTimes} className="text-danger" />
-                    )}
-                </span>
+                    </>
+                ) : (
+                    <>
+                        <p className="my-1 d-inline">
+                            Failed to get balance of {token.symbol} from{" "}
+                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
+                                {wallet.address}
+                            </a>
+                        </p>
+                        <span>
+                            <Icon name={IconNames.FaTimes} className="text-danger" />
+                        </span>
+                    </>
+                )}
             </div>
         </ListGroup.Item>
     )
