@@ -68,15 +68,15 @@ function Setting() {
 
         // Networks with updated "hasValidProvider" property
         const validatedNetworks = networks.map((_network) => _network.checkProvider())
-        // Parse from an array of Network to an array of Object
+        // Convert the array from "Networks" to "Objects"
         const newNetworks = validatedNetworks.map((_network) => ({ ..._network }))
 
         // Save networks to local storage
         dispatch(updateNetworks({ networks: newNetworks }))
         // Update provider of the chosen network
-        const updateNetwork = newNetworks.find((_network) => _network.id === chosenNetwork.id)
-        if (updateNetwork && updateNetwork.rpcEndpoint !== chosenNetwork.rpcEndpoint) {
-            dispatch(updateChosenNetwork({ updateNetwork }))
+        if (chosenNetwork.id) {
+            const updateNetwork = newNetworks.find((_network) => _network.id === chosenNetwork.id)
+            dispatch(updateChosenNetwork({ chosenNetwork: updateNetwork }))
         }
 
         if (newNetworks.findIndex((_network) => _network.hasValidProvider) !== -1) {
@@ -123,15 +123,14 @@ function Setting() {
                 // Update to chosen network
                 if (
                     network.id === chosenNetwork.id &&
-                    chosenNetwork.tokens.findIndex(
-                        (_token) => _token.address === tokenAddress
-                    ) === -1
+                    chosenNetwork.tokens.findIndex((_token) => _token.address === tokenAddress) ===
+                        -1
                 ) {
                     const updateNetwork = {
                         ...chosenNetwork,
                         tokens: [...chosenNetwork.tokens, newToken]
                     }
-                    dispatch(updateChosenNetwork({ updateNetwork }))
+                    dispatch(updateChosenNetwork({ chosenNetwork: updateNetwork }))
                 }
 
                 setTimeout(() => {
@@ -167,7 +166,7 @@ function Setting() {
                     ...chosenNetwork,
                     tokens: network.tokens.filter((_token) => _token.address !== _tokenAddress)
                 }
-                dispatch(updateChosenNetwork({ updateNetwork }))
+                dispatch(updateChosenNetwork({ chosenNetwork: updateNetwork }))
             }
 
             // Update token list
