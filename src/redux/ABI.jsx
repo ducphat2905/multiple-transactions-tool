@@ -8,7 +8,7 @@ const getDefaultAbiList = () => {
     let listOfAbi = [
         {
             address: USDT.address,
-            abi: ERC20_USDT
+            abi: JSON.stringify(ERC20_USDT)
         }
     ]
 
