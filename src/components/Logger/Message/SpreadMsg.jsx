@@ -13,8 +13,8 @@ function SpreadMsg({ wallet }) {
         <ListGroup.Item>
             <div className="d-flex justify-content-between">
                 <span>
-                    Spread <b>{wallet[token.symbol] ? wallet[token.symbol] : undefined}</b>{" "}
-                    {token.symbol} to
+                    Spread <b>{wallet[token.symbol] ? wallet[token.symbol] : "0"}</b> {token.symbol}{" "}
+                    to
                     <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
                         {wallet.address}
                     </a>

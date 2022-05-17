@@ -16,8 +16,7 @@ function GetBalanceMsg({ wallet }) {
                     <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
                         {wallet.address}
                     </a>{" "}
-                    has <b>{wallet[token.symbol] ? wallet[token.symbol] : undefined}</b>{" "}
-                    {token.symbol}
+                    has <b>{wallet[token.symbol] ? wallet[token.symbol] : "0"}</b> {token.symbol}
                 </span>
                 <span>
                     {!wallet.error ? (

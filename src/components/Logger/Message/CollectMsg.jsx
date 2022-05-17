@@ -13,7 +13,7 @@ function CollectMsg({ wallet }) {
         <ListGroup.Item>
             <div className="d-flex justify-content-between">
                 <span>
-                    Collected <b>{wallet[token.symbol] ? wallet[token.symbol] : undefined}</b>{" "}
+                    Collected <b>{wallet[token.symbol] ? wallet[token.symbol] : "0"}</b>{" "}
                     {token.symbol} from
                     <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
                         {wallet.address}
