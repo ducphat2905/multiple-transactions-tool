@@ -136,6 +136,17 @@ class Web3js {
 
             if (parseInt(ethBalance, 10) === 0) return { error: "Wallet has 0 ETH." }
 
+            if (_amountOfEth === "0") return { error: "Cannot proceed to transfer 0 ETH." }
+
+            const weiToTransfer = this.web3.utils.toWei(_amountOfEth, "ether")
+            if (parseInt(ethBalance, 10) < parseInt(weiToTransfer, 10))
+                return {
+                    error: `Insufficient balance. Require: ${_amountOfEth} || Balance: ${this.web3.utils.fromWei(
+                        ethBalance,
+                        "ether"
+                    )}`
+                }
+
             const { data: gasFee, error: gasFeeError } = await this.getTransferGasFee({
                 fromAddress: _fromAddress,
                 toAddress: _toAddress,
@@ -144,14 +155,14 @@ class Web3js {
 
             if (gasFeeError) return { error: gasFeeError }
 
-            const ethToTransfer =
-                parseInt(this.web3.utils.toWei(_amountOfEth.toString(), "ether"), 10) +
-                parseInt(gasFee, 10)
-
-            if (parseInt(ethBalance, 10) < ethToTransfer)
+            const totalWeiToTransfer = parseInt(weiToTransfer, 10) + parseInt(gasFee, 10)
+            if (parseInt(ethBalance, 10) < totalWeiToTransfer)
                 return {
                     error: `Insufficient balance. Require: ${this.web3.utils.fromWei(
-                        ethToTransfer,
+                        gasFee,
+                        "ether"
+                    )} (gas) + ${_amountOfEth} || Balance: ${this.web3.utils.fromWei(
+                        ethBalance,
                         "ether"
                     )}`
                 }

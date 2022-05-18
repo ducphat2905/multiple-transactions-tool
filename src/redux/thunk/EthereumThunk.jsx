@@ -1,14 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import Web3js from "../../lib/Web3js"
 import Token from "../../objects/Token"
-import {
-    addResultWallet,
-    setResultWallets,
-    setTableType,
-    storeDataTable,
-    TABLE_TYPES
-} from "../DataTable"
-import { FEATURES, INPUT_COLUMNS } from "../../constants"
+import { addResultWallet, setTableType, storeDataTable, TABLE_TYPES } from "../DataTable"
+import { FEATURES } from "../../constants"
 import Number from "../../helpers/Number"
 
 const resultColumns = [
