@@ -123,10 +123,9 @@ function Logger() {
             <Card.Footer>
                 <div className="d-flex justify-content-end">
                     <p className="mb-0 mx-2 d-flex justify-content-between align-items-center">
-                        Fail:{" "}
-                        <span className="d-block m-1 p-1 text-danger">{fails}</span>
-                        Success:{" "}
-                        <span className="d-block m-1 p-1 text-success">{successes}</span>
+                        Total: <span className="d-block m-1 p-1 text-primary">{rows.length}</span>
+                        Fail: <span className="d-block m-1 p-1 text-danger">{fails}</span>
+                        Success: <span className="d-block m-1 p-1 text-success">{successes}</span>
                     </p>
                     <Button onClick={showTableResult} disabled={isLoading}>
                         Done

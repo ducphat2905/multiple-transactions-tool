@@ -22,7 +22,7 @@ export const dataTableSlice = createSlice({
             state.tableType = action.payload
         },
         storeDataTable: (state, action) => {
-            const { name, type, size, rows, tableType, columns } = action.payload
+            const { name, type, size, rows, tableType, columns, feature } = action.payload
 
             // Add id to each row (required by @MUI)
             const rowsWithId = rows.map((row, index) => ({ id: index, ...row }))
@@ -31,7 +31,8 @@ export const dataTableSlice = createSlice({
                 file: { name, type, size },
                 rows: rowsWithId,
                 columns,
-                tableType
+                tableType,
+                feature
             })
 
             if (tableType !== TABLE_TYPES.Empty) localStorage.setItem(tableType, storageData)
@@ -45,6 +46,7 @@ export const dataTableSlice = createSlice({
             state.columns = columns
             state.rows = rowsWithId
             state.tableType = tableType
+            state.feature = feature
         },
         setResultWallets(state, action) {
             state.resultWallets = action.payload
@@ -66,12 +68,13 @@ export const dataTableSlice = createSlice({
             const storageData = localStorage.getItem(table)
 
             if (storageData) {
-                const { file, rows, columns, tableType } = JSON.parse(storageData)
+                const { file, rows, columns, tableType, feature } = JSON.parse(storageData)
 
                 state.file = file
                 state.columns = columns
                 state.rows = rows
                 state.tableType = tableType
+                state.feature = feature
             } else {
                 state.tableType = table
                 state.rows = initialState.rows

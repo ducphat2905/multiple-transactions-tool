@@ -17,8 +17,8 @@ import TokenDropdown from "../Dropdown/TokenDropdown"
 
 function CustomToolbar() {
     const network = useSelector((state) => state.network)
-    const { tableType } = useSelector((state) => state.dataTable)
-    const { feature, token } = useSelector((state) => state.stage)
+    const { tableType, feature } = useSelector((state) => state.dataTable)
+    const { token } = useSelector((state) => state.stage)
     const dispatch = useDispatch()
     const [error, setError] = useState("")
 

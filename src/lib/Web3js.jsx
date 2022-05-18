@@ -74,11 +74,10 @@ class Web3js {
 
     async getErc20Balance(_address, _token, _parseToDecimalValue = false) {
         try {
-            const token = new Token({ ..._token })
-            const contract = new this.web3.eth.Contract(token.ABI, token.address)
+            const contract = new this.web3.eth.Contract(_token.ABI, _token.address)
             const balance = await contract.methods.balanceOf(_address).call()
             const data = _parseToDecimalValue
-                ? NumberHelper.parseToDecimalVal(balance, token.decimal)
+                ? NumberHelper.parseToDecimalVal(balance, _token.decimal)
                 : balance
 
             return { data }
@@ -103,8 +102,7 @@ class Web3js {
                 : "0"
 
             if (token) {
-                const tokenObject = new Token({ ...token })
-                const contract = new this.web3.eth.Contract(tokenObject.ABI, tokenObject.address)
+                const contract = new this.web3.eth.Contract(token.ABI, token.address)
                 const amountToTransfer = NumberHelper.parseFromDecimalVal(
                     parseFloat(amountOfToken),
                     token.decimal
@@ -120,7 +118,13 @@ class Web3js {
             gasFee = parseInt(gasPrice, 10) * parseInt(estimateGas, 10)
             gasFee = _parseToEth ? this.web3.utils.fromWei(gasFee.toString(), "ether") : gasFee
 
-            return { data: gasFee }
+            return {
+                data: {
+                    gasFee,
+                    estimateGas,
+                    gasPrice
+                }
+            }
         } catch (error) {
             return { error: error.message }
         }
@@ -136,8 +140,6 @@ class Web3js {
 
             if (parseInt(ethBalance, 10) === 0) return { error: "Wallet has 0 ETH." }
 
-            if (_amountOfEth === "0") return { error: "Cannot proceed to transfer 0 ETH." }
-
             const weiToTransfer = this.web3.utils.toWei(_amountOfEth, "ether")
             if (parseInt(ethBalance, 10) < parseInt(weiToTransfer, 10))
                 return {
@@ -147,19 +149,20 @@ class Web3js {
                     )}`
                 }
 
-            const { data: gasFee, error: gasFeeError } = await this.getTransferGasFee({
+            const { data: transferGas, error: transferGasError } = await this.getTransferGasFee({
                 fromAddress: _fromAddress,
                 toAddress: _toAddress,
                 amountOfEth: _amountOfEth
             })
 
-            if (gasFeeError) return { error: gasFeeError }
+            if (transferGasError) return { error: transferGasError }
 
-            const totalWeiToTransfer = parseInt(weiToTransfer, 10) + parseInt(gasFee, 10)
+            const totalWeiToTransfer =
+                parseInt(weiToTransfer, 10) + parseInt(transferGas.gasFee, 10)
             if (parseInt(ethBalance, 10) < totalWeiToTransfer)
                 return {
                     error: `Insufficient balance. Require: ${this.web3.utils.fromWei(
-                        gasFee,
+                        transferGas.gasFee,
                         "ether"
                     )} (gas) + ${_amountOfEth} || Balance: ${this.web3.utils.fromWei(
                         ethBalance,
@@ -177,6 +180,8 @@ class Web3js {
 
     async sendEth({ from, toAddress, amountOfEth }) {
         try {
+            if (amountOfEth === "0") return { error: "Cannot proceed to transfer 0 ETH." }
+
             // Check sufficiency
             const { error: ethBalanceError } = await this.checkBalanceEth(
                 from.address,
@@ -193,6 +198,118 @@ class Web3js {
                 value: this.web3.utils.toWei(amountOfEth, "ether"),
                 gas: 21000,
                 data: "0x"
+            }
+
+            // Sign
+            const signedTransaction = await this.web3.eth.accounts.signTransaction(
+                transactionObject,
+                from.privateKey
+            )
+
+            // Send
+            const receipt = await this.web3.eth.sendSignedTransaction(
+                signedTransaction.rawTransaction
+            )
+
+            return { data: receipt }
+        } catch (error) {
+            return { error: error.message }
+        }
+    }
+
+    async checkBalanceErc20(_fromAddress, _toAddress, _amountOfToken, _token) {
+        try {
+            const { data: erc20Balance, error: erc20BalanceError } = await this.getErc20Balance(
+                _fromAddress,
+                new Token({ ..._token })
+            )
+
+            if (erc20BalanceError) return { error: erc20BalanceError }
+
+            if (parseInt(erc20Balance, 10) === 0) return { error: `Wallet has 0 ${_token.symbol}.` }
+
+            if (_amountOfToken === "0")
+                return { error: `Cannot proceed to transfer 0 ${_token.symbol}.` }
+
+            const tokenToTransfer = NumberHelper.parseFromDecimalVal(_amountOfToken, _token.decimal)
+            if (parseInt(erc20Balance, 10) < tokenToTransfer)
+                return {
+                    error: `Insufficient balance. Require: ${_amountOfToken} || Balance: ${NumberHelper.parseToDecimalVal(
+                        erc20Balance,
+                        _token.decimal
+                    )}`
+                }
+
+            // Check sufficiency
+            const { error: ethBalanceError } = await this.checkBalanceEth(
+                _fromAddress,
+                _toAddress,
+                "0"
+            )
+
+            if (ethBalanceError) return { error: ethBalanceError }
+
+            return {
+                data: true
+            }
+        } catch (error) {
+            return { error: error.message }
+        }
+    }
+
+    async getTransferData(toAddress, amountOfToken, token) {
+        try {
+            const contract = new this.web3.eth.Contract(token.ABI, token.address)
+            const tokenToTransfer = NumberHelper.parseFromDecimalVal(amountOfToken, token.decimal)
+            const transferData = await contract.methods
+                .transfer(toAddress, tokenToTransfer.toString())
+                .encodeABI()
+
+            return { data: transferData }
+        } catch (error) {
+            return { error: error.message }
+        }
+    }
+
+    async sendErc20({ from, toAddress, amountOfToken, token }) {
+        try {
+            if (amountOfToken === "0") return { error: "Cannot proceed to transfer 0 ETH." }
+
+            // Check sufficiency
+            const { error: erc20BalanceError } = await this.checkBalanceErc20(
+                from.address,
+                toAddress,
+                amountOfToken,
+                token
+            )
+
+            if (erc20BalanceError) return { error: erc20BalanceError }
+
+            const { data: transferGas, error: transferGasError } = await this.getTransferGasFee({
+                fromAddress: from.address,
+                toAddress,
+                amountOfToken,
+                token: new Token({ ...token })
+            })
+
+            if (transferGasError) return { error: transferGasError }
+
+            const { data: transferData, error: transferDataErr } = await this.getTransferData(
+                toAddress,
+                amountOfToken,
+                new Token({ ...token })
+            )
+
+            if (transferDataErr) return { error: transferDataErr }
+
+            // Transaction Object
+            const transactionObject = {
+                from: from.address,
+                to: token.address,
+                value: "0",
+                gas: transferGas.estimateGas,
+                gasPrice: transferGas.gasPrice,
+                data: transferData
             }
 
             // Sign
