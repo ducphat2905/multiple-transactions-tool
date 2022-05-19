@@ -61,6 +61,16 @@ class Web3js {
         return this.web3.utils.isAddress(_address)
     }
 
+    getWalletByPk(_privateKey) {
+        try {
+            const wallet = this.web3.eth.accounts.privateKeyToAccount(_privateKey)
+
+            return { data: { address: wallet.address, privateKey: wallet.privateKey } }
+        } catch (error) {
+            return { error: error.message }
+        }
+    }
+
     async getEthBalance(_address, _parseToEth = false) {
         try {
             const balance = await this.web3.eth.getBalance(_address)

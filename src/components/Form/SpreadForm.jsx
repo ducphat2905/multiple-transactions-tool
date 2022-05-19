@@ -12,38 +12,30 @@ function SpreadForm() {
     const dispatch = useDispatch()
     const { token } = useSelector((state) => state.stage)
     const chosenNetwork = useSelector((state) => state.network)
+    const [spreaderPk, setSpreaderPk] = useState("")
     const [spreaderAddress, setSpreaderAddress] = useState("")
+    const [spreaderBalance, setSpreaderBalance] = useState(0)
+    const [amountToSpread, setAmountToSpread] = useState(0)
     const [error, setError] = useState("")
-    const [isValid, setIsValid] = useState()
+    const [isValidPk, setIsValidPk] = useState()
+    const [isEnoughBalance, setIsEnoughBalance] = useState()
 
-    const toggleErrorMsg = (hasError, errorMsg) => {
+    const toggleErrorMsg = (hasError, errorMsg, setValid) => {
         if (hasError) {
             setError(errorMsg)
-            setIsValid(false)
+            setValid(false)
         } else {
             setError("")
-            setIsValid(true)
+            setValid(true)
         }
     }
 
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        if (!spreaderAddress) {
-            toggleErrorMsg(true, "Please provide the recipient's address")
-            return
-        }
+        console.log(amountToSpread)
 
-        const web3js = new Web3js(chosenNetwork.rpcEndpoint)
-        const isValidFormat = web3js.checkAddressFormat(spreaderAddress)
-
-        if (!isValidFormat) {
-            toggleErrorMsg(true, "Invalid format")
-            return
-        }
-
-        toggleErrorMsg(false)
-        dispatch(setStage(STAGES.Logger))
+        // dispatch(setStage(STAGES.Logger))
     }
 
     const onBack = () => {
@@ -51,6 +43,35 @@ function SpreadForm() {
         dispatch(setFeature(""))
     }
 
+    const onPkChange = async (e) => {
+        const privateKey = e.target.value
+        toggleErrorMsg(false, "", setIsValidPk)
+        setSpreaderAddress("")
+        setSpreaderBalance("")
+        setSpreaderPk(privateKey)
+
+        if (privateKey) {
+            // Check private key
+            const web3js = new Web3js(chosenNetwork.rpcEndpoint)
+            const { data: wallet, error: walletError } = await web3js.getWalletByPk(privateKey)
+            if (walletError) {
+                toggleErrorMsg(true, walletError, setIsValidPk)
+                return
+            }
+
+            const { data: balance, error: balanceError } = token.address
+                ? await web3js.getErc20Balance(wallet.address, token.address, true)
+                : await web3js.getEthBalance(wallet.address, true)
+
+            if (balanceError) {
+                toggleErrorMsg(true, balanceError, setIsEnoughBalance)
+                return
+            }
+
+            setSpreaderAddress(wallet.address)
+            setSpreaderBalance(balance)
+        }
+    }
     return (
         <>
             <div>
@@ -64,18 +85,42 @@ function SpreadForm() {
                     <div className="my-2 py-2">
                         <Form onSubmit={handleSubmit} noValidate>
                             <Form.Group className="mb-3">
-                                <Form.Label>Spreader&apos;s address</Form.Label>
+                                <Form.Label>Spreader&apos;s private key</Form.Label>
                                 <Form.Control
                                     type="text"
                                     required
-                                    value={spreaderAddress}
-                                    onChange={(e) => setSpreaderAddress(e.target.value)}
-                                    isInvalid={isValid === false}
-                                    isValid={isValid === true}
+                                    value={spreaderPk}
+                                    onChange={onPkChange}
+                                    isInvalid={isValidPk === false}
+                                    isValid={isValidPk === true}
                                 />
                                 <Form.Control.Feedback type="invalid">
                                     {error}
                                 </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Spreader&apos;s address</Form.Label>
+                                <Form.Control type="text" disabled value={spreaderAddress} />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Balance of {token.symbol}</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    disabled
+                                    value={spreaderBalance}
+                                    isInvalid={isEnoughBalance === false}
+                                    isValid={isEnoughBalance === true}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>{token.symbol} for each wallet</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    min={0}
+                                    step={0.0001}
+                                    value={amountToSpread}
+                                    onChange={(e) => setAmountToSpread(e.target.value)}
+                                />
                             </Form.Group>
                             <Button type="submit" variant="primary w-100">
                                 Start collecting
