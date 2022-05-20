@@ -1,12 +1,16 @@
 import Card from "react-bootstrap/Card"
 import Button from "react-bootstrap/Button"
 import Form from "react-bootstrap/Form"
+import InputGroup from "react-bootstrap/InputGroup"
 import { useDispatch, useSelector } from "react-redux"
 import { useState } from "react"
 import Web3js from "../../lib/Web3js"
 import { setFeature, setStage, STAGES } from "../../redux/Stage"
 import Icon from "../Icon/Icon"
 import IconNames from "../Icon/IconNames"
+import EthereumThunk from "../../redux/thunk/EthereumThunk"
+import { setResultWallets } from "../../redux/DataTable"
+import Token from "../../objects/Token"
 
 function SpreadForm() {
     const dispatch = useDispatch()
@@ -19,6 +23,7 @@ function SpreadForm() {
     const [error, setError] = useState("")
     const [isValidPk, setIsValidPk] = useState()
     const [isEnoughBalance, setIsEnoughBalance] = useState()
+    const [isValidAmount, setIsValidAmount] = useState()
 
     const toggleErrorMsg = (hasError, errorMsg, setValid) => {
         if (hasError) {
@@ -30,14 +35,6 @@ function SpreadForm() {
         }
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-
-        console.log(amountToSpread)
-
-        // dispatch(setStage(STAGES.Logger))
-    }
-
     const onBack = () => {
         dispatch(setStage(STAGES.DataTable))
         dispatch(setFeature(""))
@@ -46,6 +43,8 @@ function SpreadForm() {
     const onPkChange = async (e) => {
         const privateKey = e.target.value
         toggleErrorMsg(false, "", setIsValidPk)
+        setIsEnoughBalance(undefined)
+        setIsValidAmount(undefined)
         setSpreaderAddress("")
         setSpreaderBalance("")
         setSpreaderPk(privateKey)
@@ -60,7 +59,7 @@ function SpreadForm() {
             }
 
             const { data: balance, error: balanceError } = token.address
-                ? await web3js.getErc20Balance(wallet.address, token.address, true)
+                ? await web3js.getErc20Balance(wallet.address, new Token({ ...token }), true)
                 : await web3js.getEthBalance(wallet.address, true)
 
             if (balanceError) {
@@ -72,6 +71,30 @@ function SpreadForm() {
             setSpreaderBalance(balance)
         }
     }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        setIsValidAmount(undefined)
+        toggleErrorMsg(false, "", setIsValidAmount)
+
+        if (parseFloat(amountToSpread) <= 0) {
+            toggleErrorMsg(true, "Amount must be larger than 0", setIsValidAmount)
+            return
+        }
+
+        if (spreaderAddress && spreaderAddress && spreaderBalance && amountToSpread) {
+            const spreader = {
+                address: spreaderAddress,
+                privateKey: spreaderPk,
+                [`${token.symbol}`]: spreaderBalance
+            }
+
+            dispatch(setStage(STAGES.Logger))
+            dispatch(setResultWallets([]))
+            dispatch(EthereumThunk.spread({ token, spreader, amountToSpread }))
+        }
+    }
+
     return (
         <>
             <div>
@@ -80,49 +103,88 @@ function SpreadForm() {
                 </Button>
             </div>
             <Card className="mt-3">
-                <Card.Header as="h5">Spread ({token.symbol})</Card.Header>
+                <Card.Header className="text-center" as="h5">
+                    Spread ({token.symbol})
+                </Card.Header>
                 <Card.Body>
+                    <Card.Title>
+                        <h6 className="text-primary">Spreader wallet</h6>
+                    </Card.Title>
                     <div className="my-2 py-2">
                         <Form onSubmit={handleSubmit} noValidate>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Spreader&apos;s private key</Form.Label>
+                            {/* Private key */}
+                            <InputGroup className="my-3">
+                                <InputGroup.Text id="private-key-label">
+                                    Private key
+                                </InputGroup.Text>
                                 <Form.Control
                                     type="text"
+                                    aria-label="private-key"
+                                    aria-describedby="private-key-label"
                                     required
                                     value={spreaderPk}
                                     onChange={onPkChange}
                                     isInvalid={isValidPk === false}
                                     isValid={isValidPk === true}
                                 />
-                                <Form.Control.Feedback type="invalid">
+                                <Form.Control.Feedback className="p-1" type="invalid">
                                     {error}
                                 </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Spreader&apos;s address</Form.Label>
-                                <Form.Control type="text" disabled value={spreaderAddress} />
-                            </Form.Group>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Balance of {token.symbol}</Form.Label>
+                            </InputGroup>
+                            {/* Address */}
+                            <InputGroup className="my-3">
+                                <InputGroup.Text id="address-label">Address</InputGroup.Text>
                                 <Form.Control
                                     type="text"
+                                    aria-label="address"
+                                    aria-describedby="address-label"
+                                    disabled
+                                    value={spreaderAddress}
+                                />
+                            </InputGroup>
+                            {/* Balance */}
+                            <InputGroup className="my-3">
+                                <InputGroup.Text id="balance-label">
+                                    Balance of {token.symbol}
+                                </InputGroup.Text>
+                                <Form.Control
+                                    type="text"
+                                    aria-label="balance"
+                                    aria-describedby="balance-label"
                                     disabled
                                     value={spreaderBalance}
                                     isInvalid={isEnoughBalance === false}
                                     isValid={isEnoughBalance === true}
                                 />
-                            </Form.Group>
-                            <Form.Group className="mb-3">
-                                <Form.Label>{token.symbol} for each wallet</Form.Label>
+                                <Form.Control.Feedback className="p-1" type="invalid">
+                                    {error}
+                                </Form.Control.Feedback>
+                            </InputGroup>
+
+                            <Card.Title className="my-3">
+                                <h6 className="text-primary">Amount</h6>
+                            </Card.Title>
+                            {/* Amount to spread */}
+                            <InputGroup className="mb-3">
+                                <InputGroup.Text id="spread-amount-label">
+                                    {token.symbol} for each wallet
+                                </InputGroup.Text>
                                 <Form.Control
                                     type="number"
+                                    aria-label="spread-amount"
+                                    aria-describedby="spread-amount-label"
                                     min={0}
                                     step={0.0001}
                                     value={amountToSpread}
                                     onChange={(e) => setAmountToSpread(e.target.value)}
+                                    isInvalid={isValidAmount === false}
+                                    isValid={isValidAmount === true}
                                 />
-                            </Form.Group>
-                            <Button type="submit" variant="primary w-100">
+                                <Form.Control.Feedback className="p-1" type="invalid">
+                                    {error}
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                            <Button className="my-3" type="submit" variant="primary w-100">
                                 Start collecting
                             </Button>
                         </Form>

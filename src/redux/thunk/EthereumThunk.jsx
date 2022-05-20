@@ -3,7 +3,6 @@ import Web3js from "../../lib/Web3js"
 import Token from "../../objects/Token"
 import { addResultWallet, setTableType, storeDataTable, TABLE_TYPES } from "../DataTable"
 import { FEATURES } from "../../constants"
-import Number from "../../helpers/Number"
 
 const resultColumns = [
     {
@@ -177,4 +176,71 @@ const collect = createAsyncThunk(
     }
 )
 
-export default { getBalance, collect }
+const spread = createAsyncThunk(
+    "ethereum/spread",
+    async ({ token, spreader, amountToSpread }, { dispatch, getState }) => {
+        const { network, dataTable, stage } = getState()
+        const wallets = dataTable.rows
+        const web3js = new Web3js(network.rpcEndpoint)
+
+        const resultWallets = await Promise.all(
+            wallets.map(async (_wallet, index) => {
+                // new Promise((resolve, reject) => {
+                const resultWallet = {
+                    ..._wallet
+                }
+                // setTimeout(async () => {
+                // const transferredAmount = _wallet.transferringAmount
+                //     ? _wallet.transferringAmount
+                //     : "0"
+
+                if (!token.address) {
+                    const { data: receipt, error: receiptError } = await web3js.sendEth({
+                        from: spreader,
+                        toAddress: _wallet.address,
+                        amountOfEth: amountToSpread,
+                        nonce: index
+                    })
+
+                    resultWallet.error = receiptError
+                    resultWallet.txHash = receipt?.transactionHash
+                    resultWallet.status = !receiptError
+                    resultWallet.transferredETH = amountToSpread
+
+                    dispatch(addResultWallet(resultWallet))
+                } else {
+                    const { data: receipt, error: receiptError } = await web3js.sendErc20({
+                        from: spreader,
+                        toAddress: _wallet.address,
+                        amountOfToken: amountToSpread,
+                        token,
+                        nonce: index
+                    })
+
+                    resultWallet.error = receiptError
+                    resultWallet.txHash = receipt?.transactionHash
+                    resultWallet.status = !receiptError
+                    resultWallet[`transferred${token.symbol.toUpperCase()}`] = amountToSpread
+
+                    dispatch(addResultWallet(resultWallet))
+                }
+
+                console.log(resultWallet)
+                return resultWallet
+                // resolve(resultWallet)
+                // }, 10 * index)
+            })
+        )
+
+        console.log(resultWallets)
+
+        storeResultInTable(dispatch, {
+            file: dataTable.file,
+            rows: resultWallets,
+            token,
+            feature: stage.feature
+        })
+    }
+)
+
+export default { getBalance, collect, spread }
