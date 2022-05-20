@@ -188,7 +188,7 @@ class Web3js {
         }
     }
 
-    async sendEth({ from, toAddress, amountOfEth }) {
+    async sendEth({ from, toAddress, amountOfEth, nonce }) {
         try {
             if (amountOfEth === "0") return { error: "Cannot proceed to transfer 0 ETH." }
 
@@ -208,6 +208,11 @@ class Web3js {
                 value: this.web3.utils.toWei(amountOfEth, "ether"),
                 gas: 21000,
                 data: "0x"
+            }
+
+            if (nonce) {
+                const numOfTx = await this.web3.eth.getTransactionCount(from.address, "pending")
+                transactionObject.nonce = this.web3.utils.toHex(parseInt(numOfTx, 10) + nonce)
             }
 
             // Sign
@@ -281,7 +286,7 @@ class Web3js {
         }
     }
 
-    async sendErc20({ from, toAddress, amountOfToken, token }) {
+    async sendErc20({ from, toAddress, amountOfToken, token, nonce }) {
         try {
             if (amountOfToken === "0") return { error: "Cannot proceed to transfer 0 ETH." }
 
@@ -320,6 +325,11 @@ class Web3js {
                 gas: transferGas.estimateGas,
                 gasPrice: transferGas.gasPrice,
                 data: transferData
+            }
+
+            if (nonce) {
+                const numOfTx = await this.web3.eth.getTransactionCount(from.address, "pending")
+                transactionObject.nonce = this.web3.utils.toHex(parseInt(numOfTx, 10) + nonce)
             }
 
             // Sign
