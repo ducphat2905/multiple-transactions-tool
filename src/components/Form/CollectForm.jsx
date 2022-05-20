@@ -14,7 +14,9 @@ function CollectForm() {
     const dispatch = useDispatch()
     const { token } = useSelector((state) => state.stage)
     const chosenNetwork = useSelector((state) => state.network)
-    const [recipientAddress, setRecipientAddress] = useState("0xa6dd3736841f1A1f3f7C27349867D46285c39f58")
+    const [recipientAddress, setRecipientAddress] = useState(
+        "0xa6dd3736841f1A1f3f7C27349867D46285c39f58"
+    )
     const [error, setError] = useState("")
     const [isValid, setIsValid] = useState()
 
@@ -63,7 +65,9 @@ function CollectForm() {
                 </Button>
             </div>
             <Card className="mt-3">
-                <Card.Header as="h5">Collect ({token.symbol})</Card.Header>
+                <Card.Header className="text-center" as="h5">
+                    Collect ({token.symbol})
+                </Card.Header>
                 <Card.Body>
                     <div className="m-2 p-2">
                         <Form onSubmit={handleSubmit} noValidate>
