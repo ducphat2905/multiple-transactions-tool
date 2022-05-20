@@ -10,7 +10,7 @@ function SpreadMsg({ wallet }) {
     const { token } = useSelector((state) => state.stage)
 
     return (
-        <ListGroup.Item>
+        <ListGroup.Item key={wallet.id}>
             <div className="d-flex justify-content-between">
                 {!wallet.error ? (
                     <>
