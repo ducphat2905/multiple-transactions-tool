@@ -10,7 +10,7 @@ function GetBalanceMsg({ wallet }) {
     const { token } = useSelector((state) => state.stage)
 
     return (
-        <ListGroup.Item key={wallet.id}>
+        <ListGroup.Item>
             <div className="d-flex justify-content-between">
                 {!wallet.error ? (
                     <>

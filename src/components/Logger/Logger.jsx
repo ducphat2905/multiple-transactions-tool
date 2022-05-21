@@ -109,13 +109,13 @@ function Logger() {
                     style={{ overflowY: "scroll", maxHeight: "80vh" }}>
                     <ListGroup className="my-2">
                         {resultWallets.map((wallet) => (
-                            <>
+                            <div key={wallet.id}>
                                 {feature === FEATURES.GetBalance && (
                                     <GetBalanceMsg wallet={wallet} />
                                 )}
                                 {feature === FEATURES.Collect && <CollectMsg wallet={wallet} />}
                                 {feature === FEATURES.Spread && <SpreadMsg wallet={wallet} />}
-                            </>
+                            </div>
                         ))}
                     </ListGroup>
                 </div>
