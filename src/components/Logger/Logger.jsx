@@ -16,7 +16,7 @@ import SpreadMsg from "./Message/SpreadMsg"
 
 function Logger() {
     const { feature, token } = useSelector((state) => state.stage)
-    const { resultWallets, rows } = useSelector((state) => state.dataTable)
+    const { resultMessages, rows } = useSelector((state) => state.dataTable)
     const dispatch = useDispatch()
     const [title, setTitle] = useState("")
     const cardContainer = useRef()
@@ -47,13 +47,13 @@ function Logger() {
         const element = cardContainer.current
         element.scrollTop = element.scrollHeight
 
-        if (resultWallets.length === rows.length) {
+        if (resultMessages.length === rows.length) {
             setIsLoading(false)
         }
 
-        setFails(resultWallets.filter((_result) => _result.error).length)
-        setSuccesses(resultWallets.filter((_result) => !_result.error).length)
-    }, [resultWallets])
+        setFails(resultMessages.filter((_result) => _result.error).length)
+        setSuccesses(resultMessages.filter((_result) => !_result.error).length)
+    }, [resultMessages])
 
     const showTableResult = () => {
         dispatch(setStage(STAGES.DataTable))
@@ -96,11 +96,11 @@ function Logger() {
                 <ProgressBar
                     striped
                     variant="success"
-                    now={resultWallets.length}
+                    now={resultMessages.length}
                     className="my-3"
                     max={rows.length}
                     min={0}
-                    label={`${Math.floor((resultWallets.length / rows.length) * 100)}%`}
+                    label={`${Math.floor((resultMessages.length / rows.length) * 100)}%`}
                 />
 
                 <div
@@ -108,7 +108,7 @@ function Logger() {
                     className="py-2 my-2"
                     style={{ overflowY: "scroll", maxHeight: "80vh" }}>
                     <ListGroup className="my-2">
-                        {resultWallets.map((wallet) => (
+                        {resultMessages.map((wallet) => (
                             <div key={wallet.id}>
                                 {feature === FEATURES.GetBalance && (
                                     <GetBalanceMsg wallet={wallet} />

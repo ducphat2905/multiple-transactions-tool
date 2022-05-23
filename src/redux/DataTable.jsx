@@ -11,7 +11,7 @@ const initialState = {
     file: { name: "", type: "", size: 0 },
     columns: [],
     rows: [],
-    resultWallets: []
+    resultMessages: []
 }
 
 export const dataTableSlice = createSlice({
@@ -48,11 +48,11 @@ export const dataTableSlice = createSlice({
             state.tableType = tableType
             state.feature = feature
         },
-        setResultWallets(state, action) {
-            state.resultWallets = action.payload
+        setResultMessages(state, action) {
+            state.resultMessages = action.payload
         },
-        addResultWallet(state, action) {
-            state.resultWallets = [...state.resultWallets, action.payload]
+        addResultMessage(state, action) {
+            state.resultMessages = [...state.resultMessages, action.payload]
         },
         removeTable: (state, action) => {
             const { table } = action.payload
@@ -87,8 +87,8 @@ export const {
     setTableType,
     getDataTable,
     storeDataTable,
-    setResultWallets,
-    addResultWallet,
+    setResultMessages,
+    addResultMessage,
     removeTable
 } = dataTableSlice.actions
 

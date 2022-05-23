@@ -9,7 +9,7 @@ import { setFeature, setStage, STAGES } from "../../redux/Stage"
 import Icon from "../Icon/Icon"
 import IconNames from "../Icon/IconNames"
 import EthereumThunk from "../../redux/thunk/EthereumThunk"
-import { setResultWallets } from "../../redux/DataTable"
+import { getDataTable, setResultMessages, TABLE_TYPES } from "../../redux/DataTable"
 import Token from "../../objects/Token"
 
 function SpreadForm() {
@@ -77,7 +77,7 @@ function SpreadForm() {
         setIsValidAmount(undefined)
         toggleErrorMsg(false, "", setIsValidAmount)
 
-        if (parseFloat(amountToSpread, 10) <= 0) {
+        if (parseFloat(amountToSpread) <= 0) {
             toggleErrorMsg(true, "Amount must be larger than 0", setIsValidAmount)
             return
         }
@@ -90,12 +90,13 @@ function SpreadForm() {
             }
 
             dispatch(setStage(STAGES.Logger))
-            dispatch(setResultWallets([]))
+            dispatch(setResultMessages([]))
+            dispatch(getDataTable({ table: TABLE_TYPES.Input }))
             dispatch(
                 EthereumThunk.spread({
                     token,
                     spreader,
-                    amountToSpread: parseFloat(amountToSpread, 10).toString() // Prevent cases like: "012"
+                    amountToSpread: parseFloat(amountToSpread).toString() // Prevent cases like: "012"
                 })
             )
         }

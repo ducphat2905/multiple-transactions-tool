@@ -73,11 +73,83 @@ export const INPUT_COLUMNS = [
         headerClassName: "bg-light"
     },
     {
-        field: "transferringAmount",
-        headerName: "Transferring Amount",
+        field: "amountToTransfer",
+        headerName: "Amount To Transfer",
         flex: 0.3,
         headerClassName: "bg-light"
     }
 ]
 
-export default { NETWORKS, BSC_PROVIDERS, INPUT_COLUMNS }
+export const getBalanceColumns = (tokenSymbol) => [
+    {
+        field: "address",
+        headerName: "Address",
+        flex: 0.7,
+        headerClassName: "bg-light"
+    },
+    {
+        field: "status",
+        flex: 0.1,
+        headerName: "Status",
+        headerClassName: "bg-light"
+    },
+    {
+        field: tokenSymbol.toUpperCase(),
+        flex: 0.3,
+        headerName: tokenSymbol.toUpperCase(),
+        headerClassName: "bg-light"
+    },
+    {
+        field: "error",
+        flex: 0.7,
+        headerName: "Error",
+        headerClassName: "bg-light"
+    }
+]
+
+export const TX_COLUMNS = [
+    {
+        field: "transactionHash",
+        headerName: "Transaction Hash",
+        flex: 1,
+        headerClassName: "bg-light"
+    },
+    {
+        field: "fromAddress",
+        headerName: "From",
+        flex: 0.7,
+        headerClassName: "bg-light"
+    },
+    {
+        field: "toAddress",
+        headerName: "To",
+        flex: 0.7,
+        headerClassName: "bg-light"
+    },
+    {
+        field: "transferredAmount",
+        flex: 0.3,
+        headerName: "Transferred Amount",
+        headerClassName: "bg-light"
+    },
+    {
+        field: "status",
+        flex: 0.1,
+        headerName: "Status",
+        headerClassName: "bg-light"
+    },
+    {
+        field: "gasFee",
+        flex: 0.3,
+        headerName: "Gas fee (ETH)",
+        headerClassName: "bg-light"
+    },
+    {
+        field: "error",
+        flex: 0.7,
+        headerName: "Error",
+        headerClassName: "bg-light"
+    }
+]
+
+export default { NETWORKS, BSC_PROVIDERS, INPUT_COLUMNS, getBalanceColumns, TX_COLUMNS }

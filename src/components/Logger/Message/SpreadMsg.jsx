@@ -16,19 +16,16 @@ function SpreadMsg({ wallet }) {
                     <>
                         <p className="my-1 d-inline">
                             Spread{" "}
-                            <b>
-                                {wallet[`transferred${token.symbol}`]
-                                    ? wallet[`transferred${token.symbol}`]
-                                    : "0"}
-                            </b>{" "}
+                            <b>{wallet.transferredAmount ? wallet.transferredAmount : "0"}</b>{" "}
                             {token.symbol} to{" "}
-                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
-                                {wallet.address}
+                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.toAddress}`}>
+                                {wallet.toAddress}
                             </a>
                             <span className="text-success m-1 p-1 d-block">
                                 Transaction hash:{" "}
-                                <a href={`${chosenNetwork.blockExplorer}/tx/${wallet.txHash}`}>
-                                    {wallet.txHash}
+                                <a
+                                    href={`${chosenNetwork.blockExplorer}/tx/${wallet.transactionHash}`}>
+                                    {wallet.transactionHash}
                                 </a>
                             </span>
                         </p>
@@ -40,14 +37,10 @@ function SpreadMsg({ wallet }) {
                     <>
                         <p className="my-1 d-inline">
                             Failed to spread{" "}
-                            <b>
-                                {wallet[`transferred${token.symbol}`]
-                                    ? wallet[`transferred${token.symbol}`]
-                                    : "0"}
-                            </b>{" "}
+                            <b>{wallet.amountToTransfer ? wallet.amountToTransfer : "0"}</b>{" "}
                             {token.symbol} to{" "}
-                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
-                                {wallet.address}
+                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.toAddress}`}>
+                                {wallet.toAddress}
                             </a>
                             <span className="text-danger m-1 p-1 d-block">{wallet.error}</span>
                         </p>

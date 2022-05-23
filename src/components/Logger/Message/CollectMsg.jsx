@@ -17,9 +17,7 @@ function CollectMsg({ wallet }) {
                         <p className="my-1 d-inline">
                             Collected{" "}
                             <b>
-                                {wallet.transferringAmount !== null
-                                    ? wallet.transferringAmount
-                                    : "0"}
+                                {wallet.amountToTransfer !== null ? wallet.amountToTransfer : "0"}
                             </b>{" "}
                             {token.symbol} from{" "}
                             <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
@@ -27,8 +25,9 @@ function CollectMsg({ wallet }) {
                             </a>
                             <span className="text-success m-1 p-1 d-block">
                                 Transaction hash:{" "}
-                                <a href={`${chosenNetwork.blockExplorer}/tx/${wallet.txHash}`}>
-                                    {wallet.txHash}
+                                <a
+                                    href={`${chosenNetwork.blockExplorer}/tx/${wallet.transactionHash}`}>
+                                    {wallet.transactionHash}
                                 </a>
                             </span>
                         </p>
@@ -41,9 +40,7 @@ function CollectMsg({ wallet }) {
                         <p className="my-1 d-inline">
                             Failed to collect{" "}
                             <b>
-                                {wallet.transferringAmount !== null
-                                    ? wallet.transferringAmount
-                                    : "0"}
+                                {wallet.amountToTransfer !== null ? wallet.amountToTransfer : "0"}
                             </b>{" "}
                             {token.symbol} from{" "}
                             <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>

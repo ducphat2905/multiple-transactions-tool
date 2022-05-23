@@ -9,7 +9,13 @@ import { useDispatch, useSelector } from "react-redux"
 
 import Icon from "../Icon/Icon"
 import IconNames from "../Icon/IconNames"
-import { getDataTable, removeTable, setResultMessages, setTableType, TABLE_TYPES } from "../../redux/DataTable"
+import {
+    getDataTable,
+    removeTable,
+    setResultMessages,
+    setTableType,
+    TABLE_TYPES
+} from "../../redux/DataTable"
 import EthereumThunk from "../../redux/thunk/EthereumThunk"
 import { setStage, STAGES, setFeature, setToken } from "../../redux/Stage"
 import { FEATURES } from "../../constants"
@@ -17,7 +23,7 @@ import TokenDropdown from "../Dropdown/TokenDropdown"
 
 function CustomToolbar() {
     const network = useSelector((state) => state.network)
-    const { tableType, feature, rows } = useSelector((state) => state.dataTable)
+    const { tableType, feature } = useSelector((state) => state.dataTable)
     const { token } = useSelector((state) => state.stage)
     const dispatch = useDispatch()
     const [error, setError] = useState("")
@@ -53,11 +59,10 @@ function CustomToolbar() {
         dispatch(setFeature({ feature: FEATURES.GetBalance, token }))
         dispatch(setStage(STAGES.Logger))
         dispatch(setResultMessages([]))
-        dispatch(getDataTable({table: TABLE_TYPES.Input}))
+        dispatch(getDataTable({ table: TABLE_TYPES.Input }))
         dispatch(
             EthereumThunk.getBalance({
-                token,
-                wallets: rows
+                token
             })
         )
     }
