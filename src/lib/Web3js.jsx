@@ -9,9 +9,14 @@ class Web3js {
         try {
             this.web3 = new Web3(_provider)
             // this.web3.eth.transactionPollingTimeout = 300
+            this.gasPriceRate = 1.11
         } catch (error) {
             this.error = error.message
         }
+    }
+
+    setGasPriceRate(_gasPriceRate) {
+        this.gasPriceRate = parseInt(_gasPriceRate, 10)
     }
 
     getTokenData(_tokenAddress, _networkId) {
@@ -139,7 +144,7 @@ class Web3js {
         try {
             let gasFee = 0
             // Increase gas fee in case the gasPrice raises
-            const fluctuationRate = 1.1
+            const fluctuationRate = this.gasPriceRate
             let gasPrice = await this.web3.eth.getGasPrice()
             gasPrice = Math.floor(parseInt(gasPrice, 10) * fluctuationRate)
             let estimateGas = "21000" // default gas for transferring between wallets
@@ -158,6 +163,7 @@ class Web3js {
                     })
             }
 
+            // estimateGas = Math.floor(parseInt(estimateGas, 10) * 1.05)
             gasFee = gasPrice * parseInt(estimateGas, 10)
             gasFee = _parseToEth
                 ? this.web3.utils.fromWei(gasFee.toString(), "ether")
@@ -170,6 +176,19 @@ class Web3js {
                     gasPrice: gasPrice.toString()
                 }
             }
+        } catch (error) {
+            return { error: error.message }
+        }
+    }
+
+    async getGasPrice(increaseByGasRate = false) {
+        try {
+            let gasPrice = await this.web3.eth.getGasPrice()
+            if (increaseByGasRate) {
+                gasPrice = parseInt(gasPrice, 10) * this.gasPriceRate
+            }
+
+            return { data: gasPrice }
         } catch (error) {
             return { error: error.message }
         }
@@ -192,7 +211,7 @@ class Web3js {
             if (weiBalance < gasFee) {
                 return {
                     error: `
-                Insufficient for gas fee.
+                Insufficient ETH for gas fee.
                 Require: [${this.web3.utils.fromWei(gasFee.toString(), "ether")}]
                 ~ Balance: [${this.web3.utils.fromWei(weiBalance.toString(), "ether")}]`
                 }
@@ -201,7 +220,7 @@ class Web3js {
             if (weiBalance === gasFee) {
                 return {
                     error: `
-                The balance is only enough for gas fee.
+                The balance of ETH is only enough for gas fee.
                 Gas fee: [${this.web3.utils.fromWei(gasFee.toString(), "ether")}]
                 ~ Balance: [${this.web3.utils.fromWei(weiBalance.toString(), "ether")}]`
                 }
@@ -260,26 +279,24 @@ class Web3js {
             if (cannotPayGas) return { error: cannotPayGas }
 
             const amountOfWei = parseInt(this.web3.utils.toWei(amountOfEth, "ether"), 10)
-            const gasPrice = await this.web3.eth.getGasPrice()
-            const weiOfGasFee = parseInt(gasPrice, 10) * parseInt(transferGas.estimateGas, 10)
-            const weiToTransfer = _includeGasFee
-                ? // amountOfWei - parseInt(transferGas.gasFee, 10)
-                  amountOfWei - weiOfGasFee
-                : amountOfWei
+            // const {data: gasPrice} = await this.getGasPrice(false)
+            // const { estimateGas } = transferGas
+            const { gasPrice, estimateGas } = transferGas
+            const weiOfGasFee = parseInt(gasPrice, 10) * parseInt(estimateGas, 10)
+            const weiToTransfer = _includeGasFee ? amountOfWei - weiOfGasFee : amountOfWei
 
             // Transaction Object
             const transactionObject = {
                 from: from.address,
                 to: toAddress,
                 value: weiToTransfer.toString(),
-                // gasPrice: transferGas.gasPrice,
                 gasPrice,
-                gas: transferGas.estimateGas,
+                gas: estimateGas,
                 data: "0x"
             }
 
             if (nonce) {
-                let numOfTx = await this.web3.eth.getTransactionCount(from.address, "pending")
+                let numOfTx = await this.web3.eth.getTransactionCount(from.address, "latest")
                 numOfTx = parseInt(numOfTx, 10) + parseInt(nonce, 10)
                 transactionObject.nonce = this.web3.utils.toHex(numOfTx)
             }
@@ -428,7 +445,7 @@ class Web3js {
             if (parseInt(wei20Balance, 10) < wei20ToTransfer)
                 return {
                     error: `
-                    Insufficient balance. 
+                    Insufficient ${token.symbol}. 
                     Require: [${erc20ToTransfer}] 
                     ~ Balance: [${NumberHelper.parseToDecimalVal(wei20Balance, token.decimal)}]`
                 }
@@ -483,12 +500,11 @@ class Web3js {
                 value: "0",
                 gas: transferGas.estimateGas,
                 gasPrice: transferGas.gasPrice,
-                // gasPrice: await this.web3.eth.getGasPrice(),
                 data: transferData
             }
 
             if (nonce) {
-                let numOfTx = await this.web3.eth.getTransactionCount(from.address, "pending")
+                let numOfTx = await this.web3.eth.getTransactionCount(from.address, "latest")
                 numOfTx = parseInt(numOfTx, 10) + parseInt(nonce, 10)
                 transactionObject.nonce = this.web3.utils.toHex(numOfTx)
             }
@@ -519,6 +535,13 @@ class Web3js {
         // In here, "wei20" represents the smallest unit of the given ERC20 Token.
         try {
             const result = { ...from }
+            const { data: weiBalance, error: weiBalanceError } = await this.getEthBalance(
+                result.address
+            )
+            if (weiBalanceError) return { error: weiBalanceError }
+
+            result.weiBalance = weiBalance
+            result.weiToTransfer = "0"
 
             // Get erc20 to transfer
             const { data: erc20ToTransfer, error: amountError } = await this.getAmountToTransfer(
@@ -542,8 +565,6 @@ class Web3js {
 
             if (notSufficient) return { error: notSufficient }
 
-            result.weiBalance = await this.getEthBalance(result.address)
-            result.weiToTransfer = "0"
             result.wei20Balance = wei20Balance
             result.wei20ToTransfer = wei20ToTransfer
 
@@ -578,6 +599,13 @@ class Web3js {
         // In here, "wei20" represents the smallest unit of the given ERC20 Token.
         try {
             const result = { ...from }
+            const { data: weiBalance, error: weiBalanceError } = await this.getEthBalance(
+                result.address
+            )
+            if (weiBalanceError) return { error: weiBalanceError }
+
+            result.weiBalance = weiBalance
+            result.weiToTransfer = "0"
 
             // Get erc20 to transfer
             const { data: erc20ToTransfer, error: amountError } = await this.getAmountToTransfer(
@@ -601,8 +629,6 @@ class Web3js {
 
             if (notSufficient) return { error: notSufficient }
 
-            result.weiBalance = await this.getEthBalance(result.address)
-            result.weiToTransfer = "0"
             result.wei20Balance = wei20Balance
             result.wei20ToTransfer = wei20ToTransfer
 
