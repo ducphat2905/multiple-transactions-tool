@@ -9,7 +9,7 @@ import Accordion from "react-bootstrap/Accordion"
 import ListGroup from "react-bootstrap/ListGroup"
 import Alert from "react-bootstrap/Alert"
 import Table from "react-bootstrap/Table"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 
@@ -44,12 +44,6 @@ function Setting() {
     useEffect(() => {
         setNetworks(setting.networks.map((_network) => new Network({ ..._network })))
     }, [setting.networks])
-
-    // useEffect(() => {
-    //     if (network.id === chosenNetwork.id) {
-    //         setNetwork(new Network({ ...chosenNetwork }))
-    //     }
-    // }, [chosenNetwork])
 
     const onChangeEndpoint = (networkId, rpcEndpoint) => {
         setNetworks((prevItems) =>
@@ -185,6 +179,82 @@ function Setting() {
         }, 1000)
     }
 
+    const MainNetworks = useMemo(() => {
+        let mainNetworks = setting.networks.filter((_network) => _network.type === "mainnet")
+        mainNetworks = mainNetworks.map((_network) => new Network({ ..._network }))
+
+        return mainNetworks.map((_network) => (
+            <InputGroup key={_network.id} className="mb-3">
+                <InputGroup.Text id="basic-addon1">
+                    <span className="mx-1">{_network.getIconComponent()}</span>
+                    {_network.name}
+                </InputGroup.Text>
+
+                {_network.id === "bsc" ? (
+                    <Form.Select
+                        value={_network.rpcEndpoint}
+                        onChange={(e) => onChangeEndpoint(_network.id, e.target.value)}>
+                        <option value="">Choose a RPC endpoint</option>
+                        {BscEndpoints.map((endpoint) => (
+                            <option key={endpoint} value={endpoint}>
+                                {endpoint}
+                            </option>
+                        ))}
+                    </Form.Select>
+                ) : (
+                    <FormControl
+                        value={_network.rpcEndpoint}
+                        onChange={(e) => onChangeEndpoint(_network.id, e.target.value)}
+                        placeholder="Enter the RPC's endpoint (URL) here ."
+                    />
+                )}
+
+                <Button className="row" variant={_network.hasValidProvider ? "success" : "danger"}>
+                    {_network.hasValidProvider && <Icon name={IconNames.AiOutlineCheckCircle} />}
+                    {!_network.hasValidProvider && <Icon name={IconNames.AiFillCloseCircle} />}
+                </Button>
+            </InputGroup>
+        ))
+    }, [setting.networks])
+
+    const TestNetworks = useMemo(() => {
+        let testNetworks = setting.networks.filter((_network) => _network.type === "testnet")
+        testNetworks = testNetworks.map((_network) => new Network({ ..._network }))
+
+        return testNetworks.map((_network) => (
+            <InputGroup key={_network.id} className="mb-3">
+                <InputGroup.Text id="basic-addon1">
+                    <span className="mx-1">{_network.getIconComponent()}</span>
+                    {_network.name}
+                </InputGroup.Text>
+
+                {_network.id === "bsc-testnet" ? (
+                    <Form.Select
+                        value={_network.rpcEndpoint}
+                        onChange={(e) => onChangeEndpoint(_network.id, e.target.value)}>
+                        <option value="">Choose a RPC endpoint</option>
+                        {BscEndpoints.map((endpoint) => (
+                            <option key={endpoint} value={endpoint}>
+                                {endpoint}
+                            </option>
+                        ))}
+                    </Form.Select>
+                ) : (
+                    <FormControl
+                        value={_network.rpcEndpoint}
+                        onChange={(e) => onChangeEndpoint(_network.id, e.target.value)}
+                        placeholder="Enter the RPC's endpoint (URL) here."
+                    />
+                )}
+
+                <Button className="row" variant={_network.hasValidProvider ? "success" : "danger"}>
+                    {_network.hasValidProvider && <Icon name={IconNames.AiOutlineCheckCircle} />}
+                    {!_network.hasValidProvider && <Icon name={IconNames.AiFillCloseCircle} />}
+                </Button>
+            </InputGroup>
+        ))
+    }, [setting.networks])
+
     return (
         <Row className="pb-5 px-4">
             <Col className="m-3 p-2">
@@ -195,58 +265,12 @@ function Setting() {
                         <Accordion.Body>
                             <Form onSubmit={onSaveEndpoints}>
                                 <Col className="m-2 p-1">
-                                    {networks.map((_network) => (
-                                        <InputGroup key={_network.id} className="mb-3">
-                                            <InputGroup.Text id="basic-addon1">
-                                                <span className="mx-1">
-                                                    {_network.getIconComponent()}
-                                                </span>
-                                                {_network.name}
-                                            </InputGroup.Text>
-
-                                            {_network.id === "bsc" ? (
-                                                <Form.Select
-                                                    value={_network.rpcEndpoint}
-                                                    onChange={(e) =>
-                                                        onChangeEndpoint(
-                                                            _network.id,
-                                                            e.target.value
-                                                        )
-                                                    }>
-                                                    <option value="">Choose a RPC endpoint</option>
-                                                    {BscEndpoints.map((endpoint) => (
-                                                        <option key={endpoint} value={endpoint}>
-                                                            {endpoint}
-                                                        </option>
-                                                    ))}
-                                                </Form.Select>
-                                            ) : (
-                                                <FormControl
-                                                    value={_network.rpcEndpoint}
-                                                    onChange={(e) =>
-                                                        onChangeEndpoint(
-                                                            _network.id,
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                    placeholder="Enter the RPC's endpoint (URL) here ."
-                                                />
-                                            )}
-
-                                            <Button
-                                                className="row"
-                                                variant={
-                                                    _network.hasValidProvider ? "success" : "danger"
-                                                }>
-                                                {_network.hasValidProvider && (
-                                                    <Icon name={IconNames.AiOutlineCheckCircle} />
-                                                )}
-                                                {!_network.hasValidProvider && (
-                                                    <Icon name={IconNames.AiFillCloseCircle} />
-                                                )}
-                                            </Button>
-                                        </InputGroup>
-                                    ))}
+                                    <h6 className="text-danger">Mainnet</h6>
+                                    {MainNetworks}
+                                </Col>
+                                <Col className="m-2 p-1">
+                                    <h6 className="text-danger">Testnet</h6>
+                                    {TestNetworks}
                                 </Col>
 
                                 <Col className="row">

@@ -17,7 +17,8 @@ export const NETWORKS = [
         blockExplorer: "https://etherscan.io/",
         rpcEndpoint: "",
         hasValidProvider: false,
-        tokens: EthereumTokens
+        tokens: EthereumTokens,
+        type: "mainnet"
     }),
     new Network({
         id: "bsc",
@@ -25,7 +26,17 @@ export const NETWORKS = [
         blockExplorer: "https://www.bscscan.com/",
         rpcEndpoint: "",
         hasValidProvider: false,
-        tokens: BscTokens
+        tokens: BscTokens,
+        type: "mainnet"
+    }),
+    new Network({
+        id: "bsc-testnet",
+        name: "BSC Testnet",
+        blockExplorer: "https://www.testnet.bscscan.com/",
+        rpcEndpoint: "",
+        hasValidProvider: false,
+        tokens: BscTokens,
+        type: "testnet"
     }),
     new Network({
         id: "tron",
@@ -33,15 +44,17 @@ export const NETWORKS = [
         blockExplorer: "https://tronscan.org/#/",
         rpcEndpoint: "",
         hasValidProvider: false,
-        tokens: TronTokens
+        tokens: TronTokens,
+        type: "mainnet"
     }),
     new Network({
         id: "ropsten",
-        name: "Ropsten (Testnet)",
+        name: "Ropsten",
         blockExplorer: "https://ropsten.etherscan.io/",
         rpcEndpoint: "",
         hasValidProvider: false,
-        tokens: RopstenTokens
+        tokens: RopstenTokens,
+        type: "testnet"
     })
 ]
 

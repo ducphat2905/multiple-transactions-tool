@@ -5,13 +5,14 @@ import TronIcon from "../assets/icons/tron-icon.png"
 import Web3js from "../lib/Web3js"
 
 class Network {
-    constructor({ id, name, blockExplorer, rpcEndpoint, hasValidProvider, tokens }) {
+    constructor({ id, name, blockExplorer, rpcEndpoint, hasValidProvider, tokens, type }) {
         this.id = id
         this.name = name
         this.blockExplorer = blockExplorer
         this.rpcEndpoint = rpcEndpoint
         this.hasValidProvider = hasValidProvider
         this.tokens = tokens
+        this.type = type
     }
 
     checkProvider() {
@@ -48,7 +49,8 @@ class Network {
         let iconComponent
 
         switch (this.id) {
-            case "bsc": {
+            case "bsc":
+            case "bsc-testnet": {
                 iconComponent = <img src={BscIcon} alt="bsc-icon" width="15" height="15" />
                 break
             }

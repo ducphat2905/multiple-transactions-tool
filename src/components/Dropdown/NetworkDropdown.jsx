@@ -1,7 +1,7 @@
 import Dropdown from "react-bootstrap/Dropdown"
 import ButtonGroup from "react-bootstrap/ButtonGroup"
 import Button from "react-bootstrap/Button"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import PropTypes from "prop-types"
 import { useSelector } from "react-redux"
 import Network from "../../objects/Network"
@@ -30,6 +30,40 @@ function NetworkDropdown({ selectHandler }) {
         selectHandler(_network)
     }
 
+    const Networks = useMemo(() => {
+        const mainNetworks = []
+        const testNetworks = []
+
+        setting.networks.forEach((_network) => {
+            const newNetwork = new Network({ ..._network })
+            if (_network.type === "mainnet") {
+                mainNetworks.push(newNetwork)
+            } else {
+                testNetworks.push(newNetwork)
+            }
+        })
+
+        return (
+            <Dropdown.Menu>
+                <p className="mx-2 mb-1 text-danger">Mainnet</p>
+                {mainNetworks.map((_network) => (
+                    <Dropdown.Item key={_network.id} onClick={() => selectNetwork(_network)}>
+                        <span className="mx-1">{_network.getIconComponent()}</span>
+                        {_network.name}
+                    </Dropdown.Item>
+                ))}
+                <Dropdown.Divider />
+                <p className="mx-2 mb-1 text-danger">Testnet</p>
+                {testNetworks.map((_network) => (
+                    <Dropdown.Item key={_network.id} onClick={() => selectNetwork(_network)}>
+                        <span className="mx-1">{_network.getIconComponent()}</span>
+                        {_network.name}
+                    </Dropdown.Item>
+                ))}
+            </Dropdown.Menu>
+        )
+    }, [setting.networks])
+
     return (
         <Dropdown as={ButtonGroup}>
             <Button variant={network.id ? "info" : "danger"}>
@@ -44,14 +78,7 @@ function NetworkDropdown({ selectHandler }) {
                 id="dropdown-split-basic"
             />
 
-            <Dropdown.Menu>
-                {networks.map((_network) => (
-                    <Dropdown.Item key={_network.id} onClick={() => selectNetwork(_network)}>
-                        <span className="mx-1">{_network.getIconComponent()}</span>
-                        {_network.name}
-                    </Dropdown.Item>
-                ))}
-            </Dropdown.Menu>
+            {Networks}
         </Dropdown>
     )
 }
