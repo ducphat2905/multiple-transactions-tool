@@ -106,62 +106,67 @@ const collect = createAsyncThunk(
         const wallets = dataTable.rows
 
         const rowsOfResult = await Promise.all(
-            wallets.map(async (_wallet) => {
-                let collectResult = {
-                    id: _wallet.id,
-                    fromAddress: _wallet.address,
-                    toAddress: recipient.address,
-                    status: false,
-                    transactionHash: "",
-                    error: "",
-                    transferredAmount: ""
-                }
+            wallets.map(async (_wallet, _index) => {
+                return new Promise((resolve) => {
+                    setTimeout(async () => {
+                        let collectResult = {
+                            id: _wallet.id,
+                            fromAddress: _wallet.address,
+                            toAddress: recipient.address,
+                            status: false,
+                            transactionHash: "",
+                            error: "",
+                            transferredAmount: ""
+                        }
 
-                // Check input amount
-                const { error: invalidAmount } = checkInputAmount(_wallet.amountToTransfer)
-                if (invalidAmount) {
-                    collectResult.error = invalidAmount
-                    dispatch(addResultMessage(collectResult))
-                    return collectResult
-                }
+                        // Check input amount
+                        const { error: invalidAmount } = checkInputAmount(_wallet.amountToTransfer)
+                        if (invalidAmount) {
+                            collectResult.error = invalidAmount
+                            dispatch(addResultMessage(collectResult))
+                            return collectResult
+                        }
 
-                // Collect ETH
-                if (!token.address) {
-                    const collectEthResult = await web3js.collectEth({
-                        from: _wallet,
-                        toAddress: recipient.address,
-                        amountOfEth: _wallet.amountToTransfer
-                    })
+                        // Collect ETH
+                        if (!token.address) {
+                            const collectEthResult = await web3js.collectEth({
+                                from: _wallet,
+                                toAddress: recipient.address,
+                                amountOfEth: _wallet.amountToTransfer
+                            })
 
-                    if (collectEthResult.error) {
-                        collectResult.error = collectEthResult.error
+                            if (collectEthResult.error) {
+                                collectResult.error = collectEthResult.error
+                                dispatch(addResultMessage(collectResult))
+                                return collectResult
+                            }
+
+                            collectResult = { ...collectResult, ...collectEthResult.data }
+                        }
+
+                        // Collect ERC20
+                        else {
+                            const collectErc20Result = await web3js.collectErc20({
+                                from: _wallet,
+                                toAddress: recipient.address,
+                                amountOfToken: _wallet.amountToTransfer,
+                                token: new Token({ ...token })
+                            })
+
+                            if (collectErc20Result.error) {
+                                collectResult.error = collectErc20Result.error
+                                dispatch(addResultMessage(collectResult))
+                                return collectResult
+                            }
+
+                            collectResult = { ...collectResult, ...collectErc20Result.data }
+                        }
+
                         dispatch(addResultMessage(collectResult))
-                        return collectResult
-                    }
 
-                    collectResult = { ...collectResult, ...collectEthResult.data }
-                }
-
-                // Collect ERC20
-                else {
-                    const collectErc20Result = await web3js.collectErc20({
-                        from: _wallet,
-                        toAddress: recipient.address,
-                        amountOfToken: _wallet.amountToTransfer,
-                        token: new Token({ ...token })
-                    })
-
-                    if (collectErc20Result.error) {
-                        collectResult.error = collectErc20Result.error
-                        dispatch(addResultMessage(collectResult))
-                        return collectResult
-                    }
-
-                    collectResult = { ...collectResult, ...collectErc20Result.data }
-                }
-
-                dispatch(addResultMessage(collectResult))
-                return collectResult
+                        return resolve(collectResult)
+                    }, 100 * _index)
+                })
             })
         )
 
@@ -181,67 +186,68 @@ const spread = createAsyncThunk(
         const wallets = dataTable.rows
 
         const rowsOfResult = await Promise.all(
-            wallets.map(async (_wallet, index) => {
-                // return new Promise((resolve, reject) => {
-                let spreadResult = {
-                    id: index,
-                    fromAddress: spreader.address,
-                    toAddress: _wallet.address,
-                    status: false,
-                    transactionHash: "",
-                    error: "",
-                    transferredAmount: ""
-                }
+            wallets.map(async (_wallet, _index) => {
+                return new Promise((resolve) => {
+                    setTimeout(async () => {
+                        let spreadResult = {
+                            id: _index,
+                            fromAddress: spreader.address,
+                            toAddress: _wallet.address,
+                            status: false,
+                            transactionHash: "",
+                            error: "",
+                            transferredAmount: ""
+                        }
 
-                // Check input amount
-                const { error: invalidAmount } = checkInputAmount(amountToSpread)
-                if (invalidAmount) {
-                    spreadResult.error = invalidAmount
-                    dispatch(addResultMessage(spreadResult))
-                    return spreadResult
-                }
+                        // Check input amount
+                        const { error: invalidAmount } = checkInputAmount(amountToSpread)
+                        if (invalidAmount) {
+                            spreadResult.error = invalidAmount
+                            dispatch(addResultMessage(spreadResult))
+                            return spreadResult
+                        }
 
-                // Spread ETH
-                if (!token.address) {
-                    const spreadEthResult = await web3js.spreadEth({
-                        from: spreader,
-                        toAddress: _wallet.address,
-                        amountOfEth: amountToSpread,
-                        nonce: index
-                    })
+                        // Spread ETH
+                        if (!token.address) {
+                            const spreadEthResult = await web3js.spreadEth({
+                                from: spreader,
+                                toAddress: _wallet.address,
+                                amountOfEth: amountToSpread,
+                                nonce: _index
+                            })
 
-                    if (spreadEthResult.error) {
-                        spreadResult.error = spreadEthResult.error
+                            if (spreadEthResult.error) {
+                                spreadResult.error = spreadEthResult.error
+                                dispatch(addResultMessage(spreadResult))
+                                return spreadResult
+                            }
+
+                            spreadResult = { ...spreadResult, ...spreadEthResult.data }
+                        }
+
+                        // Collect ERC20
+                        else {
+                            const spreadErc20Result = await web3js.spreadErc20({
+                                from: spreader,
+                                toAddress: _wallet.address,
+                                amountOfToken: amountToSpread,
+                                token: new Token({ ...token }),
+                                nonce: _index
+                            })
+
+                            if (spreadErc20Result.error) {
+                                spreadResult.error = spreadErc20Result.error
+                                dispatch(addResultMessage(spreadResult))
+                                return spreadResult
+                            }
+
+                            spreadResult = { ...spreadResult, ...spreadErc20Result.data }
+                        }
+
                         dispatch(addResultMessage(spreadResult))
-                        return spreadResult
-                    }
-
-                    spreadResult = { ...spreadResult, ...spreadEthResult.data }
-                }
-
-                // Collect ERC20
-                else {
-                    const spreadErc20Result = await web3js.spreadErc20({
-                        from: spreader,
-                        toAddress: _wallet.address,
-                        amountOfToken: amountToSpread,
-                        token: new Token({ ...token }),
-                        nonce: index
-                    })
-
-                    if (spreadErc20Result.error) {
-                        spreadResult.error = spreadErc20Result.error
-                        dispatch(addResultMessage(spreadResult))
-                        return spreadResult
-                    }
-
-                    spreadResult = { ...spreadResult, ...spreadErc20Result.data }
-                }
-
-                dispatch(addResultMessage(spreadResult))
-                return spreadResult
-
-                // })
+                        return resolve(spreadResult)
+                    }, 100 * _index)
+                })
             })
         )
 
