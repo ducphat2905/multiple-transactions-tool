@@ -3,12 +3,15 @@ import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import Card from "react-bootstrap/Card"
 import Alert from "react-bootstrap/Alert"
+import Accordion from "react-bootstrap/Accordion"
+import ListGroup from "react-bootstrap/ListGroup"
 import { Link, useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { useSelector } from "react-redux"
 
 import Icon from "../components/Icon/Icon"
 import IconNames from "../components/Icon/IconNames"
+import InfuraExampleImg from "../assets/images/infura-rpc-endpoint-example.png"
 
 const features = [
     {
@@ -70,6 +73,7 @@ function Home() {
                         </Col>
                     ))}
 
+                    {/* Configuration Status */}
                     <Card className="p-0 mt-4">
                         <Card.Header className="text-center">Configuration Status</Card.Header>
                         <Card.Body>
@@ -101,6 +105,48 @@ function Home() {
                                 ))}
                         </Card.Body>
                     </Card>
+
+                    {/* FAQ */}
+                    <div>
+                        <h2 className="p-3 my-2 text-primary text-center">
+                            Frequently Asked Questions (FAQ)
+                        </h2>
+                        <Accordion className="p-0 my-4" defaultActiveKey="1">
+                            <Accordion.Item eventKey="1">
+                                <Accordion.Header>How to get the RPC Endpoint ?</Accordion.Header>
+                                <Accordion.Body>
+                                    <Card>
+                                        <Card.Body className="p-0">
+                                            <Card.Header className="fw-bold">
+                                                Ethereum and its testnets - by
+                                                <Link className="mx-2" to="https://infura.io/">
+                                                    Infura
+                                                </Link>
+                                            </Card.Header>
+                                            <div className="card-text">
+                                                <ListGroup as="ol" numbered varian="flush">
+                                                    <ListGroup.Item as="li">Sign up</ListGroup.Item>
+                                                    <ListGroup.Item as="li">
+                                                        Create a project
+                                                    </ListGroup.Item>
+                                                    <ListGroup.Item as="li">
+                                                        Go to setting and copy the URL
+                                                        <img
+                                                            src={InfuraExampleImg}
+                                                            alt="Infura's endpoint"
+                                                        />
+                                                    </ListGroup.Item>
+                                                    <ListGroup.Item as="li">
+                                                        Paste above to set up your provider
+                                                    </ListGroup.Item>
+                                                </ListGroup>
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
+                                </Accordion.Body>
+                            </Accordion.Item>
+                        </Accordion>
+                    </div>
                 </Col>
             </Row>
         </Row>
