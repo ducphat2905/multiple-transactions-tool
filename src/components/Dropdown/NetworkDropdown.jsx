@@ -10,7 +10,7 @@ function NetworkDropdown({ selectHandler }) {
     const setting = useSelector((state) => state.setting)
     const selectedNetwork = useSelector((state) => state.network)
     const [network, setNetwork] = useState(() => new Network({ ...selectedNetwork }))
-    const [networks, setNetworks] = useState(() =>
+    const [, setNetworks] = useState(() =>
         setting.networks.map((_network) => new Network({ ..._network }))
     )
 

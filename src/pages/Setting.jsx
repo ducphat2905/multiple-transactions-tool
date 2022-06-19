@@ -4,36 +4,30 @@ import Button from "react-bootstrap/Button"
 import Form from "react-bootstrap/Form"
 import InputGroup from "react-bootstrap/InputGroup"
 import FormControl from "react-bootstrap/FormControl"
-import Card from "react-bootstrap/Card"
 import Accordion from "react-bootstrap/Accordion"
-import ListGroup from "react-bootstrap/ListGroup"
 import Alert from "react-bootstrap/Alert"
 import Table from "react-bootstrap/Table"
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { Link } from "react-router-dom"
 
-import { BSC_PROVIDERS } from "../constants"
 import { addToken, removeTokenByAddress, updateNetworks } from "../redux/Setting"
 import Network from "../objects/Network"
 import Icon from "../components/Icon/Icon"
 import IconNames from "../components/Icon/IconNames"
-import InfuraExampleImg from "../assets/images/infura-rpc-endpoint-example.png"
 import NetworkDropdown from "../components/Dropdown/NetworkDropdown"
 import { updateChosenNetwork } from "../redux/Network"
 import Spinner from "../components/Spinner/Spinner"
 import Web3js from "../lib/Web3js"
 import { addAbi, removeAbiByAddress } from "../redux/ABI"
-
-const { Bsc: BscEndpoints, BscTestnet: BscTestnetEndpoints } = BSC_PROVIDERS
+import RpcInput from "../components/Form/TextInput/RpcInput"
+import RpcSelect from "../components/Form/Select/RpcSelect"
 
 function Setting() {
     const setting = useSelector((state) => state.setting)
     const chosenNetwork = useSelector((state) => state.network)
     const dispatch = useDispatch()
-    const [networks, setNetworks] = useState(() =>
-        setting.networks.map((_network) => new Network({ ..._network }))
-    )
+    const [mainNetworks, setMainNetworks] = useState([])
+    const [testNetworks, setTestNetworks] = useState([])
     const [network, setNetwork] = useState(new Network({ ...chosenNetwork }))
     const [tokenAddress, setTokenAddress] = useState("")
     const [tokenError, setTokenError] = useState("")
@@ -42,29 +36,53 @@ function Setting() {
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
-        setNetworks(setting.networks.map((_network) => new Network({ ..._network })))
+        const mainNets = []
+        const testNets = []
+
+        setting.networks.forEach((_network) => {
+            const newNetwork = new Network({ ..._network })
+            if (_network.type === "mainnet") {
+                mainNets.push(newNetwork)
+            } else {
+                testNets.push(newNetwork)
+            }
+        })
+
+        setMainNetworks(mainNets)
+        setTestNetworks(testNets)
     }, [setting.networks])
 
-    const onChangeEndpoint = (networkId, rpcEndpoint) => {
-        setNetworks((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === networkId) {
-                    item.rpcEndpoint = rpcEndpoint
-                }
-
-                return item
-            })
-        )
+    const onChangeEndpoint = (networkId, networkType, rpcEndpoint) => {
+        if (networkType === "mainnet") {
+            setMainNetworks((prevItems) =>
+                prevItems.map((item) => {
+                    if (item.id === networkId) {
+                        item.rpcEndpoint = rpcEndpoint
+                    }
+                    return item
+                })
+            )
+        } else {
+            setTestNetworks((prevItems) =>
+                prevItems.map((item) => {
+                    if (item.id === networkId) {
+                        item.rpcEndpoint = rpcEndpoint
+                    }
+                    return item
+                })
+            )
+        }
     }
 
     const onSaveEndpoints = async (e) => {
         e.preventDefault()
 
         // Networks with updated "hasValidProvider" property
-        const validatedNetworks = networks.map((_network) => _network.checkProvider())
+        const validatedNetworks = [...mainNetworks, ...testNetworks].map((_network) =>
+            _network.checkProvider()
+        )
         // Convert the array from "Networks" to "Objects"
         const newNetworks = validatedNetworks.map((_network) => ({ ..._network }))
-
         // Save networks to local storage
         dispatch(updateNetworks({ networks: newNetworks }))
         // Update provider of the chosen network
@@ -179,82 +197,6 @@ function Setting() {
         }, 1000)
     }
 
-    const MainNetworks = useMemo(() => {
-        let mainNetworks = setting.networks.filter((_network) => _network.type === "mainnet")
-        mainNetworks = mainNetworks.map((_network) => new Network({ ..._network }))
-
-        return mainNetworks.map((_network) => (
-            <InputGroup key={_network.id} className="mb-3">
-                <InputGroup.Text id="basic-addon1">
-                    <span className="mx-1">{_network.getIconComponent()}</span>
-                    {_network.name}
-                </InputGroup.Text>
-
-                {_network.id === "bsc" ? (
-                    <Form.Select
-                        value={_network.rpcEndpoint}
-                        onChange={(e) => onChangeEndpoint(_network.id, e.target.value)}>
-                        <option value="">Choose a RPC endpoint</option>
-                        {BscEndpoints.map((endpoint) => (
-                            <option key={endpoint} value={endpoint}>
-                                {endpoint}
-                            </option>
-                        ))}
-                    </Form.Select>
-                ) : (
-                    <FormControl
-                        value={_network.rpcEndpoint}
-                        onChange={(e) => onChangeEndpoint(_network.id, e.target.value)}
-                        placeholder="Enter the RPC's endpoint (URL) here ."
-                    />
-                )}
-
-                <Button className="row" variant={_network.hasValidProvider ? "success" : "danger"}>
-                    {_network.hasValidProvider && <Icon name={IconNames.AiOutlineCheckCircle} />}
-                    {!_network.hasValidProvider && <Icon name={IconNames.AiFillCloseCircle} />}
-                </Button>
-            </InputGroup>
-        ))
-    }, [setting.networks])
-
-    const TestNetworks = useMemo(() => {
-        let testNetworks = setting.networks.filter((_network) => _network.type === "testnet")
-        testNetworks = testNetworks.map((_network) => new Network({ ..._network }))
-
-        return testNetworks.map((_network) => (
-            <InputGroup key={_network.id} className="mb-3">
-                <InputGroup.Text id="basic-addon1">
-                    <span className="mx-1">{_network.getIconComponent()}</span>
-                    {_network.name}
-                </InputGroup.Text>
-
-                {_network.id === "bsc-testnet" ? (
-                    <Form.Select
-                        value={_network.rpcEndpoint}
-                        onChange={(e) => onChangeEndpoint(_network.id, e.target.value)}>
-                        <option value="">Choose a RPC endpoint</option>
-                        {BscEndpoints.map((endpoint) => (
-                            <option key={endpoint} value={endpoint}>
-                                {endpoint}
-                            </option>
-                        ))}
-                    </Form.Select>
-                ) : (
-                    <FormControl
-                        value={_network.rpcEndpoint}
-                        onChange={(e) => onChangeEndpoint(_network.id, e.target.value)}
-                        placeholder="Enter the RPC's endpoint (URL) here."
-                    />
-                )}
-
-                <Button className="row" variant={_network.hasValidProvider ? "success" : "danger"}>
-                    {_network.hasValidProvider && <Icon name={IconNames.AiOutlineCheckCircle} />}
-                    {!_network.hasValidProvider && <Icon name={IconNames.AiFillCloseCircle} />}
-                </Button>
-            </InputGroup>
-        ))
-    }, [setting.networks])
-
     return (
         <Row className="pb-5 px-4">
             <Col className="m-3 p-2">
@@ -264,13 +206,84 @@ function Setting() {
                         <Accordion.Header>Set Provider</Accordion.Header>
                         <Accordion.Body>
                             <Form onSubmit={onSaveEndpoints}>
+                                {/* Mainnet */}
                                 <Col className="m-2 p-1">
                                     <h6 className="text-danger">Mainnet</h6>
-                                    {MainNetworks}
+                                    {mainNetworks.map((_network) => (
+                                        <InputGroup key={_network.id} className="mb-3">
+                                            <InputGroup.Text id="basic-addon1">
+                                                <span className="mx-1">
+                                                    {_network.getIconComponent()}
+                                                </span>
+                                                {_network.name}
+                                            </InputGroup.Text>
+
+                                            {_network.id === "bsc" ? (
+                                                <RpcSelect
+                                                    network={_network}
+                                                    saveRpcEndpoint={onChangeEndpoint}
+                                                />
+                                            ) : (
+                                                <RpcInput
+                                                    network={_network}
+                                                    saveRpcEndpoint={onChangeEndpoint}
+                                                />
+                                            )}
+
+                                            <Button
+                                                className="row"
+                                                variant={
+                                                    _network.hasValidProvider ? "success" : "danger"
+                                                }>
+                                                {_network.hasValidProvider && (
+                                                    <Icon name={IconNames.AiOutlineCheckCircle} />
+                                                )}
+                                                {!_network.hasValidProvider && (
+                                                    <Icon name={IconNames.AiFillCloseCircle} />
+                                                )}
+                                            </Button>
+                                        </InputGroup>
+                                    ))}
                                 </Col>
+
+                                {/* Testnet */}
                                 <Col className="m-2 p-1">
                                     <h6 className="text-danger">Testnet</h6>
-                                    {TestNetworks}
+                                    {testNetworks.map((_network) => (
+                                        <InputGroup key={_network.id} className="mb-3">
+                                            <InputGroup.Text id="basic-addon1">
+                                                <span className="mx-1">
+                                                    {_network.getIconComponent()}
+                                                </span>
+                                                {_network.name}
+                                            </InputGroup.Text>
+
+                                            {_network.id === "bsc-testnet" ? (
+                                                <RpcSelect
+                                                    network={_network}
+                                                    saveRpcEndpoint={onChangeEndpoint}
+                                                />
+                                            ) : (
+                                                <RpcInput
+                                                    network={_network}
+                                                    saveRpcEndpoint={onChangeEndpoint}
+                                                />
+                                            )}
+
+                                            <Button
+                                                className="row"
+                                                variant={
+                                                    _network.hasValidProvider ? "success" : "danger"
+                                                }>
+                                                {_network.hasValidProvider && (
+                                                    <Icon name={IconNames.AiOutlineCheckCircle} />
+                                                )}
+                                                {!_network.hasValidProvider && (
+                                                    <Icon name={IconNames.AiFillCloseCircle} />
+                                                )}
+                                            </Button>
+                                        </InputGroup>
+                                    ))}
                                 </Col>
 
                                 <Col className="row">
@@ -286,41 +299,6 @@ function Setting() {
                                     </Button>
                                 </Col>
                             </Form>
-                        </Accordion.Body>
-                    </Accordion.Item>
-
-                    {/* Guide */}
-                    <Accordion.Item eventKey="1">
-                        <Accordion.Header>How to get the RPC Endpoint ?</Accordion.Header>
-                        <Accordion.Body>
-                            <Card>
-                                <Card.Body className="p-0">
-                                    <Card.Header className="fw-bold">
-                                        Ethereum and its testnets - by
-                                        <Link className="mx-2" to="https://infura.io/">
-                                            Infura
-                                        </Link>
-                                    </Card.Header>
-                                    <div className="card-text">
-                                        <ListGroup as="ol" numbered varian="flush">
-                                            <ListGroup.Item as="li">Sign up</ListGroup.Item>
-                                            <ListGroup.Item as="li">
-                                                Create a project
-                                            </ListGroup.Item>
-                                            <ListGroup.Item as="li">
-                                                Go to setting and copy the URL
-                                                <img
-                                                    src={InfuraExampleImg}
-                                                    alt="Infura's endpoint"
-                                                />
-                                            </ListGroup.Item>
-                                            <ListGroup.Item as="li">
-                                                Paste above to set up your provider
-                                            </ListGroup.Item>
-                                        </ListGroup>
-                                    </div>
-                                </Card.Body>
-                            </Card>
                         </Accordion.Body>
                     </Accordion.Item>
                 </Accordion>
