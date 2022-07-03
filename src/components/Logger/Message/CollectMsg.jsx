@@ -17,11 +17,11 @@ function CollectMsg({ wallet }) {
                         <p className="my-1 d-inline">
                             Collected{" "}
                             <b>
-                                {wallet.amountToTransfer !== null ? wallet.amountToTransfer : "0"}
+                                {wallet.transferredAmount !== null ? wallet.transferredAmount : "0"}
                             </b>{" "}
                             {token.symbol} from{" "}
-                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
-                                {wallet.address}
+                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.fromAddress}`}>
+                                {wallet.fromAddress}
                             </a>
                             <span className="text-success m-1 p-1 d-block">
                                 Transaction hash:{" "}
@@ -43,8 +43,8 @@ function CollectMsg({ wallet }) {
                                 {wallet.amountToTransfer !== null ? wallet.amountToTransfer : "0"}
                             </b>{" "}
                             {token.symbol} from{" "}
-                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
-                                {wallet.address}
+                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.fromAddress}`}>
+                                {wallet.fromAddress}
                             </a>
                             <span className="text-danger m-1 p-1 d-block">{wallet.error}</span>
                         </p>
