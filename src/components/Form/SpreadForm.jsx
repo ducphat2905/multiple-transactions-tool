@@ -72,6 +72,31 @@ function SpreadForm() {
         }
     }
 
+    const spread = (spreader) => {
+        switch (chosenNetwork.id) {
+            case "ethereum":
+            case "ropsten": {
+                dispatch(
+                    EthereumThunk.spread({
+                        token,
+                        spreader,
+                        amountToSpread: parseFloat(amountToSpread).toString() // Prevent cases like: "012"
+                    })
+                )
+                break
+            }
+            case "bsc": {
+                break
+            }
+            case "tron": {
+                break
+            }
+
+            default:
+                break
+        }
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault()
         setIsValidAmount(undefined)
@@ -92,13 +117,7 @@ function SpreadForm() {
             dispatch(setStage(STAGES.Logger))
             dispatch(setResultMessages([]))
             dispatch(getDataTable({ table: TABLE_TYPES.Input }))
-            dispatch(
-                EthereumThunk.spread({
-                    token,
-                    spreader,
-                    amountToSpread: parseFloat(amountToSpread).toString() // Prevent cases like: "012"
-                })
-            )
+            spread(spreader)
         }
     }
 

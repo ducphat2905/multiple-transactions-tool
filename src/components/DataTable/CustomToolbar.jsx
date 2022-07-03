@@ -32,6 +32,29 @@ function CustomToolbar() {
         dispatch(setToken(null))
     }, [network])
 
+    const getBalance = () => {
+        switch (network.id) {
+            case "ethereum":
+            case "ropsten": {
+                dispatch(
+                    EthereumThunk.getBalance({
+                        token
+                    })
+                )
+                break
+            }
+            case "bsc": {
+                break
+            }
+            case "tron": {
+                break
+            }
+
+            default:
+                break
+        }
+    }
+
     // Remove the dropped file
     const dropTable = () => {
         dispatch(removeTable({ table: tableType }))
@@ -60,11 +83,7 @@ function CustomToolbar() {
         dispatch(setStage(STAGES.Logger))
         dispatch(setResultMessages([]))
         dispatch(getDataTable({ table: TABLE_TYPES.Input }))
-        dispatch(
-            EthereumThunk.getBalance({
-                token
-            })
-        )
+        getBalance()
     }
 
     const collectHandler = () => {

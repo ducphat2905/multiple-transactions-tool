@@ -30,6 +30,30 @@ function CollectForm() {
         }
     }
 
+    const collect = () => {
+        switch (chosenNetwork.id) {
+            case "ethereum":
+            case "ropsten": {
+                dispatch(
+                    EthereumThunk.collect({
+                        token,
+                        recipient: { address: recipientAddress }
+                    })
+                )
+                break
+            }
+            case "bsc": {
+                break
+            }
+            case "tron": {
+                break
+            }
+
+            default:
+                break
+        }
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault()
 
@@ -50,12 +74,7 @@ function CollectForm() {
         dispatch(setStage(STAGES.Logger))
         dispatch(setResultMessages([]))
         dispatch(getDataTable({ table: TABLE_TYPES.Input }))
-        dispatch(
-            EthereumThunk.collect({
-                token,
-                recipient: { address: recipientAddress }
-            })
-        )
+        collect()
     }
 
     const onBack = () => {
