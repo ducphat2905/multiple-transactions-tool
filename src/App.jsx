@@ -13,7 +13,6 @@ import Collect from "./pages/Collect"
 import Spread from "./pages/Spread"
 import Setting from "./pages/Setting"
 import Wallet from "./pages/Wallet"
-import Toaster from "./components/Toaster/Toaster"
 
 function App() {
     return (
@@ -28,9 +27,6 @@ function App() {
             <NavigationBar />
 
             <Row style={{ padding: 0, margin: 0, justifyContent: "center" }}>
-                <div className="p-2" style={{ height: "100vh" }}>
-                    <Toaster />
-                </div>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/collect" element={<Collect />} />

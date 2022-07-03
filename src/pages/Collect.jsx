@@ -7,6 +7,7 @@ import DropFileComponent from "../components/DropFile/DropFile"
 import Logger from "../components/Logger/Logger"
 import CollectForm from "../components/Form/CollectForm"
 import SpreadForm from "../components/Form/SpreadForm"
+import Toaster from "../components/Toaster/Toaster"
 import { getDataTable, TABLE_TYPES } from "../redux/DataTable"
 import { toggleToaster } from "../redux/Toaster"
 import { setFeature, setStage, STAGES } from "../redux/Stage"
@@ -78,14 +79,18 @@ function Collect() {
 
     return (
         <Row>
-            {chosenNetwork.hasValidProvider && (
-                <Col className="pb-5 px-4">
+            {chosenNetwork.hasValidProvider ? (
+                <Col className="p-4">
                     {stage.current === STAGES.DropFile && <DropFileComponent />}
                     {stage.current === STAGES.DataTable && <DataTable />}
                     {stage.current === STAGES.CollectForm && <CollectForm />}
                     {stage.current === STAGES.SpreadForm && <SpreadForm />}
                     {stage.current === STAGES.Logger && <Logger />}
                 </Col>
+            ) : (
+                <div className="p-2" style={{ height: "100vh" }}>
+                    <Toaster />
+                </div>
             )}
         </Row>
     )

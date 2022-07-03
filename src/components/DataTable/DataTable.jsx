@@ -36,7 +36,7 @@ function DataTable() {
                 }
             }}
             components={{ Toolbar, Pagination }}
-            className="m-2 p-3"
+            className="p-4"
         />
     )
 }
