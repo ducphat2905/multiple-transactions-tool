@@ -3,8 +3,8 @@ import Col from "react-bootstrap/Col"
 
 function Footer() {
     return (
-        <Row className="bg-dark fixed-bottom">
-            <Col className="text-white text-center p-2">&copy; 2022 Copyright: phatductran</Col>
+        <Row className="bg-dark" style={{ padding: 0, margin: 0 }}>
+            <Col className="text-white text-center py-2">&copy; 2022 Copyright: phatductran</Col>
         </Row>
     )
 }

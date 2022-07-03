@@ -1,3 +1,4 @@
+import "./app.css"
 import "bootstrap/dist/css/bootstrap.min.css"
 
 import Container from "react-bootstrap/Container"
@@ -16,22 +17,29 @@ import Toaster from "./components/Toaster/Toaster"
 
 function App() {
     return (
-        <Container fluid>
-            <Row>
-                <NavigationBar />
+        <Container
+            fluid
+            style={{
+                height: "100%",
+                padding: 0,
+                flexDirection: "column",
+                justifyContent: "space-between"
+            }}>
+            <NavigationBar />
+
+            <Row style={{ padding: 0, margin: 0, justifyContent: "center" }}>
+                <div className="p-2" style={{ height: "100vh" }}>
+                    <Toaster />
+                </div>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/collect" element={<Collect />} />
+                    <Route path="/spread" element={<Spread />} />
+                    <Route path="/wallet" element={<Wallet />} />
+                    <Route path="/setting" element={<Setting />} />
+                </Routes>
             </Row>
 
-            <Row className="my-2 mx-1">
-                <Toaster />
-            </Row>
-
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/collect" element={<Collect />} />
-                <Route path="/spread" element={<Spread />} />
-                <Route path="/wallet" element={<Wallet />} />
-                <Route path="/setting" element={<Setting />} />
-            </Routes>
             <Footer />
         </Container>
     )

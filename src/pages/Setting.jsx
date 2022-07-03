@@ -198,8 +198,8 @@ function Setting() {
     }
 
     return (
-        <Row className="pb-5 px-4">
-            <Col className="m-3 p-2">
+        <Row style={{ height: "100vh" }}>
+            <Col className="m-4">
                 {/* Provider */}
                 <Accordion defaultActiveKey="0">
                     <Accordion.Item eventKey="0">
@@ -304,7 +304,7 @@ function Setting() {
                 </Accordion>
             </Col>
 
-            <Col className="m-3 p-2">
+            <Col className="m-4">
                 {/* Add token */}
                 <Accordion defaultActiveKey="2">
                     <Accordion.Item eventKey="2">

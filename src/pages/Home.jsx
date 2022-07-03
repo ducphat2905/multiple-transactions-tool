@@ -49,7 +49,7 @@ function Home() {
     }, [setting.networks])
 
     return (
-        <Row>
+        <Row className="my-2 mx-1">
             <h1 className="px-4 py-3 text-primary text-center">
                 <u>Features</u>
             </h1>
