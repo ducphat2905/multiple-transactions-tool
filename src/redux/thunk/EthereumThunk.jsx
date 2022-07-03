@@ -111,12 +111,21 @@ const collect = createAsyncThunk(
                     setTimeout(async () => {
                         let collectResult = {
                             id: _wallet.id,
+                            amountToTransfer: _wallet.amountToTransfer,
                             fromAddress: _wallet.address,
                             toAddress: recipient.address,
                             status: false,
                             transactionHash: "",
                             error: "",
                             transferredAmount: ""
+                        }
+
+                        // Check same address
+                        if (collectResult.fromAddress === collectResult.toAddress) {
+                            const sameAddressError = "From and To address are the same."
+                            collectResult.error = sameAddressError
+                            dispatch(addResultMessage(collectResult))
+                            return collectResult
                         }
 
                         // Check input amount
@@ -191,12 +200,21 @@ const spread = createAsyncThunk(
                     setTimeout(async () => {
                         let spreadResult = {
                             id: _index,
+                            amountToTransfer: _wallet.amountToTransfer,
                             fromAddress: spreader.address,
                             toAddress: _wallet.address,
                             status: false,
                             transactionHash: "",
                             error: "",
                             transferredAmount: ""
+                        }
+
+                        // Check same address
+                        if (spreadResult.fromAddress === spreadResult.toAddress) {
+                            const sameAddressError = "From and To address are the same."
+                            spreadResult.error = sameAddressError
+                            dispatch(addResultMessage(spreadResult))
+                            return spreadResult
                         }
 
                         // Check input amount
