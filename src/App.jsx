@@ -21,12 +21,13 @@ function App() {
             style={{
                 height: "100%",
                 padding: 0,
+                display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between"
             }}>
             <NavigationBar />
 
-            <Row style={{ padding: 0, margin: 0, justifyContent: "center" }}>
+            <Row style={{ padding: 0, margin: 0, justifyContent: "center", height: "100%" }}>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/collect" element={<Collect />} />

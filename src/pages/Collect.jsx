@@ -88,7 +88,7 @@ function Collect() {
                     {stage.current === STAGES.Logger && <Logger />}
                 </Col>
             ) : (
-                <div className="p-2" style={{ height: "100vh" }}>
+                <div className="p-2">
                     <Toaster />
                 </div>
             )}

@@ -198,7 +198,7 @@ function Setting() {
     }
 
     return (
-        <Row style={{ height: "100vh" }}>
+        <Row>
             <Col className="m-4">
                 {/* Provider */}
                 <Accordion defaultActiveKey="0">
