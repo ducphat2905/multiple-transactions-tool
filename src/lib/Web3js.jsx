@@ -3,20 +3,20 @@ import axios from "axios"
 import NumberHelper from "../helpers/Number"
 
 class Web3js {
+    ONE_GWEI = 1_000_000_000
+
+    priorityFee = 3
+
     web3 = null
 
     constructor(_provider) {
         try {
             this.web3 = new Web3(_provider)
             // this.web3.eth.transactionPollingTimeout = 300
-            this.gasPriceRate = 1.11
+            this.gasPriceRate = 1.1
         } catch (error) {
             this.error = error.message
         }
-    }
-
-    setGasPriceRate(_gasPriceRate) {
-        this.gasPriceRate = parseInt(_gasPriceRate, 10)
     }
 
     getTokenData(_tokenAddress, _networkId) {
@@ -144,9 +144,8 @@ class Web3js {
         try {
             let gasFee = 0
             // Increase gas fee in case the gasPrice raises
-            const fluctuationRate = this.gasPriceRate
-            let gasPrice = await this.web3.eth.getGasPrice()
-            gasPrice = Math.floor(parseInt(gasPrice, 10) * fluctuationRate)
+            const gasPrice = await this.web3.eth.getGasPrice()
+            // gasPrice = Math.floor(parseInt(gasPrice, 10) * this.gasPriceRate)
             let estimateGas = "21000" // default gas for transferring between wallets
 
             if (token) {
@@ -163,7 +162,6 @@ class Web3js {
                     })
             }
 
-            // estimateGas = Math.floor(parseInt(estimateGas, 10) * 1.05)
             gasFee = gasPrice * parseInt(estimateGas, 10)
             gasFee = _parseToEth
                 ? this.web3.utils.fromWei(gasFee.toString(), "ether")
@@ -176,19 +174,6 @@ class Web3js {
                     gasPrice: gasPrice.toString()
                 }
             }
-        } catch (error) {
-            return { error: error.message }
-        }
-    }
-
-    async getGasPrice(increaseByGasRate = false) {
-        try {
-            let gasPrice = await this.web3.eth.getGasPrice()
-            if (increaseByGasRate) {
-                gasPrice = parseInt(gasPrice, 10) * this.gasPriceRate
-            }
-
-            return { data: gasPrice }
         } catch (error) {
             return { error: error.message }
         }
@@ -279,20 +264,23 @@ class Web3js {
             if (cannotPayGas) return { error: cannotPayGas }
 
             const amountOfWei = parseInt(this.web3.utils.toWei(amountOfEth, "ether"), 10)
-            // const {data: gasPrice} = await this.getGasPrice(false)
-            // const { estimateGas } = transferGas
             const { gasPrice, estimateGas } = transferGas
-            const weiOfGasFee = parseInt(gasPrice, 10) * parseInt(estimateGas, 10)
-            const weiToTransfer = _includeGasFee ? amountOfWei - weiOfGasFee : amountOfWei
+
+            const newGasPrice = Math.floor(parseInt(gasPrice, 10) * this.gasPriceRate)
+            // const maxPriorityFeePerGas = this.ONE_GWEI * this.priorityFee
+            // const maxFeePerGas = newGasPrice + maxPriorityFeePerGas
+            const gasFee = newGasPrice * estimateGas
+            const weiToTransfer = _includeGasFee ? amountOfWei - gasFee : amountOfWei
 
             // Transaction Object
             const transactionObject = {
                 from: from.address,
                 to: toAddress,
-                value: weiToTransfer.toString(),
-                gasPrice,
-                gas: estimateGas,
-                data: "0x"
+                value: this.web3.utils.toHex(weiToTransfer.toString()),
+                // gasPrice: newGasPrice.toString(),
+                // maxFeePerGas: newGasPrice.toString(),
+                // maxPriorityFeePerGas: gasPrice.toString()
+                gas: estimateGas.toString()
             }
 
             if (nonce) {
@@ -374,6 +362,7 @@ class Web3js {
         }
     }
 
+    // If the spread does not happen, use the main wallet sends a transaction (by MetaMask extension)
     async spreadEth({ from, toAddress, amountOfEth, nonce }) {
         try {
             const result = { ...from }
@@ -499,7 +488,7 @@ class Web3js {
                 to: token.address,
                 value: "0",
                 gas: transferGas.estimateGas,
-                gasPrice: transferGas.gasPrice,
+                // gasPrice: transferGas.gasPrice,
                 data: transferData
             }
 
@@ -595,6 +584,7 @@ class Web3js {
         }
     }
 
+    // If the spread does not happen, use the main wallet sends a transaction (by MetaMask extension)
     async spreadErc20({ from, toAddress, amountOfToken, token, nonce }) {
         // In here, "wei20" represents the smallest unit of the given ERC20 Token.
         try {
