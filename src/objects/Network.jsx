@@ -18,6 +18,7 @@ class Network {
     checkProvider() {
         switch (this.id) {
             case "bsc":
+            case "bsc-testnet":
             case "ropsten":
             case "ethereum": {
                 if (!this.rpcEndpoint) {

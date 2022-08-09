@@ -19,7 +19,12 @@ function RpcSelect({ network, saveRpcEndpoint }) {
     return (
         <Form.Select value={rpcEndpoint} onChange={onRpcChange}>
             <option value="">Choose a RPC endpoint</option>
-            {BscEndpoints.map((endpoint) => (
+            {network.type === "mainnet" && BscEndpoints.map((endpoint) => (
+                <option key={endpoint} value={endpoint}>
+                    {endpoint}
+                </option>
+            ))}
+            {network.type === "testnet" && BscTestnetEndpoints.map((endpoint) => (
                 <option key={endpoint} value={endpoint}>
                     {endpoint}
                 </option>

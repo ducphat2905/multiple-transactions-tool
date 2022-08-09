@@ -8,6 +8,7 @@ import IconNames from "../Icon/IconNames"
 import Web3js from "../../lib/Web3js"
 import { setFeature, setStage, STAGES } from "../../redux/Stage"
 import EthereumThunk from "../../redux/thunk/EthereumThunk"
+import BscThunk from "../../redux/thunk/BscThunk"
 import { getDataTable, setResultMessages, TABLE_TYPES } from "../../redux/DataTable"
 
 function CollectForm() {
@@ -42,7 +43,14 @@ function CollectForm() {
                 )
                 break
             }
-            case "bsc": {
+            case "bsc":
+            case "bsc-testnet": {
+                dispatch(
+                    BscThunk.collect({
+                        token,
+                        recipient: { address: recipientAddress }
+                    })
+                )
                 break
             }
             case "tron": {

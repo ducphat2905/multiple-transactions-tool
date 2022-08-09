@@ -3,7 +3,6 @@ import { useState } from "react"
 import PropTypes from "prop-types"
 
 function RpcInput({ network, saveRpcEndpoint }) {
-    console.log(network)
     const [rpcEndpoint, setRpcEndpoint] = useState(network.rpcEndpoint)
 
     const onRpcChange = (e) => {

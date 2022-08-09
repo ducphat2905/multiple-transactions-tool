@@ -23,7 +23,7 @@ export const NETWORKS = [
     new Network({
         id: "bsc",
         name: "Binance Smart Chain",
-        blockExplorer: "https://www.bscscan.com/",
+        blockExplorer: "https://bscscan.com/",
         rpcEndpoint: "",
         hasValidProvider: false,
         tokens: BscTokens,
@@ -32,7 +32,7 @@ export const NETWORKS = [
     new Network({
         id: "bsc-testnet",
         name: "BSC Testnet",
-        blockExplorer: "https://www.testnet.bscscan.com/",
+        blockExplorer: "https://testnet.bscscan.com/",
         rpcEndpoint: "",
         hasValidProvider: false,
         tokens: BscTokens,

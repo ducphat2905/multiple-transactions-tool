@@ -17,6 +17,7 @@ import {
     TABLE_TYPES
 } from "../../redux/DataTable"
 import EthereumThunk from "../../redux/thunk/EthereumThunk"
+import BscThunk from "../../redux/thunk/BscThunk"
 import { setStage, STAGES, setFeature, setToken } from "../../redux/Stage"
 import { FEATURES } from "../../constants"
 import TokenDropdown from "../Dropdown/TokenDropdown"
@@ -43,7 +44,13 @@ function CustomToolbar() {
                 )
                 break
             }
-            case "bsc": {
+            case "bsc":
+            case "bsc-testnet": {
+                dispatch(
+                    BscThunk.getBalance({
+                        token
+                    })
+                )
                 break
             }
             case "tron": {

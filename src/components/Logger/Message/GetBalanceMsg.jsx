@@ -15,7 +15,10 @@ function GetBalanceMsg({ wallet }) {
                 {!wallet.error ? (
                     <>
                         <p className="my-1 d-inline">
-                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
+                            <a
+                                href={`${chosenNetwork.blockExplorer}address/${wallet.address}`}
+                                target="_blank"
+                                rel="noreferrer">
                                 {wallet.address}
                             </a>{" "}
                             has <b>{wallet[token.symbol] ? wallet[token.symbol] : "0"}</b>{" "}
@@ -27,7 +30,10 @@ function GetBalanceMsg({ wallet }) {
                     <>
                         <p className="my-1 d-inline">
                             Failed to get balance of {token.symbol} from{" "}
-                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.address}`}>
+                            <a
+                                href={`${chosenNetwork.blockExplorer}address/${wallet.address}`}
+                                target="_blank"
+                                rel="noreferrer">
                                 {wallet.address}
                             </a>
                         </p>

@@ -20,7 +20,10 @@ function CollectMsg({ wallet }) {
                                 {wallet.transferredAmount !== null ? wallet.transferredAmount : "0"}
                             </b>{" "}
                             {token.symbol} from{" "}
-                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.fromAddress}`}>
+                            <a
+                                href={`${chosenNetwork.blockExplorer}address/${wallet.fromAddress}`}
+                                target="_blank"
+                                rel="noreferrer">
                                 {wallet.fromAddress}
                             </a>
                             <span className="text-success m-1 p-1 d-block">
@@ -43,7 +46,10 @@ function CollectMsg({ wallet }) {
                                 {wallet.amountToTransfer !== null ? wallet.amountToTransfer : "0"}
                             </b>{" "}
                             {token.symbol} from{" "}
-                            <a href={`${chosenNetwork.blockExplorer}/address/${wallet.fromAddress}`}>
+                            <a
+                                href={`${chosenNetwork.blockExplorer}address/${wallet.fromAddress}`}
+                                target="_blank"
+                                rel="noreferrer">
                                 {wallet.fromAddress}
                             </a>
                             <span className="text-danger m-1 p-1 d-block">{wallet.error}</span>
@@ -57,6 +63,7 @@ function CollectMsg({ wallet }) {
         </ListGroup.Item>
     )
 }
+
 CollectMsg.propTypes = {
     wallet: PropTypes.object.isRequired
 }

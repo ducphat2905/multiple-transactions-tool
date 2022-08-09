@@ -20,15 +20,33 @@ class Web3js {
     }
 
     getTokenData(_tokenAddress, _networkId) {
-        let apiFullUrl = "https://api.etherscan.io/api?module=contract&action=getabi&address="
+        let apiFullUrl = ""
 
-        if (_networkId === "bsc") {
-            apiFullUrl = "https://api.bscscan.com"
-        }
-
-        if (_networkId === "ropsten") {
-            apiFullUrl =
-                "https://api-ropsten.etherscan.io/api?module=contract&action=getabi&address="
+        switch (_networkId) {
+            case "ethereum": {
+                apiFullUrl = "https://api.etherscan.io/api?module=contract&action=getabi&address="
+                break
+            }
+            case "ropsten": {
+                apiFullUrl =
+                    "https://api-ropsten.etherscan.io/api?module=contract&action=getabi&address="
+                break
+            }
+            case "bsc": {
+                apiFullUrl = "https://api.bscscan.com/api?module=contract&action=getabi&address="
+                break
+            }
+            case "bsc-testnet": {
+                apiFullUrl =
+                    "https://api-testnet.bscscan.com/api?module=contract&action=getabi&address="
+                break
+            }
+            case "tron": {
+                apiFullUrl = "https://api.trongrid.com"
+                break
+            }
+            default:
+                apiFullUrl = "https://"
         }
 
         return new Promise((resolve, reject) => {

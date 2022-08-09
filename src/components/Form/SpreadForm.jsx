@@ -9,6 +9,7 @@ import { setFeature, setStage, STAGES } from "../../redux/Stage"
 import Icon from "../Icon/Icon"
 import IconNames from "../Icon/IconNames"
 import EthereumThunk from "../../redux/thunk/EthereumThunk"
+import BscThunk from "../../redux/thunk/BscThunk"
 import { getDataTable, setResultMessages, TABLE_TYPES } from "../../redux/DataTable"
 import Token from "../../objects/Token"
 
@@ -85,7 +86,15 @@ function SpreadForm() {
                 )
                 break
             }
-            case "bsc": {
+            case "bsc":
+            case "bsc-testnet": {
+                dispatch(
+                    BscThunk.spread({
+                        token,
+                        spreader,
+                        amountToSpread: parseFloat(amountToSpread).toString() // Prevent cases like: "012"
+                    })
+                )
                 break
             }
             case "tron": {
