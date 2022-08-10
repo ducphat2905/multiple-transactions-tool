@@ -9,10 +9,9 @@ import NavigationBar from "./components/Nav/NavigationBar"
 import Footer from "./components/Footer/Footer"
 
 import Home from "./pages/Home"
-import Collect from "./pages/Collect"
-import Spread from "./pages/Spread"
+import Guide from "./pages/Guide"
+import BulkTx from "./pages/BulkTx"
 import Setting from "./pages/Setting"
-import Wallet from "./pages/Wallet"
 
 function App() {
     return (
@@ -30,9 +29,8 @@ function App() {
             <Row style={{ padding: 0, margin: 0, justifyContent: "center", height: "100%" }}>
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/collect" element={<Collect />} />
-                    <Route path="/spread" element={<Spread />} />
-                    <Route path="/wallet" element={<Wallet />} />
+                    <Route path="/guide" element={<Guide />} />
+                    <Route path="/bulk-tx" element={<BulkTx />} />
                     <Route path="/setting" element={<Setting />} />
                 </Routes>
             </Row>

@@ -45,14 +45,11 @@ function NavigationBar() {
                     <Nav.Link eventKey="/" href="/">
                         Home
                     </Nav.Link>
-                    <Nav.Link eventKey="/collect" href="/collect">
-                        Collect
+                    <Nav.Link eventKey="/guide" href="/guide">
+                        Guide
                     </Nav.Link>
-                    <Nav.Link eventKey="/spread" href="/spread">
-                        Spread
-                    </Nav.Link>
-                    <Nav.Link eventKey="/wallet" href="/wallet">
-                        Wallet
+                    <Nav.Link eventKey="/bulk-tx" href="/bulk-tx">
+                        Bulk
                     </Nav.Link>
                     <Nav.Link eventKey="/setting" href="/setting">
                         Setting

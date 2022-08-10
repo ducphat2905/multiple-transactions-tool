@@ -12,7 +12,7 @@ import { getDataTable, TABLE_TYPES } from "../redux/DataTable"
 import { toggleToaster } from "../redux/Toaster"
 import { setFeature, setStage, STAGES } from "../redux/Stage"
 
-function Collect() {
+function BulkTx() {
     const stage = useSelector((state) => state.stage)
     const { tableType, rows } = useSelector((state) => state.dataTable)
     const chosenNetwork = useSelector((state) => state.network)
@@ -83,7 +83,7 @@ function Collect() {
                 <Col className="p-4">
                     {stage.current === STAGES.DropFile && <DropFileComponent />}
                     {stage.current === STAGES.DataTable && <DataTable />}
-                    {stage.current === STAGES.CollectForm && <CollectForm />}
+                    {stage.current === STAGES.BulkTxForm && <CollectForm />}
                     {stage.current === STAGES.SpreadForm && <SpreadForm />}
                     {stage.current === STAGES.Logger && <Logger />}
                 </Col>
@@ -95,4 +95,4 @@ function Collect() {
         </Row>
     )
 }
-export default Collect
+export default BulkTx
