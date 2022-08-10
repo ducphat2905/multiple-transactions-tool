@@ -203,7 +203,9 @@ function Setting() {
                 {/* Provider */}
                 <Accordion defaultActiveKey="0">
                     <Accordion.Item eventKey="0">
-                        <Accordion.Header>Set Provider</Accordion.Header>
+                        <Accordion.Header>
+                            <b>Set Provider</b>
+                        </Accordion.Header>
                         <Accordion.Body>
                             <Form onSubmit={onSaveEndpoints}>
                                 {/* Mainnet */}
@@ -308,7 +310,9 @@ function Setting() {
                 {/* Add token */}
                 <Accordion defaultActiveKey="2">
                     <Accordion.Item eventKey="2">
-                        <Accordion.Header>Tokens</Accordion.Header>
+                        <Accordion.Header>
+                            <b>Tokens</b>
+                        </Accordion.Header>
                         <Accordion.Body className="row">
                             <Col md={3} className="pr-0">
                                 <NetworkDropdown

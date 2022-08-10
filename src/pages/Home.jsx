@@ -14,13 +14,12 @@ import Network from "../objects/Network"
 const features = [
     {
         title: "Collect",
-        description:
-            "Collect cryptocurrencies from multiple wallets and return to the given address.",
+        description: "Collect cryptocurrencies from many wallets and return to the main wallet.",
         iconName: "BsStackOverflow"
     },
     {
         title: "Spread",
-        description: "Spread cryptocurrencies from a given wallet to multiple wallets.",
+        description: "Spread cryptocurrencies from the main wallet to many wallets.",
         iconName: "BsFillDiagram3Fill"
     },
     {
@@ -30,7 +29,7 @@ const features = [
     },
     {
         title: "Setting",
-        description: "Set up addresses, API key in order to send transactions.",
+        description: "Set up token and provider for each network.",
         iconName: "FaCogs"
     }
 ]
@@ -178,7 +177,7 @@ function Home() {
 
                 <div className="my-3 align-items-center row">
                     <h2 className="text-center m-2 p-2 text-info">
-                        <u>Guides</u>
+                        <b>Guides</b>
                     </h2>
                     {features.map((_) => (
                         <Col md={3} key={_.title} className="my-2 p-2">
