@@ -17,7 +17,6 @@ import IconNames from "../components/Icon/IconNames"
 import NetworkDropdown from "../components/Dropdown/NetworkDropdown"
 import { updateChosenNetwork } from "../redux/Network"
 import Spinner from "../components/Spinner/Spinner"
-import Web3js from "../lib/Web3js"
 import { addAbi, removeAbiByAddress } from "../redux/ABI"
 import RpcInput from "../components/Form/TextInput/RpcInput"
 import RpcSelect from "../components/Form/Select/RpcSelect"
@@ -104,61 +103,68 @@ function Setting() {
         setTokenSuccess("")
         setTokenError("")
 
-        if (network.id) {
-            if (!network.hasValidProvider) {
-                setIsLoading(false)
-                setTokenSuccess("")
-                setTokenError("Please set up provider for the network first.")
-                return
+        // Not select network
+        if (!network.id) {
+            setIsLoading(false)
+            setTokenSuccess("")
+            setTokenError("Please select a network")
+            return
+        }
+
+        // Not provide the provider
+        if (!network.hasValidProvider) {
+            setIsLoading(false)
+            setTokenSuccess("")
+            setTokenError("Please set up provider for the network first.")
+            return
+        }
+
+        // Already existed token
+        const existed = network.tokens.findIndex((_token) => _token.address === tokenAddress)
+        if (existed !== -1) {
+            setIsLoading(false)
+            setTokenSuccess("")
+            setTokenError("Token already existed.")
+            return
+        }
+
+        // const web3js = new Web3js(network.rpcEndpoint)
+        // const { data: newToken } = await web3js.getTokenData(tokenAddress, network.id)
+        const { data: newToken, error } = await network.getTokenDataByAddress(tokenAddress)
+        // Failed to get token's data
+        if (error) {
+            setIsLoading(false)
+            setTokenSuccess("")
+            setTokenError(error)
+            return
+        }
+
+        // Save token's data
+        dispatch(
+            addToken({
+                networkId: network.id,
+                token: newToken
+            })
+        )
+        dispatch(addAbi({ tokenAddress: newToken.address, abi: newToken.ABI }))
+
+        // Update to the chosen network
+        if (
+            network.id === chosenNetwork.id &&
+            chosenNetwork.tokens.findIndex((_token) => _token.address === tokenAddress) === -1
+        ) {
+            const updateNetwork = {
+                ...chosenNetwork,
+                tokens: [...chosenNetwork.tokens, newToken]
             }
-
-            const existed = network.tokens.findIndex((_token) => _token.address === tokenAddress)
-            if (existed !== -1) {
-                setIsLoading(false)
-                setTokenSuccess("")
-                setTokenError("Token already existed.")
-                return
-            }
-
-            const web3js = new Web3js(network.rpcEndpoint)
-            const { data: newToken } = await web3js.getTokenData(tokenAddress, network.id)
-
-            if (newToken) {
-                dispatch(
-                    addToken({
-                        networkId: network.id,
-                        token: newToken
-                    })
-                )
-                dispatch(addAbi({ tokenAddress: newToken.address, abi: newToken.ABI }))
-
-                // Update to chosen network
-                if (
-                    network.id === chosenNetwork.id &&
-                    chosenNetwork.tokens.findIndex((_token) => _token.address === tokenAddress) ===
-                        -1
-                ) {
-                    const updateNetwork = {
-                        ...chosenNetwork,
-                        tokens: [...chosenNetwork.tokens, newToken]
-                    }
-                    dispatch(updateChosenNetwork({ chosenNetwork: updateNetwork }))
-                }
-
-                setTimeout(() => {
-                    setIsLoading(false)
-                    setNetwork((prev) => ({ ...prev, tokens: [...prev.tokens, newToken] }))
-                    setTokenSuccess("Successful!")
-                    setTokenError("")
-                }, 1000)
-                return
-            }
+            dispatch(updateChosenNetwork({ chosenNetwork: updateNetwork }))
         }
 
         setTimeout(() => {
             setIsLoading(false)
-            setTokenSuccess("")
-            setTokenError("Please select a network")
+            setNetwork((prev) => new Network({ ...prev, tokens: [...prev.tokens, newToken] }))
+            setTokenSuccess("Successful!")
+            setTokenError("")
         }, 1000)
     }
 
@@ -187,10 +193,10 @@ function Setting() {
                     (_token) => _token.address !== _tokenAddress
                 )
 
-                return {
+                return new Network({
                     ..._network,
                     tokens: [...newTokenList]
-                }
+                })
             })
             setTokenSuccess("Successful!")
             setTokenError("")
@@ -316,7 +322,9 @@ function Setting() {
                         <Accordion.Body className="row">
                             <Col md={3} className="pr-0">
                                 <NetworkDropdown
-                                    selectHandler={(_network) => setNetwork(_network)}
+                                    selectHandler={(_network) =>
+                                        setNetwork(new Network({ ..._network }))
+                                    }
                                 />
                             </Col>
                             <Col md={9} className="pl-0">
