@@ -36,6 +36,7 @@
         "react-router-dom": "6",
         "stream-browserify": "^3.0.0",
         "styled-components": "^5.3.5",
+        "tronweb": "^3.2.6",
         "util": "^0.12.4",
         "web3": "^1.7.3",
         "xlsx": "^0.18.5"

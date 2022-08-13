@@ -19,7 +19,7 @@ class Web3js {
         }
     }
 
-    getTokenData(_tokenAddress, _networkId) {
+    async getERC20Data(_tokenAddress, _networkId) {
         let apiFullUrl = ""
 
         switch (_networkId) {
@@ -41,43 +41,40 @@ class Web3js {
                     "https://api-testnet.bscscan.com/api?module=contract&action=getabi&address="
                 break
             }
-            case "tron": {
-                apiFullUrl = "https://api.trongrid.com"
-                break
-            }
             default:
                 apiFullUrl = "https://"
         }
 
-        return new Promise((resolve, reject) => {
-            axios
-                .get(`${apiFullUrl}${_tokenAddress}`)
-                .then(async (response) => {
-                    if (response.data.status === "1") {
-                        const tokenABIString = response.data.result
-                        const tokenInstance = new this.web3.eth.Contract(
-                            JSON.parse(tokenABIString),
-                            _tokenAddress
-                        )
+        try {
+            const response = await axios.get(`${apiFullUrl}${_tokenAddress}`)
 
-                        // Get decimal
-                        const decimal = await tokenInstance.methods.decimals().call()
+            if (response.status !== 200 || response.data.status !== "1") {
+                return { error: `Can not get token with the address of ${_tokenAddress}` }
+            }
 
-                        // Get symbol
-                        const symbol = await tokenInstance.methods.symbol().call()
+            const tokenABIString = response.data.result
+            const tokenInstance = new this.web3.eth.Contract(
+                JSON.parse(tokenABIString),
+                _tokenAddress
+            )
 
-                        const token = {
-                            address: _tokenAddress,
-                            symbol,
-                            decimal,
-                            ABI: tokenABIString
-                        }
+            // Get decimal
+            const decimal = await tokenInstance.methods.decimals().call()
 
-                        resolve({ data: token })
-                    } else reject(response.data.result)
-                })
-                .catch((e) => reject(e))
-        })
+            // Get symbol
+            const symbol = await tokenInstance.methods.symbol().call()
+
+            const token = {
+                address: _tokenAddress,
+                symbol,
+                decimal,
+                ABI: tokenABIString
+            }
+
+            return { data: token }
+        } catch (error) {
+            return { error: error.message }
+        }
     }
 
     checkAddressFormat(_address) {

@@ -3,6 +3,7 @@ import IconNames from "../components/Icon/IconNames"
 import BscIcon from "../assets/icons/bsc-icon.png"
 import TronIcon from "../assets/icons/tron-icon.png"
 import Web3js from "../lib/Web3js"
+import Tronweb from "../lib/Tronweb"
 
 class Network {
     constructor({ id, name, blockExplorer, rpcEndpoint, hasValidProvider, tokens, type }) {
@@ -37,8 +38,15 @@ class Network {
                 }
                 break
             }
-            case "tron":
+            case "tron": {
+                if (!this.rpcEndpoint) {
+                    this.hasValidProvider = false
+                    break
+                }
+
+                this.hasValidProvider = true
                 break
+            }
             default:
                 break
         }
@@ -70,6 +78,27 @@ class Network {
         }
 
         return iconComponent
+    }
+
+    async getTokenDataByAddress(_tokenAddress) {
+        switch (this.id) {
+            case "bsc":
+            case "bsc-testnet":
+            case "ethereum":
+            case "ropsten": {
+                const web3js = new Web3js(this.rpcEndpoint)
+                return web3js.getERC20Data(_tokenAddress, this.id)
+            }
+            case "tron":
+            case "shasta": {
+                const tronweb = new Tronweb(this.rpcEndpoint)
+                return tronweb.getTRC20Data(_tokenAddress, this.id)
+            }
+            default:
+                break
+        }
+
+        return { error: `Invalid contract address provided` }
     }
 }
 
