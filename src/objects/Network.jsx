@@ -38,7 +38,8 @@ class Network {
                 }
                 break
             }
-            case "tron": {
+            case "tron":
+            case "shasta": {
                 if (!this.rpcEndpoint) {
                     this.hasValidProvider = false
                     break
@@ -68,7 +69,8 @@ class Network {
                 iconComponent = <Icon name={IconNames.FaEthereum} />
                 break
             }
-            case "tron": {
+            case "tron":
+            case "shasta": {
                 iconComponent = <img src={TronIcon} alt="tron-icon" width="15" height="15" />
                 break
             }

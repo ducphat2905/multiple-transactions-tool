@@ -49,7 +49,7 @@ class Web3js {
             const response = await axios.get(`${apiFullUrl}${_tokenAddress}`)
 
             if (response.status !== 200 || response.data.status !== "1") {
-                return { error: `Can not get token with the address of ${_tokenAddress}` }
+                return { error: `Invalid contract address provided` }
             }
 
             const tokenABIString = response.data.result

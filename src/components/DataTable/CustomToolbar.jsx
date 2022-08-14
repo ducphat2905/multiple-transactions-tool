@@ -18,6 +18,7 @@ import {
 } from "../../redux/DataTable"
 import EthereumThunk from "../../redux/thunk/EthereumThunk"
 import BscThunk from "../../redux/thunk/BscThunk"
+import TronThunk from "../../redux/thunk/TronThunk"
 import { setStage, STAGES, setFeature, setToken } from "../../redux/Stage"
 import { FEATURES } from "../../constants"
 import TokenDropdown from "../Dropdown/TokenDropdown"
@@ -53,7 +54,13 @@ function CustomToolbar() {
                 )
                 break
             }
-            case "tron": {
+            case "tron":
+            case "shasta": {
+                dispatch(
+                    TronThunk.getBalance({
+                        token
+                    })
+                )
                 break
             }
 

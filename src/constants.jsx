@@ -21,6 +21,15 @@ export const NETWORKS = [
         type: "mainnet"
     }),
     new Network({
+        id: "ropsten",
+        name: "Ropsten",
+        blockExplorer: "https://ropsten.etherscan.io/",
+        rpcEndpoint: "",
+        hasValidProvider: false,
+        tokens: RopstenTokens,
+        type: "testnet"
+    }),
+    new Network({
         id: "bsc",
         name: "Binance Smart Chain",
         blockExplorer: "https://bscscan.com/",
@@ -42,18 +51,18 @@ export const NETWORKS = [
         id: "tron",
         name: "Tron Network",
         blockExplorer: "https://tronscan.org/#/",
-        rpcEndpoint: "",
-        hasValidProvider: false,
+        rpcEndpoint: "https://api.trongrid.io",
+        hasValidProvider: true,
         tokens: TronTokens,
         type: "mainnet"
     }),
     new Network({
-        id: "ropsten",
-        name: "Ropsten",
-        blockExplorer: "https://ropsten.etherscan.io/",
-        rpcEndpoint: "",
-        hasValidProvider: false,
-        tokens: RopstenTokens,
+        id: "shasta",
+        name: "Shasta Network",
+        blockExplorer: "https://shasta.tronscan.org/#/",
+        rpcEndpoint: "https://api.shasta.trongrid.io",
+        hasValidProvider: true,
+        tokens: TronTokens,
         type: "testnet"
     })
 ]
@@ -165,4 +174,10 @@ export const TX_COLUMNS = [
     }
 ]
 
-export default { NETWORKS, BSC_PROVIDERS, INPUT_COLUMNS, getBalanceColumns, TX_COLUMNS }
+export default {
+    NETWORKS,
+    BSC_PROVIDERS,
+    INPUT_COLUMNS,
+    getBalanceColumns,
+    TX_COLUMNS
+}
