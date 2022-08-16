@@ -9,7 +9,7 @@ import IconNames from "../../Icon/IconNames"
 function GetBalanceMsg({ wallet }) {
     const chosenNetwork = useSelector((state) => state.network)
     const { token } = useSelector((state) => state.stage)
-    const [balance] = useState(wallet[token.symbol] ? wallet[token.symbol] : "unknown")
+    const [balance] = useState(wallet[token.symbol] != null ? wallet[token.symbol] : "unknown")
     const [walletLink] = useState(`${chosenNetwork.blockExplorer}address/${wallet.fromAddress}`)
 
     return (

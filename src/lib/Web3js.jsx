@@ -158,8 +158,8 @@ class Web3js {
     async getTransferGasFee({ fromAddress, toAddress, amountOfToken, token }, _parseToEth = false) {
         try {
             let gasFee = 0
-            // Increase gas fee in case the gasPrice raises
             const gasPrice = await this.web3.eth.getGasPrice()
+            // Increase gas fee in case the gasPrice raises
             // gasPrice = Math.floor(parseInt(gasPrice, 10) * this.gasPriceRate)
             let estimateGas = "21000" // default gas for transferring between wallets
 
