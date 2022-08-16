@@ -29,7 +29,9 @@ function CollectMsg({ wallet }) {
                             <span className="text-success m-1 p-1 d-block">
                                 Transaction hash:{" "}
                                 <a
-                                    href={`${chosenNetwork.blockExplorer}/tx/${wallet.transactionHash}`}>
+                                    href={`${chosenNetwork.blockExplorer}/tx/${wallet.transactionHash}`}
+                                    target="_blank"
+                                    rel="noreferrer">
                                     {wallet.transactionHash}
                                 </a>
                             </span>
