@@ -5,19 +5,18 @@ import { useDispatch, useSelector } from "react-redux"
 import { useState } from "react"
 import Icon from "../Icon/Icon"
 import IconNames from "../Icon/IconNames"
-import Web3js from "../../lib/Web3js"
 import { setFeature, setStage, STAGES } from "../../redux/Stage"
 import EthereumThunk from "../../redux/thunk/EthereumThunk"
+import TronThunk from "../../redux/thunk/TronThunk"
 import BscThunk from "../../redux/thunk/BscThunk"
 import { getDataTable, setResultMessages, TABLE_TYPES } from "../../redux/DataTable"
+import Network from "../../objects/Network"
 
 function CollectForm() {
     const dispatch = useDispatch()
     const { token } = useSelector((state) => state.stage)
     const chosenNetwork = useSelector((state) => state.network)
-    const [recipientAddress, setRecipientAddress] = useState(
-        "0xa6dd3736841f1A1f3f7C27349867D46285c39f58"
-    )
+    const [recipientAddress, setRecipientAddress] = useState("TEr3J5eggpGBgP7te4xVh6Uq3zm3HZwD1j")
     const [error, setError] = useState("")
     const [isValid, setIsValid] = useState()
 
@@ -53,7 +52,14 @@ function CollectForm() {
                 )
                 break
             }
-            case "tron": {
+            case "tron":
+            case "shasta": {
+                dispatch(
+                    TronThunk.collect({
+                        token,
+                        recipient: { address: recipientAddress }
+                    })
+                )
                 break
             }
 
@@ -70,8 +76,8 @@ function CollectForm() {
             return
         }
 
-        const web3js = new Web3js(chosenNetwork.rpcEndpoint)
-        const isValidFormat = web3js.checkAddressFormat(recipientAddress)
+        const network = new Network({ ...chosenNetwork })
+        const isValidFormat = network.checkAddress(recipientAddress)
 
         if (!isValidFormat) {
             toggleErrorMsg(true, "Invalid format")

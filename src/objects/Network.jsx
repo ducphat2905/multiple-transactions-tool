@@ -3,7 +3,7 @@ import IconNames from "../components/Icon/IconNames"
 import BscIcon from "../assets/icons/bsc-icon.png"
 import TronIcon from "../assets/icons/tron-icon.png"
 import Web3js from "../lib/Web3js"
-import Tronweb from "../lib/Tronweb"
+import TronWeb from "../lib/Tronweb"
 
 class Network {
     constructor({ id, name, blockExplorer, rpcEndpoint, hasValidProvider, tokens, type }) {
@@ -93,7 +93,7 @@ class Network {
             }
             case "tron":
             case "shasta": {
-                const tronweb = new Tronweb(this.rpcEndpoint)
+                const tronweb = new TronWeb(this.rpcEndpoint)
                 return tronweb.getTRC20Data(_tokenAddress, this.id)
             }
             default:
@@ -101,6 +101,90 @@ class Network {
         }
 
         return { error: `Invalid contract address provided` }
+    }
+
+    checkAddress(_address) {
+        let isValid = false
+
+        switch (this.id) {
+            case "bsc":
+            case "bsc-testnet":
+            case "ethereum":
+            case "ropsten": {
+                const web3js = new Web3js(this.rpcEndpoint)
+                isValid = web3js.checkAddressFormat(_address)
+                break
+            }
+            case "tron":
+            case "shasta": {
+                const tronweb = new TronWeb(this.rpcEndpoint)
+                isValid = tronweb.checkAddressFormat(_address)
+                break
+            }
+            default:
+                break
+        }
+
+        return isValid
+    }
+
+    getWalletByPrivateKey(_privateKey) {
+        let walletFromPK = {}
+        switch (this.id) {
+            case "bsc":
+            case "bsc-testnet":
+            case "ethereum":
+            case "ropsten": {
+                const web3js = new Web3js(this.rpcEndpoint)
+                walletFromPK = web3js.getWalletByPk(_privateKey)
+                break
+            }
+            case "tron":
+            case "shasta": {
+                const tronweb = new TronWeb(this.rpcEndpoint)
+                walletFromPK = tronweb.getWalletByPk(_privateKey)
+                break
+            }
+            default:
+                break
+        }
+
+        return walletFromPK
+    }
+
+    /**
+     *
+     * @param {string} _address
+     * @param {Token} _token
+     * @returns
+     */
+    async getBalance(_address, _token) {
+        let balance = {}
+
+        switch (this.id) {
+            case "bsc":
+            case "bsc-testnet":
+            case "ethereum":
+            case "ropsten": {
+                const web3js = new Web3js(this.rpcEndpoint)
+                balance = _token.address
+                    ? await web3js.getErc20Balance(_address, _token, true)
+                    : await web3js.getEthBalance(_address, true)
+                break
+            }
+            case "tron":
+            case "shasta": {
+                const tronweb = new TronWeb(this.rpcEndpoint)
+                balance = _token.address
+                    ? await tronweb.getTrc20Balance(_address, _token, true)
+                    : await tronweb.getTrxBalance(_address, true)
+                break
+            }
+            default:
+                break
+        }
+
+        return balance
     }
 }
 

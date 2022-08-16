@@ -4,14 +4,15 @@ import Form from "react-bootstrap/Form"
 import InputGroup from "react-bootstrap/InputGroup"
 import { useDispatch, useSelector } from "react-redux"
 import { useState } from "react"
-import Web3js from "../../lib/Web3js"
 import { setFeature, setStage, STAGES } from "../../redux/Stage"
 import Icon from "../Icon/Icon"
 import IconNames from "../Icon/IconNames"
 import EthereumThunk from "../../redux/thunk/EthereumThunk"
+import TronThunk from "../../redux/thunk/TronThunk"
 import BscThunk from "../../redux/thunk/BscThunk"
 import { getDataTable, setResultMessages, TABLE_TYPES } from "../../redux/DataTable"
 import Token from "../../objects/Token"
+import Network from "../../objects/Network"
 
 function SpreadForm() {
     const dispatch = useDispatch()
@@ -19,11 +20,10 @@ function SpreadForm() {
     const chosenNetwork = useSelector((state) => state.network)
     const [spreaderPk, setSpreaderPk] = useState("")
     const [spreaderAddress, setSpreaderAddress] = useState("")
-    const [spreaderBalance, setSpreaderBalance] = useState(0)
+    const [spreaderBalance, setSpreaderBalance] = useState("")
     const [amountToSpread, setAmountToSpread] = useState(0)
     const [error, setError] = useState("")
     const [isValidPk, setIsValidPk] = useState()
-    const [isEnoughBalance, setIsEnoughBalance] = useState()
     const [isValidAmount, setIsValidAmount] = useState()
 
     const toggleErrorMsg = (hasError, errorMsg, setValid) => {
@@ -44,33 +44,37 @@ function SpreadForm() {
     const onPkChange = async (e) => {
         const privateKey = e.target.value
         toggleErrorMsg(false, "", setIsValidPk)
-        setIsEnoughBalance(undefined)
         setIsValidAmount(undefined)
-        setSpreaderAddress("")
-        setSpreaderBalance("")
+        setSpreaderAddress("...")
+        setSpreaderBalance("...")
         setSpreaderPk(privateKey)
 
-        if (privateKey) {
-            // Check private key
-            const web3js = new Web3js(chosenNetwork.rpcEndpoint)
-            const { data: wallet, error: walletError } = await web3js.getWalletByPk(privateKey)
-            if (walletError) {
-                toggleErrorMsg(true, walletError, setIsValidPk)
-                return
-            }
-
-            const { data: balance, error: balanceError } = token.address
-                ? await web3js.getErc20Balance(wallet.address, new Token({ ...token }), true)
-                : await web3js.getEthBalance(wallet.address, true)
-
-            if (balanceError) {
-                toggleErrorMsg(true, balanceError, setIsEnoughBalance)
-                return
-            }
-
-            setSpreaderAddress(wallet.address)
-            setSpreaderBalance(balance)
+        if (!privateKey) {
+            toggleErrorMsg(true, "Invalid key", setIsValidPk)
+            return
         }
+
+        // Check private key
+        const network = new Network({ ...chosenNetwork })
+        const { data: wallet, error: walletError } = network.getWalletByPrivateKey(privateKey)
+        if (walletError) {
+            toggleErrorMsg(true, walletError, setIsValidPk)
+            return
+        }
+
+        // Get balance
+        const { data: balance, error: balanceError } = await network.getBalance(
+            wallet.address,
+            new Token({ ...token })
+        )
+
+        if (balanceError) {
+            setSpreaderBalance(balanceError)
+            return
+        }
+
+        setSpreaderAddress(wallet.address)
+        setSpreaderBalance(balance)
     }
 
     const spread = (spreader) => {
@@ -97,7 +101,15 @@ function SpreadForm() {
                 )
                 break
             }
-            case "tron": {
+            case "tron":
+            case "shasta": {
+                dispatch(
+                    TronThunk.spread({
+                        token,
+                        spreader,
+                        amountToSpread: parseFloat(amountToSpread).toString() // Prevent cases like: "012"
+                    })
+                )
                 break
             }
 
@@ -113,6 +125,11 @@ function SpreadForm() {
 
         if (parseFloat(amountToSpread) <= 0) {
             toggleErrorMsg(true, "Amount must be larger than 0", setIsValidAmount)
+            return
+        }
+
+        if (parseFloat(amountToSpread) > parseFloat(spreaderBalance)) {
+            toggleErrorMsg(true, "Amount exceeds the current balance", setIsValidAmount)
             return
         }
 
@@ -169,31 +186,12 @@ function SpreadForm() {
                             {/* Address */}
                             <InputGroup className="my-3">
                                 <InputGroup.Text id="address-label">Address</InputGroup.Text>
-                                <Form.Control
-                                    type="text"
-                                    aria-label="address"
-                                    aria-describedby="address-label"
-                                    disabled
-                                    value={spreaderAddress}
-                                />
+                                <p className="mb-0 py-2 px-3 bg-info rounded">{spreaderAddress}</p>
                             </InputGroup>
                             {/* Balance */}
                             <InputGroup className="my-3">
-                                <InputGroup.Text id="balance-label">
-                                    Balance of {token.symbol}
-                                </InputGroup.Text>
-                                <Form.Control
-                                    type="text"
-                                    aria-label="balance"
-                                    aria-describedby="balance-label"
-                                    disabled
-                                    value={spreaderBalance}
-                                    isInvalid={isEnoughBalance === false}
-                                    isValid={isEnoughBalance === true}
-                                />
-                                <Form.Control.Feedback className="p-1" type="invalid">
-                                    {error}
-                                </Form.Control.Feedback>
+                                <InputGroup.Text id="balance-label">{token.symbol}</InputGroup.Text>
+                                <p className="mb-0 py-2 px-3 bg-info rounded">{spreaderBalance}</p>
                             </InputGroup>
 
                             <Card.Title className="my-3">
