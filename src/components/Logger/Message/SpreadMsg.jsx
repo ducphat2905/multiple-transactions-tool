@@ -1,6 +1,7 @@
 import ListGroup from "react-bootstrap/ListGroup"
 import PropTypes from "prop-types"
 import { useSelector } from "react-redux"
+import { useState, useEffect } from "react"
 
 import Icon from "../../Icon/Icon"
 import IconNames from "../../Icon/IconNames"
@@ -8,6 +9,30 @@ import IconNames from "../../Icon/IconNames"
 function SpreadMsg({ wallet }) {
     const chosenNetwork = useSelector((state) => state.network)
     const { token } = useSelector((state) => state.stage)
+    const [amount] = useState(() =>
+        wallet.transferredAmount !== null ? wallet.transferredAmount : "0"
+    )
+    const [walletLink] = useState(`${chosenNetwork.blockExplorer}address/${wallet.toAddress}`)
+    const [transactionLink, setTransactionLink] = useState("")
+
+    useEffect(() => {
+        switch (chosenNetwork.id) {
+            case "bsc":
+            case "bsc-testnet":
+            case "ethereum":
+            case "ropsten":
+                setTransactionLink(`${chosenNetwork.blockExplorer}tx/${wallet.transactionHash}`)
+                break
+            case "tron":
+            case "shasta":
+                setTransactionLink(
+                    `${chosenNetwork.blockExplorer}transaction/${wallet.transactionHash}`
+                )
+                break
+            default:
+                break
+        }
+    }, [])
 
     return (
         <ListGroup.Item>
@@ -15,21 +40,13 @@ function SpreadMsg({ wallet }) {
                 {!wallet.error ? (
                     <>
                         <p className="my-1 d-inline">
-                            Spread{" "}
-                            <b>{wallet.transferredAmount ? wallet.transferredAmount : "0"}</b>{" "}
-                            {token.symbol} to{" "}
-                            <a
-                                href={`${chosenNetwork.blockExplorer}address/${wallet.toAddress}`}
-                                target="_blank"
-                                rel="noreferrer">
+                            Spread <b>{amount}</b> {token.symbol} to{" "}
+                            <a href={walletLink} target="_blank" rel="noreferrer">
                                 {wallet.toAddress}
                             </a>
                             <span className="text-success m-1 p-1 d-block">
                                 Transaction hash:{" "}
-                                <a
-                                    href={`${chosenNetwork.blockExplorer}tx/${wallet.transactionHash}`}
-                                    target="_blank"
-                                    rel="noreferrer">
+                                <a href={transactionLink} target="_blank" rel="noreferrer">
                                     {wallet.transactionHash}
                                 </a>
                             </span>
@@ -41,13 +58,8 @@ function SpreadMsg({ wallet }) {
                 ) : (
                     <>
                         <p className="my-1 d-inline">
-                            Failed to spread{" "}
-                            <b>{wallet.amountToTransfer ? wallet.amountToTransfer : "0"}</b>{" "}
-                            {token.symbol} to{" "}
-                            <a
-                                href={`${chosenNetwork.blockExplorer}address/${wallet.toAddress}`}
-                                target="_blank"
-                                rel="noreferrer">
+                            Failed to spread <b>{amount}</b> {token.symbol} to{" "}
+                            <a href={walletLink} target="_blank" rel="noreferrer">
                                 {wallet.toAddress}
                             </a>
                             <span className="text-danger m-1 p-1 d-block">{wallet.error}</span>

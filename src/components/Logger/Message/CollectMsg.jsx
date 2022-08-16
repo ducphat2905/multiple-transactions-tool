@@ -1,6 +1,7 @@
 import ListGroup from "react-bootstrap/ListGroup"
 import PropTypes from "prop-types"
 import { useSelector } from "react-redux"
+import { useState, useEffect } from "react"
 
 import Icon from "../../Icon/Icon"
 import IconNames from "../../Icon/IconNames"
@@ -8,6 +9,30 @@ import IconNames from "../../Icon/IconNames"
 function CollectMsg({ wallet }) {
     const chosenNetwork = useSelector((state) => state.network)
     const { token } = useSelector((state) => state.stage)
+    const [amount] = useState(() =>
+        wallet.transferredAmount !== null ? wallet.transferredAmount : "0"
+    )
+    const [walletLink] = useState(`${chosenNetwork.blockExplorer}address/${wallet.fromAddress}`)
+    const [transactionLink, setTransactionLink] = useState("")
+
+    useEffect(() => {
+        switch (chosenNetwork.id) {
+            case "bsc":
+            case "bsc-testnet":
+            case "ethereum":
+            case "ropsten":
+                setTransactionLink(`${chosenNetwork.blockExplorer}tx/${wallet.transactionHash}`)
+                break
+            case "tron":
+            case "shasta":
+                setTransactionLink(
+                    `${chosenNetwork.blockExplorer}transaction/${wallet.transactionHash}`
+                )
+                break
+            default:
+                break
+        }
+    }, [])
 
     return (
         <ListGroup.Item>
@@ -15,23 +40,13 @@ function CollectMsg({ wallet }) {
                 {!wallet.error ? (
                     <>
                         <p className="my-1 d-inline">
-                            Collected{" "}
-                            <b>
-                                {wallet.transferredAmount !== null ? wallet.transferredAmount : "0"}
-                            </b>{" "}
-                            {token.symbol} from{" "}
-                            <a
-                                href={`${chosenNetwork.blockExplorer}address/${wallet.fromAddress}`}
-                                target="_blank"
-                                rel="noreferrer">
+                            Collected <b>{amount}</b> {token.symbol} from{" "}
+                            <a href={walletLink} target="_blank" rel="noreferrer">
                                 {wallet.fromAddress}
                             </a>
                             <span className="text-success m-1 p-1 d-block">
                                 Transaction hash:{" "}
-                                <a
-                                    href={`${chosenNetwork.blockExplorer}/tx/${wallet.transactionHash}`}
-                                    target="_blank"
-                                    rel="noreferrer">
+                                <a href={transactionLink} target="_blank" rel="noreferrer">
                                     {wallet.transactionHash}
                                 </a>
                             </span>
@@ -43,15 +58,8 @@ function CollectMsg({ wallet }) {
                 ) : (
                     <>
                         <p className="my-1 d-inline">
-                            Failed to collect{" "}
-                            <b>
-                                {wallet.amountToTransfer !== null ? wallet.amountToTransfer : "0"}
-                            </b>{" "}
-                            {token.symbol} from{" "}
-                            <a
-                                href={`${chosenNetwork.blockExplorer}address/${wallet.fromAddress}`}
-                                target="_blank"
-                                rel="noreferrer">
+                            Failed to collect <b>{amount}</b> {token.symbol} from{" "}
+                            <a href={walletLink} target="_blank" rel="noreferrer">
                                 {wallet.fromAddress}
                             </a>
                             <span className="text-danger m-1 p-1 d-block">{wallet.error}</span>

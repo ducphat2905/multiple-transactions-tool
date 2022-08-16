@@ -1,6 +1,7 @@
 import ListGroup from "react-bootstrap/ListGroup"
 import PropTypes from "prop-types"
 import { useSelector } from "react-redux"
+import { useState } from "react"
 
 import Icon from "../../Icon/Icon"
 import IconNames from "../../Icon/IconNames"
@@ -8,6 +9,8 @@ import IconNames from "../../Icon/IconNames"
 function GetBalanceMsg({ wallet }) {
     const chosenNetwork = useSelector((state) => state.network)
     const { token } = useSelector((state) => state.stage)
+    const [balance] = useState(wallet[token.symbol] ? wallet[token.symbol] : "unknown")
+    const [walletLink] = useState(`${chosenNetwork.blockExplorer}address/${wallet.fromAddress}`)
 
     return (
         <ListGroup.Item>
@@ -15,14 +18,10 @@ function GetBalanceMsg({ wallet }) {
                 {!wallet.error ? (
                     <>
                         <p className="my-1 d-inline">
-                            <a
-                                href={`${chosenNetwork.blockExplorer}address/${wallet.address}`}
-                                target="_blank"
-                                rel="noreferrer">
+                            <a href={walletLink} target="_blank" rel="noreferrer">
                                 {wallet.address}
                             </a>{" "}
-                            has <b>{wallet[token.symbol] ? wallet[token.symbol] : "0"}</b>{" "}
-                            {token.symbol}
+                            has <b>{balance}</b> {token.symbol}
                         </p>
                         <Icon name={IconNames.FaCheck} className="text-success" />
                     </>
@@ -30,10 +29,7 @@ function GetBalanceMsg({ wallet }) {
                     <>
                         <p className="my-1 d-inline">
                             Failed to get balance of {token.symbol} from{" "}
-                            <a
-                                href={`${chosenNetwork.blockExplorer}address/${wallet.address}`}
-                                target="_blank"
-                                rel="noreferrer">
+                            <a href={walletLink} target="_blank" rel="noreferrer">
                                 {wallet.address}
                             </a>
                         </p>

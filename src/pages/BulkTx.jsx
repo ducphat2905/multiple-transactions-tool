@@ -83,7 +83,7 @@ function BulkTx() {
                 <Col className="p-4">
                     {stage.current === STAGES.DropFile && <DropFileComponent />}
                     {stage.current === STAGES.DataTable && <DataTable />}
-                    {stage.current === STAGES.BulkTxForm && <CollectForm />}
+                    {stage.current === STAGES.CollectForm && <CollectForm />}
                     {stage.current === STAGES.SpreadForm && <SpreadForm />}
                     {stage.current === STAGES.Logger && <Logger />}
                 </Col>
