@@ -4,6 +4,7 @@ import TronWeb from "../../lib/Tronweb"
 import Token from "../../objects/Token"
 import { addResultMessage, setTableType, storeDataTable, TABLE_TYPES } from "../DataTable"
 import { FEATURES, TX_COLUMNS, getBalanceColumns } from "../../constants"
+import NumberHelper from "../../helpers/Number"
 
 const storeResultInTable = (dispatch, data) => {
     const { file, rows, feature, token } = data
@@ -90,7 +91,7 @@ const getBalance = createAsyncThunk(
                             }
 
                             result.status = true
-                            result[`${token.symbol.toUpperCase()}`] = trc20Balance
+                            result[`${token.symbol.toUpperCase()}`] = NumberHelper.convertNumToFullString(trc20Balance)
                         }
 
                         dispatch(addResultMessage(result))
@@ -185,7 +186,7 @@ const collect = createAsyncThunk(
                         dispatch(addResultMessage(collectResult))
 
                         return resolve(collectResult)
-                    }, 100 * _index)
+                    }, 200 * _index)
                 })
             })
         )
@@ -241,8 +242,7 @@ const spread = createAsyncThunk(
                             const spreadTrxResult = await tronweb.spreadTrx({
                                 from: spreader,
                                 toAddress: _wallet.address,
-                                amountOfTrx: amountToSpread,
-                                nonce: _index
+                                amountOfTrx: amountToSpread
                             })
 
                             if (spreadTrxResult.error) {
@@ -260,8 +260,7 @@ const spread = createAsyncThunk(
                                 from: spreader,
                                 toAddress: _wallet.address,
                                 amountOfToken: amountToSpread,
-                                token: new Token({ ...token }),
-                                nonce: _index
+                                token: new Token({ ...token })
                             })
 
                             if (spreadTrc20Result.error) {
@@ -275,7 +274,7 @@ const spread = createAsyncThunk(
 
                         dispatch(addResultMessage(spreadResult))
                         return resolve(spreadResult)
-                    }, 100 * _index)
+                    }, 200 * _index)
                 })
             })
         )
