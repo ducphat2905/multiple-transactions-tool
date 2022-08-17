@@ -165,12 +165,13 @@ class Web3js {
 
             if (token) {
                 const contract = new this.web3.eth.Contract(token.ABI, token.address)
-                const amountToTransfer = NumberHelper.parseFromDecimalVal(
+                let amountToTransfer = NumberHelper.parseFromDecimalVal(
                     parseFloat(amountOfToken),
                     token.decimal
                 )
+                amountToTransfer = NumberHelper.convertNumToFullString(amountToTransfer)
                 estimateGas = await contract.methods
-                    .transfer(toAddress, amountToTransfer.toString())
+                    .transfer(toAddress, amountToTransfer)
                     .estimateGas({
                         from: fromAddress,
                         value: "0"
@@ -466,9 +467,10 @@ class Web3js {
     async getTransferData({ toAddress, amountOfToken, token }) {
         try {
             const contract = new this.web3.eth.Contract(token.ABI, token.address)
-            const tokenToTransfer = NumberHelper.parseFromDecimalVal(amountOfToken, token.decimal)
+            let tokenToTransfer = NumberHelper.parseFromDecimalVal(amountOfToken, token.decimal)
+            tokenToTransfer = NumberHelper.convertNumToFullString(tokenToTransfer)
             const transferData = await contract.methods
-                .transfer(toAddress, tokenToTransfer.toString())
+                .transfer(toAddress, tokenToTransfer)
                 .encodeABI()
 
             return { data: transferData }
