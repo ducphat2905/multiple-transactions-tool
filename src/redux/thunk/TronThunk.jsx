@@ -91,7 +91,8 @@ const getBalance = createAsyncThunk(
                             }
 
                             result.status = true
-                            result[`${token.symbol.toUpperCase()}`] = NumberHelper.convertNumToFullString(trc20Balance)
+                            result[`${token.symbol.toUpperCase()}`] =
+                                NumberHelper.convertNumToFullString(trc20Balance)
                         }
 
                         dispatch(addResultMessage(result))

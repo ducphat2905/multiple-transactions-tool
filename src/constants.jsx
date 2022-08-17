@@ -160,12 +160,12 @@ export const TX_COLUMNS = [
         headerName: "Status",
         headerClassName: "bg-light"
     },
-    {
-        field: "gasFee",
-        flex: 0.3,
-        headerName: "Gas fee (ETH)",
-        headerClassName: "bg-light"
-    },
+    // {
+    //     field: "gasFee",
+    //     flex: 0.3,
+    //     headerName: "Gas fee",
+    //     headerClassName: "bg-light"
+    // },
     {
         field: "error",
         flex: 0.7,
