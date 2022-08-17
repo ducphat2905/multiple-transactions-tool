@@ -8,4 +8,8 @@ const parseFromDecimalVal = (num, decimal) => {
     return num * 10 ** decimal
 }
 
-export default { parseToDecimalVal, parseFromDecimalVal }
+const convertNumToFullString = (num) => {
+    return num.toLocaleString("fullwide", { useGrouping: false })
+}
+
+export default { parseToDecimalVal, parseFromDecimalVal, convertNumToFullString }
