@@ -185,7 +185,10 @@ function CustomToolbar() {
             <Row>
                 <Col>
                     <div className="p-0 btn btn-outline-secondary">
-                        <GridToolbarExport variant="outline-secondary" />
+                        <GridToolbarExport
+                            variant="outline-secondary"
+                            printOptions={{ disableToolbarButton: true }}
+                        />
                     </div>
                 </Col>
                 <Col>
