@@ -13,6 +13,11 @@ import Network from "../objects/Network"
 
 const features = [
     {
+        title: "Balance",
+        description: "Get balance of cryptocurrencies from the given spreadsheet or csv.",
+        iconName: "GiWallet"
+    },
+    {
         title: "Collect",
         description: "Collect cryptocurrencies from many wallets and return to the main wallet.",
         iconName: "BsStackOverflow"
@@ -21,11 +26,6 @@ const features = [
         title: "Spread",
         description: "Spread cryptocurrencies from the main wallet to many wallets.",
         iconName: "BsFillDiagram3Fill"
-    },
-    {
-        title: "Wallet",
-        description: "Create and activate wallets from different blockchain networks.",
-        iconName: "GiWallet"
     },
     {
         title: "Setting",
@@ -177,15 +177,11 @@ function Home() {
 
                 <div className="my-3 align-items-center row">
                     <h2 className="text-center m-2 p-2 text-info">
-                        <b>Guides</b>
+                        <b>Features</b>
                     </h2>
                     {features.map((_) => (
                         <Col md={3} key={_.title} className="my-2 p-2">
-                            <Button
-                                variant="light"
-                                style={{ width: "100%" }}
-                                className="p-3"
-                                onClick={() => navigate(`/${_.title.toLowerCase()}`)}>
+                            <Button variant="light" style={{ width: "100%" }} className="p-3">
                                 <h2 className="mb-4">
                                     <span className="m-2">
                                         <Icon name={_.iconName} />

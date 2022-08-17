@@ -24,17 +24,19 @@ function App() {
                 flexDirection: "column",
                 justifyContent: "space-between"
             }}>
-            <NavigationBar />
+            <div>
+                <NavigationBar />
 
-            <Row style={{ padding: 0, margin: 0, justifyContent: "center", height: "100%" }}>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/guide" element={<Guide />} />
-                    <Route path="/bulk-tx" element={<BulkTx />} />
-                    <Route path="/setting" element={<Setting />} />
-                </Routes>
-            </Row>
-
+                <Row style={{ padding: 0, margin: 0, justifyContent: "center" }}>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/guide" element={<Guide />} />
+                        <Route path="/bulk-tx" element={<BulkTx />} />
+                        <Route path="/setting" element={<Setting />} />
+                    </Routes>
+                </Row>
+            </div>
+            
             <Footer />
         </Container>
     )
