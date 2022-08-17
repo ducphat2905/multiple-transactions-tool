@@ -28,6 +28,7 @@ function Setting() {
     const [mainNetworks, setMainNetworks] = useState([])
     const [testNetworks, setTestNetworks] = useState([])
     const [network, setNetwork] = useState(new Network({ ...chosenNetwork }))
+    const [tokens, setTokens] = useState(chosenNetwork.tokens)
     const [tokenAddress, setTokenAddress] = useState("")
     const [tokenError, setTokenError] = useState("")
     const [tokenSuccess, setTokenSuccess] = useState("")
@@ -50,6 +51,14 @@ function Setting() {
         setMainNetworks(mainNets)
         setTestNetworks(testNets)
     }, [setting.networks])
+
+    useEffect(() => {
+        setTokens(chosenNetwork.tokens)
+    }, [chosenNetwork])
+
+    useEffect(() => {
+        setTokens(network.tokens)
+    }, [network])
 
     const onChangeEndpoint = (networkId, networkType, rpcEndpoint) => {
         if (networkType === "mainnet") {
@@ -372,7 +381,7 @@ function Setting() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {network.tokens.map((_token, index) => (
+                                        {tokens.map((_token, index) => (
                                             <tr key={`${_token.symbol}-${_token.address}`}>
                                                 <td>{index + 1}</td>
                                                 <td>
