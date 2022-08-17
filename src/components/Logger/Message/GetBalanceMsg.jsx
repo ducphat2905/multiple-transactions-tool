@@ -10,7 +10,7 @@ function GetBalanceMsg({ wallet }) {
     const chosenNetwork = useSelector((state) => state.network)
     const { token } = useSelector((state) => state.stage)
     const [balance] = useState(wallet[token.symbol] != null ? wallet[token.symbol] : "unknown")
-    const [walletLink] = useState(`${chosenNetwork.blockExplorer}address/${wallet.fromAddress}`)
+    const [walletLink] = useState(`${chosenNetwork.blockExplorer}address/${wallet.address}`)
 
     return (
         <ListGroup.Item>
