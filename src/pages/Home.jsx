@@ -3,7 +3,7 @@ import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
 import Card from "react-bootstrap/Card"
 import Badge from "react-bootstrap/Badge"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { useSelector } from "react-redux"
 import { AiFillCheckCircle, AiFillCloseCircle } from "react-icons/ai"
@@ -35,7 +35,6 @@ const features = [
 ]
 
 function Home() {
-    const navigate = useNavigate()
     const setting = useSelector((state) => state.setting)
     const selectedNetwork = useSelector((state) => state.network)
     const [mainNetworks, setMainNetworks] = useState([])
