@@ -4,7 +4,7 @@
 This project is a tool in which the user can send many transactions in blockchain networks. In particular, the user provides a list of wallets and the tool will send transactions to all the wallets in the given list. 
 Any data from spreadsheets or csv files will only be stored in the local storage.
 
-Link: https://vigilant-agnesi-af8c48.netlify.app/ 
+Link: [https://blockchain-transaction-tool.netlify.app/](https://blockchain-transaction-tool.netlify.app/)
 
 ## Blockchain Networks
 The tool is only able to work with these networks:
@@ -15,13 +15,12 @@ The tool is only able to work with these networks:
 | Ethereum  | Ropsten  |
 | Tron  | Shasta  |
 
-## Libraries / Frameworks
+## Built with
 <ul>
   <li>React</li>
-  <li>React Icons</li>
-  <li>React Bootstrap</li>
+  <li>Bootstrap</li>
   <li>React Router</li>
-  <li>React Redux</li>
+  <li>Redux</li>
   <li>Web3js</li>
   <li>Tronweb</li>
   <li>Vite</li>
